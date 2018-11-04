@@ -14,7 +14,7 @@ details, consult the provided javadoc for specific packages and classes.
 
 3. DISTRIBUTION JAR FILES
 
-The Spring Cloud IOT jars files can be found in the 'dist' directory. 
+The Spring DSL jars files can be found in the 'dist' directory. 
 
 4. GETTING STARTED
 
