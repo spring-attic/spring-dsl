@@ -1,6 +1,6 @@
-SPRING CLOUD IOT CHANGELOG
+SPRING DSL CHANGELOG
 ==========================
-http://cloud.spring.io/spring-cloud-iot/
+http://spring.io/spring-dsl/
 
-Issues: https://github.com/spring-cloud/spring-cloud-iot/issues
+Issues: https://github.com/spring-project/spring-dsl/issues
 
