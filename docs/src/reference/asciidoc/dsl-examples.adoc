@@ -1,0 +1,32 @@
+[[dsl-examples]]
+= DSL Examples
+This section contains documentation and instructions for various
+samples we provide with a distribution. Below sub-sections are
+mostly organised around different languages and how those
+languages are organised to a services provided by a SDSL.
+
+Generally speaking in a following sections providing various
+samples we're going to see different type of languages and
+their use cases. For sections titled _Process Server_ means that
+a particular _Language Server_ is meant to be run as is with
+expected _STDIO_ communication from a _Language Client_ which is the
+most usual case. Sections titled with _Socket Server_ are for
+cases where _Client_ is able to launch server so that it can
+connect throught a real _socket_ which naturally would allow to
+use non-blocking libraries. Sections titled with _UI Editor_
+generally mean that a sample provides a build-in infrastructure
+what you can experiment throught a browser using a _Monaco_ editor.
+
+[NOTE]
+====
+UI monaco editor integration in below samples is currently handled
+as a shared angular component in a samples which we're planning to
+outsource into a separate module at later stages in a in a lifecycle
+of _Spring DSL_ itself. For now it lives in a samples build.
+====
+
+include::dsl-examples-simple.adoc[]
+include::dsl-examples-wordcheck.adoc[]
+include::dsl-examples-dot.adoc[]
+include::dsl-examples-showcase.adoc[]
+

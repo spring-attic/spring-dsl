@@ -1,0 +1,12 @@
+[[dsl-core-dslservice]]
+=== Dsl Service
+`DslService` is an interface a service can implement providing services for various 
+languages. It currently have only one method returning list of `LanguageId` a
+particular service supports. This allows _Spring Dsl_ framework to conditionally
+choose services per currently handled `Document`.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/CoreDocs.java[tags=snippet2]
+----
+

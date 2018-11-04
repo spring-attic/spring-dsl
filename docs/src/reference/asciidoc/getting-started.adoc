@@ -1,0 +1,43 @@
+[[dsl-getting-started]]
+= Getting started
+If you’re just getting started with Spring Dsl,
+this is the section for you! Here we answer the basic
+“what?”, “how?” and “why?” questions. You’ll find a gentle
+introduction to Spring Dsl.
+
+== System Requirements
+Spring Dsl {revnumber} is built and tested with
+JDK 8, Spring Framework {spring-version}, Spring Boot
+{spring-boot-version} and ANTLR {antlr-version}.
+
+== Modules
+The following modules are available for Spring Dsl
+
+|===
+|Module |Description
+
+|spring-dsl-antrl
+|ANTLR support Module
+
+|spring-dsl-autoconfigure
+|Spring Boot Autoconfigure Module
+
+|spring-dsl-bom
+|Spring DSL Bill of Materials Module
+
+|spring-dsl-core
+|Core system of a Spring DSL
+
+|spring-dsl-jsonrpc
+|Core JSONRPC Module
+
+|spring-dsl-lsp-core
+|Core LSP Module
+
+|spring-dsl-symboltable
+|Spring DSL Symboltable
+
+|spring-dsl-websocket
+|Spring DSL Websocket Module 
+
+|===

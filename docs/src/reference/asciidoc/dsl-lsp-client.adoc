@@ -1,0 +1,41 @@
+[[dsl-lsp-client]]
+=== Language Client
+_Language Client_ is a component used to talk to the other side within
+a `LSP` connection. Apart from an usual scenario where client talks to
+a server, _Language Client_ can also used on a server side to talk to
+a client. Well that was a mouthful wasn't it! When server is doing its
+own processing, it's possible that server also sends requests to a client
+thus it working as a _Language Client_. 
+
+Interface `LspClient` defines a contract to send _JSONRCP_ requests
+and notifications.
+
+Generic use case for building a _LspClient_ used to connect to physical
+_Language Server_ running on a port is shown below.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ClientDocs.java[tags=snippet1]
+----
+
+On a server side there is no need to build a _Language Client_ as internal component
+is automatically created which can be used to hook into same communication channel
+established from a client side. In your controller it is simple as define
+`LspClient` parameter in you method and then use it. In a below example
+`Example1CommandsController` maps rpc notification to path `example/log` and
+when that method is consumed, notification is send to a client to ask
+it to log a message.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ClientDocs.java[tags=snippet2]
+----
+
+Sample below is very similar seen above except that rpc request is used
+instead of a notification.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ClientDocs.java[tags=snippet3]
+----
+

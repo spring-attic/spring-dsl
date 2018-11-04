@@ -1,0 +1,34 @@
+rootProject.name = 'spring-dsl'
+
+include 'spring-dsl-core'
+include 'spring-dsl-symboltable'
+include 'spring-dsl-lsp-core'
+include 'spring-dsl-jsonrpc'
+include 'spring-dsl-websocket'
+include 'spring-dsl-antlr'
+include 'spring-dsl-autoconfigure'
+include 'spring-dsl-bom'
+include 'spring-dsl-build-tests'
+include 'spring-dsl-starter-lspserver'
+include 'spring-dsl-samples'
+include 'spring-dsl-samples:simpledsl'
+include 'spring-dsl-samples:simpledslprocessserver'
+include 'spring-dsl-samples:simpledslsocketserver'
+include 'spring-dsl-samples:simpledsleditor'
+include 'spring-dsl-samples:wordcheckdsl'
+include 'spring-dsl-samples:wordcheckdslprocessserver'
+include 'spring-dsl-samples:wordcheckdsleditor'
+include 'spring-dsl-samples:showcase'
+include 'spring-dsl-samples:showcaseeditor'
+include 'spring-dsl-samples:dotdsl'
+include 'spring-dsl-samples:spring-dsl-editor-lib'
+
+rootProject.children.find {
+	if (it.name == 'spring-dsl-samples') {
+		it.name = 'spring-dsl-samples-common'
+		it.children.each {
+			it.name = 'spring-dsl-samples-' + it.name
+		}
+	}
+}
+

@@ -1,0 +1,37 @@
+{
+  "uri": "uri",
+  "diagnostics": [
+    {
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 1
+        },
+        "end": {
+          "line": 2,
+          "character": 2
+        }
+      },
+      "severity": null,
+      "code": null,
+      "source": null,
+      "message": null
+    },
+    {
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 3
+        },
+        "end": {
+          "line": 4,
+          "character": 4
+        }
+      },
+      "severity": null,
+      "code": null,
+      "source": null,
+      "message": null
+    }
+  ]
+}

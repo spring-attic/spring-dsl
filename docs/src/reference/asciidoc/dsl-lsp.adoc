@@ -1,0 +1,16 @@
+[[dsl-lsp]]
+== LSP
+Traditionally a _Language Server_ and a _Language Client_ implementations
+are just arbitry components following a contract defined in a <<glossary-lsp, LSP>>
+protocol. While you are free to implement everything from scratch by just
+handling _JSONRPC_ traffic between client and server, this is usually rather
+tedious process as you need to get very deep understanding how _LSP_ actually
+works. We think that integrating a more higher level services described in
+<<dsl-core>> into a generic controllers handling _LSP_ traffic is much more
+user friendly way to implement language services.
+
+include::dsl-lsp-server.adoc[]
+include::dsl-lsp-client.adoc[]
+include::dsl-lsp-extension.adoc[]
+//include::dsl-lsp-controller.adoc[]
+

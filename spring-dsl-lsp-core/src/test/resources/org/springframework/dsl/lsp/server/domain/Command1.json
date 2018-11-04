@@ -1,0 +1,8 @@
+{
+  "title": "title",
+  "command": "command",
+  "arguments": [
+    "arg1",
+    "arg2"
+  ]
+}

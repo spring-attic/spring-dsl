@@ -1,0 +1,25 @@
+logging:
+  level:
+    org.springframework.dsl: trace
+#tag::snippet1[]
+spring:
+  dsl:
+    lsp:
+      server:
+        mode: WEBSOCKET
+#end::snippet1[]
+#tag::snippet2[]
+demo:
+  wordcheckdsl:
+    words:
+    - "all"
+    - "work"
+    - "and"
+    - "no"
+    - "play"
+    - "makes"
+    - "jack"
+    - "a"
+    - "dull"
+    - "boy"
+#end::snippet1[]

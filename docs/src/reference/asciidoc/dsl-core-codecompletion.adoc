@@ -1,0 +1,10 @@
+[[dsl-core-codecompletion]]
+=== Code Completion
+`Completioner` is an interface to provide a `Flux` of `CompletionItem`
+for a `Document` in a particular `Position`.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/CompletionDocs.java[tags=snippet1]
+----
+

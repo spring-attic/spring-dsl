@@ -1,0 +1,7 @@
+[[dsl-faq]]
+= FAQ
+This chapter tries to give solutions to question user is most likely
+to ask.
+
+== DSL
+TBD.

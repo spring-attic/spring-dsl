@@ -1,0 +1,97 @@
+[[dsl-examples-wordcheck]]
+== Wordcheck Language
+_Wordcheck Language_ is a language recognizing words from a given
+text and checking validity of a legal words.
+
+We start by creating a `@ConfigurationProperties` to allow easy way to configure
+legal words. We'll map list of words under key `demo.wordcheckdsl.words`.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckProperties.java[tags=snippet1]
+----
+
+We implement a simple `Linter` returning `ReconcileProblem` for every detected
+problem. More about implementing linters, see <<dsl-core-reconcile>>.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageLinter.java[tags=snippet1]
+----
+
+[NOTE]
+====
+`WordcheckLanguageSupport` is just a simple support class keeping common features
+for all language services related to this language. This includes configuration
+properties and a language id.
+====
+
+As we're planning to use this language in an editor, we also create a simple
+`Completioner` giving hints for a possible code completions. More about implementing
+code completion, see <<dsl-core-codecompletion>>.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageCompletioner.java[tags=snippet1]
+----
+
+As renaming symbols in highly related to resolving actual symbols, `WordcheckLanguageRenamer`
+is using dependency to `WordcheckLanguageSymbolizer` order to know about
+existing _symbols_ and then decide which which matching symbols should be
+renamed per given `Position`.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageRenamer.java[tags=snippet1]
+----
+
+You could always component scan your language service beans, but as in this sample
+we define all _wordcheck_ services in a different module we simply create a
+needed beans manually in a `@Configuration` class.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/WordcheckLanguageConfiguration.java[tags=snippet1]
+----
+
+Finally we can just create a familiar _Enable_ annotation which combines all needed
+stuff together and whole _wordcheck_ language can be enabled just by using this
+meta annotation. Use of this is shown in an actual sample
+<<dsl-examples-wordcheck-uieditor>>.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsl/EnableWordcheckLanguage.java[tags=snippet1]
+----
+
+[[dsl-examples-wordcheck-uieditor]]
+=== UI Editor
+_UI Editor_ is and example using websockets for a transport.
+
+[source,java,indent=0]
+----
+include::samples/demo/wordcheckdsleditor/Application.java[tags=snippet1]
+----
+
+[NOTE]
+====
+`SampleRedirectConfiguration` simply defines a bean to redirect request from
+root path to `index.html` as _Spring Boot_ doesn't do this automatically for
+_WebFlux_ as it does for _Servlet_ environment.
+====
+
+As this sample is about running a monaco editor over a websocket, we define
+_Language Server_ `mode` as `WEBSOCKET` in `application.yml`.
+
+[source,yaml,indent=0]
+----
+include::samples/wordcheckdsleditor/src/main/resources/application.yml[tags=snippet1]
+----
+
+Also we define legal words in a language.
+
+[source,yaml,indent=0]
+----
+include::samples/wordcheckdsleditor/src/main/resources/application.yml[tags=snippet2]
+----
+

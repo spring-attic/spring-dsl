@@ -1,0 +1,18 @@
+{
+  "capabilities": {
+    "textDocumentSync": {
+      "openClose": true,
+      "willSave": true,
+      "willSaveWaitUntil": true
+    },
+    "hoverProvider": true,
+    "completionProvider": {
+      "resolveProvider": true,
+      "triggerCharacters": [
+        "a",
+        "b"
+      ]
+    },
+    "renameProvider": true
+  }
+}

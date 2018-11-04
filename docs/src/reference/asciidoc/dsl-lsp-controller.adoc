@@ -1,0 +1,10 @@
+[[dsl-lsp-controller]]
+=== Controller Methods
+TBD.
+
+[NOTE]
+====
+As _LSP_ features are built atop of generic _JSONRPC_ controller, things documented
+in <<dsl-jsonrpc-controller>> are automatically available.
+====
+

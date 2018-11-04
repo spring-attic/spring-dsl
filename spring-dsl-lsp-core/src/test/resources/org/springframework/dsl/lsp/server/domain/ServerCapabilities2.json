@@ -1,0 +1,12 @@
+{
+  "textDocumentSync":2,
+  "hoverProvider": true,
+  "completionProvider": {
+    "resolveProvider": true,
+    "triggerCharacters": [
+      "a",
+      "b"
+    ]
+  },
+  "renameProvider": true
+}

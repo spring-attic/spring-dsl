@@ -1,0 +1,12 @@
+logging:
+  file: /tmp/simplesocketserver.log
+  level:
+    org.springframework.dsl: trace
+    org.eclipse.lsp4j: trace
+spring:
+  main:
+    banner-mode: "off"
+  dsl:
+    lsp:
+      server:
+        mode: SOCKET

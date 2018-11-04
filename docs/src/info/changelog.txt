@@ -1,0 +1,6 @@
+SPRING CLOUD IOT CHANGELOG
+==========================
+http://cloud.spring.io/spring-cloud-iot/
+
+Issues: https://github.com/spring-cloud/spring-cloud-iot/issues
+

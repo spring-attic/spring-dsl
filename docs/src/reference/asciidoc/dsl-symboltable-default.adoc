@@ -1,0 +1,6 @@
+[[dsl-sybmoltable-default]]
+=== Default Symboltable
+Default _Symboltable_ implementation in a _Spring Dsl_ is based on
+an original implemenation from _ANTLR_ project with modifications to
+support further enchacements needed for intergration into _LSP_ features.
+

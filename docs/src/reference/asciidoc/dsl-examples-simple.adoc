@@ -1,0 +1,65 @@
+[[dsl-examples-simple]]
+== Simple Language
+_Simple Language_ is a language demonstrating very simplistic way
+to get you familiar with language features without introducing too
+much overhead with additional supported features.
+
+[NOTE]
+====
+_Simple Language_ is a relatively dummy language implementation in
+terms of how things are done with a language services. We do way too
+much similar calculations with each services but this is mostly to
+not adding tweaks and enhacements to each service type to keep things
+clear and simple.
+====
+
+All _Simple Language_ service classes will support a same _Language Id_,
+so we can have a base class for it.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageDslService.java[tags=snippet1]
+----
+
+We define a simple `Completioner` which simply tries to complete
+positions having a regognized token.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageCompletioner.java[tags=snippet1]
+----
+
+We define a simple `Symbolizer` which simply add all known token keys
+as _String_ symbols with a _range_ and a _selectionRange_ given by
+a language itself.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageSymbolizer.java[tags=snippet1]
+----
+
+Once we have facilities in place, we can create a normal spring @Configuration
+as `SimpleLanguageConfiguration`.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/SimpleLanguageConfiguration.java[tags=snippet1]
+----
+
+Last we can create a common spring Enable annotation to hook everything into one place.
+
+[source,java,indent=0]
+----
+include::samples/demo/simpledsl/EnableSimpleLanguage.java[tags=snippet1]
+----
+
+=== Process Server
+_Process Server_ is used for a _LSP Clients_ using normal _STDIO_.
+
+=== Socket Server
+_Socker Server_ is used for a _LSP Clients_ using normal socker
+connections.
+
+=== UI Editor
+_UI Editor_ is and example using websockets for a transport.
+

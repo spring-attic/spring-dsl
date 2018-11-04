@@ -1,0 +1,23 @@
+[[dsl-core-symbol]]
+=== Symboling
+`Symbolizer` is an interface to provide a `Symbol` information for a `Document`.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/SymbolDocs.java[tags=snippet1]
+----
+
+_Symbol_ is a relatively loose concept in terms of a `Document` reconciliation
+or checking, what can be said is that with `Symbol` information you can identify
+centain parts of a `Document` which most likely are interested when _LSP_
+is used with an real _IDE_. Well that was a mouthful, so lets go through what is
+a _Symbol_. In _Spring Lsp_ we are basing this interface as a
+`DocumentSymbol` which is a base defining various _LSP_ properties about
+a _Symbol_ itself.
+
+[NOTE]
+====
+There is more detailed chapter about generic use of a _Symboltable_
+in a <<dsl-symboltable>>.
+====
+

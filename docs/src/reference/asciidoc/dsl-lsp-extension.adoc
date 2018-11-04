@@ -1,0 +1,23 @@
+[[dsl-lsp-extension]]
+=== Protocol Extension 
+Having a custom protocol extension is simple as just registering
+a new `JsonRpcController` and defining appropriate
+`JsonRpcRequestMapping` for methods. Generic documentation for this
+can be found from <<dsl-jsonrpc>>. More about actual method and
+method parameters is more closely discussed in <<dsl-lsp-controller>>.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ExtensionDocs.java[tags=snippet1]
+----
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ExtensionDocs.java[tags=snippet2]
+----
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/lsp/docs/ExtensionDocs.java[tags=snippet3]
+----
+

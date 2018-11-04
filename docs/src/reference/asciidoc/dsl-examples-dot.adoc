@@ -1,0 +1,52 @@
+[[dsl-examples-dot]]
+== Dot Language
+_Dot_ is a language copied as is from a _antlr_ grammar sample sources.
+demonstrating very simplistic way to hook into existing _antlr_ languages.
+
+[NOTE]
+====
+There's no individual sample for _Dot_ as is, look <<dsl-examples-showcase>>
+as it adds it for its supported language. You can try it from there!
+====
+
+Currently `DOTLanguageVisitor` is a dummy implementation to hook into
+correct typed return type.
+
+[source,java,indent=0]
+----
+include::samples/demo/dotdsl/DOTLanguageVisitor.java[tags=snippet1]
+----
+
+For now `DOTLanguageLinter` simply delegates to base implementation
+`AbstractAntlrLinter`.
+
+[source,java,indent=0]
+----
+include::samples/demo/dotdsl/DOTLanguageLinter.java[tags=snippet1]
+----
+
+`DOTAntlrParseResultFunction` is more interesting as it does a simple
+parsing resulting `AntlrParseResult`.
+
+[source,java,indent=0]
+----
+include::samples/demo/dotdsl/DOTAntlrParseResultFunction.java[tags=snippet1]
+----
+
+Once we have facilities in place, we can create a normal spring _@Configuration_
+as `DOTLanguageConfiguration`.
+
+
+[source,java,indent=0]
+----
+include::samples/demo/dotdsl/DOTLanguageConfiguration.java[tags=snippet1]
+----
+
+Last we can create a common spring _Enable_ annotation to hook
+everything into one place.
+
+[source,java,indent=0]
+----
+include::samples/demo/dotdsl/EnableDOTLanguage.java[tags=snippet1]
+----
+

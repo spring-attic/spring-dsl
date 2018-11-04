@@ -1,0 +1,38 @@
+<div>
+  <button mat-raised-button
+          class="editor-open-tab-button"
+          (click)="openTab('test1.simple', 'simple')">
+    Open test1.simple
+  </button>
+  <button mat-raised-button
+          class="editor-open-tab-button"
+          (click)="openTab('test2.simple', 'simple')">
+    Open test2.simple
+  </button>
+  <button mat-raised-button
+          class="editor-open-tab-button"
+          (click)="openTab('test3.simple', 'simple')">
+    Open test3.simple
+  </button>
+  <button mat-raised-button
+          class="editor-open-tab-button"
+          (click)="openTab('test1.wordcheck', 'wordcheck')">
+    Open test1.wordcheck
+  </button>
+  <button mat-raised-button
+          class="editor-open-tab-button"
+          (click)="openTab('test1.dot', 'dot')">
+    Open test1.dot
+  </button>
+</div>
+<mat-tab-group [selectedIndex]="selected.value"
+               (selectedIndexChange)="selected.setValue($event)"
+               dynamicHeight>
+  <mat-tab *ngFor="let tab of tabs" [label]="tab">
+    <ng-template mat-tab-label>
+      {{tab.name}} ({{tab.language}})
+      <mat-icon class="editor-tab-close-icon" (click)="closeTab(tab.name)">close</mat-icon>
+    </ng-template>
+    <spring-dsl-editor class="editor-tab-content" [language]="tab.language"></spring-dsl-editor>
+  </mat-tab>
+</mat-tab-group>

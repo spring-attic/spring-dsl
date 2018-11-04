@@ -1,0 +1,32 @@
+[[introduction]]
+= Introduction
+Spring Dsl(SDSL) is a framework for application developers to use
+Spring concepts to build applications integrating to various dsl
+features.
+
+SDSL aims to provide the following features:
+
+* Easy configuration model.
+* Heavily based on a <<glossary-lsp,Language Server Protocol>> features.
+
+== Background
+Traditionally when building _DSL_ features into an application, things 
+around coding are tend to become relatively low level. Either you need to
+manually parse a _DSL_ or somewhat find other ways to find how your own
+_code_ fill translate into your own appliation code.
+
+In this document you're going to a see a lot of references to a _Reactive_
+classes like _Mono_ and _Flux_. These are a core _Reactive_ classes
+in a _Spring_ providing low level facilities for non-blocking access
+to various infrastructure features. Bear in mind that while some
+things don't immediately make sense, especially if you are coming
+from a blocking world, you need to look further in a call chain to
+see what is actually happening when a requests or a notification is
+made.
+
+What we aim to provide in _Spring Dsl_ is to have common set of abstract
+interfaces and features, if used in your application will then magically
+be able to translate into more common _Language Services_ in a
+_Language Server Protocol_ itself which for example gives relatively
+easy integration to _Language Server_ implementation itself. 
+

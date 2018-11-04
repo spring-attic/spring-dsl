@@ -1,0 +1,13 @@
+[[dsl-antlr]]
+
+== ANTLR
+As many languages are parsed and lexed using _ANTLR_ we try to provide
+integration support so that your path to use _ANTLR_ would be as easy
+as possible. Realistically this means that we try to be relatively
+conservative what comes from _ANTLR_ by providing base implementations
+to other parts of the _Spring DSL_.
+
+Two major areas _Spring DSL_ can help with integration into _ANTLR_ is
+_reconciliation_ and _code completion_ which usually are first things
+a language developer needs to tackle.
+

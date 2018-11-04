@@ -1,0 +1,9 @@
+[[dsl-core-rename]]
+=== Renaming
+`Renamer` is an interface to provide a `WorkspaceEdit` information for a `Document` in a `Position` with a new name.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/RenameDocs.java[tags=snippet1]
+----
+

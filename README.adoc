@@ -1,0 +1,20 @@
+= Spring Dsl
+
+The Spring Dsl project aims to provide a common infrastructure to work with various concepts around different languages
+integrating those into a _Spring_ world.
+
+[NOTE]
+====
+This project is currently in incubation.
+====
+
+== Code of Conduct
+This project adheres to the Contributor Covenant
+link:CODE_OF_CONDUCT.adoc[code of conduct].
+By participating, you  are expected to uphold this code. Please report
+unacceptable behavior to spring-code-of-conduct@pivotal.io.
+
+== License
+Spring Dsl is Open Source software released under the
+http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
+

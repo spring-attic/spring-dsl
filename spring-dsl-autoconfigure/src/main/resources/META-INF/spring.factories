@@ -1,0 +1,6 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.dsl.autoconfigure.DslAutoConfiguration,\
+org.springframework.dsl.autoconfigure.LspClientAutoConfiguration,\
+org.springframework.dsl.autoconfigure.LspServerAutoConfiguration,\
+org.springframework.dsl.autoconfigure.LanguageServerControllerAutoConfiguration

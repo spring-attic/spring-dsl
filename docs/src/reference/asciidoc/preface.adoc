@@ -1,0 +1,16 @@
+[preface]
+== Preface
+This reference documentation contains the following parts.
+
+<<introduction>> introduction to this reference documentation
+
+<<dsl-getting-started>> Getting started
+
+<<dsl>> Spring Dsl documentation
+
+<<dsl-examples>> Spring Dsl Samples
+
+<<dsl-faq>> Frequently asked questions
+
+<<appendices>> generic info about used material
+

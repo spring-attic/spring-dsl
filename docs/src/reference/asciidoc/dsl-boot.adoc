@@ -1,0 +1,12 @@
+[[dsl-boot]]
+
+== Spring Boot Auto Configuration
+_Spring Dsl_ is currently not managed by a _Spring Boot_, thus we have our
+own `Auto-Configuration` module. `Auto-Configuration` greatly simplifies
+cases where _Language Services_ needs to be created.
+
+As _Language Server_ is usually used in different connection configurations,
+`spring.dsl.lsp.server.mode` can have values `PROCESS`, `SOCKET` or
+`WEBSOCKET`. Process mode simply uses standard input/output, socket mode
+a configured native socket and a websocket mode assumes websocket via webflux
+is available.

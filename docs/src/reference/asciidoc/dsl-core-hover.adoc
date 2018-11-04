@@ -1,0 +1,10 @@
+[[dsl-core-hover]]
+=== Hovering
+`Hoverer` is an interface to provide a `Hover` information for a `Document`
+in a particular `Position`.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/HoverDocs.java[tags=snippet1]
+----
+

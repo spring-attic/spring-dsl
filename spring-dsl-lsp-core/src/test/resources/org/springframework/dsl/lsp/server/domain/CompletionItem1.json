@@ -1,0 +1,38 @@
+{
+  "label": "label",
+  "kind": 6,
+  "detail": "detail",
+  "documentation": {
+    "kind": "markdown",
+    "value": "value"
+  },
+  "sortText": "sortText",
+  "filterText": "filterText",
+  "insertText": "insertText",
+  "insertTextFormat": 0,
+  "textEdit": {
+    "range": {
+      "start": {
+        "line": 0,
+        "character": 0
+      },
+      "end": {
+        "line": 1,
+        "character": 1
+      }
+    },
+    "newText": "newText"
+  },
+  "additionalTextEdits": null,
+  "commitCharacters": null,
+  "command": null,
+  "data": null,
+  "command": {
+    "title": "title",
+    "command": "command",
+    "arguments": [
+      "arg1",
+      "arg2"
+    ]
+  }
+}

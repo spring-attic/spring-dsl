@@ -1,0 +1,15 @@
+[[dsl-jsonrpc-session]]
+=== Session
+`JsonRpcSession` can be used to store variables and other information between requests until
+particular session is kept alive. If you've ever used `WebSession` from a _WebFlux`, this
+concept is very similar.
+
+To access `JsonRpcSession` in a controller methods, simply add is as an parameter and
+a framework will call method with associated session. In a below example session id is
+simple returned as a mono.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet6]
+----
+

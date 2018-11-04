@@ -1,0 +1,75 @@
+{
+  "rootPath": null,
+  "rootUri": null,
+  "capabilities": {
+    "workspace": {
+      "applyEdit": true,
+      "workspaceEdit": {
+        "documentChanges": true
+      },
+      "didChangeConfiguration": {
+        "dynamicRegistration": false
+      },
+      "didChangeWatchedFiles": {
+        "dynamicRegistration": false
+      },
+      "symbol": {
+        "dynamicRegistration": true
+      },
+      "executeCommand": {
+        "dynamicRegistration": true
+      }
+    },
+    "textDocument": {
+      "synchronization": {
+        "dynamicRegistration": true
+      },
+      "completion": {
+        "completionItem": {
+          "snippetSupport": true
+        },
+        "dynamicRegistration": true
+      },
+      "hover": {
+        "dynamicRegistration": true
+      },
+      "signatureHelp": {
+        "dynamicRegistration": true
+      },
+      "references": {
+        "dynamicRegistration": true
+      },
+      "documentHighlight": {
+        "dynamicRegistration": true
+      },
+      "documentSymbol": {
+        "dynamicRegistration": true
+      },
+      "formatting": {
+        "dynamicRegistration": true
+      },
+      "rangeFormatting": {
+        "dynamicRegistration": true
+      },
+      "onTypeFormatting": {
+        "dynamicRegistration": true
+      },
+      "definition": {
+        "dynamicRegistration": true
+      },
+      "codeAction": {
+        "dynamicRegistration": true
+      },
+      "codeLens": {
+        "dynamicRegistration": true
+      },
+      "documentLink": {
+        "dynamicRegistration": true
+      },
+      "rename": {
+        "dynamicRegistration": true
+      }
+    }
+  },
+  "trace": "off"
+}

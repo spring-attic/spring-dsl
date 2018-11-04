@@ -1,0 +1,469 @@
+buildscript {
+	ext {
+		springVersion = '5.0.7.RELEASE'
+		springBootVersion = '2.0.3.RELEASE'
+		antlr4Version = '4.7.1'
+		mooworkVersion = '1.2.0'
+		propdepsVersion = '0.0.8'
+		asciidoctorVersion = '1.5.3'
+		javolutionVersion = '6.0.0'
+		findBugsVersion = '3.0.2'
+	}
+	repositories {
+		mavenCentral()
+		maven { url 'https://repo.spring.io/plugins-release' }
+		maven { url 'https://repo.spring.io/plugins-snapshot' }
+		maven { url 'https://plugins.gradle.org/m2/' }
+	}
+	dependencies {
+		classpath("io.spring.gradle:propdeps-plugin:${propdepsVersion}")
+		classpath("org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorVersion}")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("com.moowork.gradle:gradle-node-plugin:${mooworkVersion}")
+	}
+}
+
+def sampleProjects() {
+	subprojects.findAll { project ->
+		project.name.contains('spring-dsl-samples') && project.name != 'spring-dsl-samples-common'
+	}
+}
+
+configure(allprojects) {
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'propdeps'
+	apply plugin: 'propdeps-maven'
+	apply plugin: 'propdeps-idea'
+	apply plugin: 'propdeps-eclipse'
+
+	group = 'org.springframework.dsl'
+
+	compileJava {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+	}
+
+	compileTestJava {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+	}
+
+	repositories {
+		mavenCentral()
+		maven { url 'https://repo.spring.io/libs-snapshot' }
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+		}
+		dependencies {
+			dependency "org.antlr:antlr4:$antlr4Version"
+			dependency "org.antlr:antlr4-runtime:$antlr4Version"
+			dependency("org.javolution:javolution-core-java:$javolutionVersion") {
+				exclude 'org.osgi:org.osgi.core'
+				exclude 'org.osgi:org.osgi.compendium'
+			}
+			dependency "com.google.code.findbugs:jsr305:$findBugsVersion"
+		}
+	}
+
+	// for github.com/spring-gradle-plugins/dependency-management-plugin/issues/141
+	project.tasks.withType(Upload).all { uploadTask ->
+		uploadTask.repositories.withType(MavenResolver).all { resolver ->
+			resolver.pom.withXml(dependencyManagement.pomConfigurer);
+		}
+	}
+
+}
+
+configure(subprojects) { subproject ->
+	apply from: "${rootProject.projectDir}/publish-maven.gradle"
+
+	jar {
+		manifest.attributes['Implementation-Title'] = subproject.name
+		manifest.attributes['Implementation-Version'] = subproject.version
+
+		from("${rootProject.projectDir}/src/dist") {
+			include "license.txt"
+			include "notice.txt"
+			into "META-INF"
+			expand(copyright: new Date().format('yyyy'), version: project.version)
+		}
+	}
+
+	javadoc {
+		description = "Generates project-level javadoc for use in -javadoc jar"
+
+		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.author = true
+		options.header = project.name
+		options.use = true
+		options.addStringOption('Xdoclint:none', '-quiet')
+
+		// Suppress warnings due to cross-module @see and @link references.
+		// Note that global 'api' task does display all warnings.
+		logging.captureStandardError LogLevel.INFO
+		logging.captureStandardOutput LogLevel.INFO  // suppress "## warnings" message
+	}
+
+	task sourcesJar(type: Jar, dependsOn:classes) {
+		classifier = 'sources'
+		from sourceSets.main.allJava
+	}
+
+	task javadocJar(type: Jar) {
+		classifier = 'javadoc'
+		from javadoc
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+
+}
+
+project('spring-dsl-core') {
+	description = "Spring Dsl Core"
+
+	dependencies {
+		compile 'org.springframework:spring-context'
+		//compile 'org.springframework:spring-web'
+		compile 'org.slf4j:slf4j-api'
+		compile 'io.projectreactor:reactor-core'
+		compile 'org.javolution:javolution-core-java'
+		optional 'com.google.code.findbugs:jsr305'
+		optional 'com.google.code.gson:gson'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testRuntime 'org.springframework.boot:spring-boot-starter'
+	}
+}
+
+project('spring-dsl-lsp-core') {
+	description = "Spring Dsl Lsp Core"
+
+	dependencies {
+		compile project(':spring-dsl-core')
+		compile project(':spring-dsl-jsonrpc')
+		testCompile project(':spring-dsl-jsonrpc').sourceSets.test.output
+		compile 'org.springframework:spring-messaging'
+		compile 'org.springframework.boot:spring-boot-starter'
+		compile 'io.projectreactor:reactor-core'
+		compile 'io.projectreactor.ipc:reactor-netty'
+		compile 'org.javolution:javolution-core-java'
+		optional 'org.springframework.boot:spring-boot-configuration-processor'
+		optional 'com.google.code.gson:gson'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testCompile 'com.jayway.jsonpath:json-path'
+		testRuntime 'org.springframework.boot:spring-boot-starter'
+	}
+}
+
+project('spring-dsl-autoconfigure') {
+	description = "Spring Dsl Autoconfigure"
+
+	dependencies {
+		compile project(':spring-dsl-core')
+		optional project(':spring-dsl-jsonrpc')
+		optional project(':spring-dsl-lsp-core')
+		optional project(':spring-dsl-antlr')
+		optional project(':spring-dsl-websocket')
+		optional 'org.springframework.boot:spring-boot-configuration-processor'
+		compile 'org.springframework.boot:spring-boot-autoconfigure'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-websocket') {
+	description = "Spring Dsl Websocket"
+
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		compile 'org.springframework.boot:spring-boot-starter-webflux'
+	}
+}
+
+project('spring-dsl-antlr') {
+	description = "Spring Dsl Antlr"
+	apply plugin: 'antlr'
+
+	generateTestGrammarSource {
+		arguments += ["-visitor", "-long-messages", "-package", "org.springframework.dsl"]
+		doLast {
+			def parserFilePattern = 'Test*'
+			def outputPath = generateTestGrammarSource.outputDirectory.canonicalPath
+			def parserPackagePath = "${outputPath}/org/springframework/dsl"
+			file(parserPackagePath).mkdirs()
+			copy {
+				from outputPath
+				into parserPackagePath
+				include parserFilePattern
+			}
+			delete fileTree(outputPath) {
+				include parserFilePattern
+			}
+		}
+	}
+
+	dependencies {
+		antlr 'org.antlr:antlr4'
+		compile project(':spring-dsl-core')
+		compile project(':spring-dsl-symboltable')
+		compile 'org.antlr:antlr4-runtime'
+		compile 'io.projectreactor.addons:reactor-extra'
+		compile 'com.github.ben-manes.caffeine:caffeine'
+		testCompile 'org.antlr:antlr4'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-symboltable') {
+	description = "Spring Dsl Symboltable"
+
+	dependencies {
+		compile project(':spring-dsl-core')
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-jsonrpc') {
+	description = "Spring Dsl JSON RPC"
+
+	dependencies {
+		compile 'org.springframework.boot:spring-boot-starter'
+		compile 'io.projectreactor:reactor-core'
+		//compile 'io.projectreactor.ipc:reactor-netty'
+		compile 'com.fasterxml.jackson.core:jackson-core'
+		compile 'com.fasterxml.jackson.core:jackson-databind'
+		optional 'com.google.code.findbugs:jsr305'
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-bom') {
+	description = "Spring Coap (Bill of Materials)"
+
+	dependencyManagement {
+		generatedPomCustomization {
+			enabled = false
+		}
+	}
+
+	configurations.archives.artifacts.clear()
+	artifacts {
+		// work around GRADLE-2406 by attaching text artifact
+		archives(file("spring-dsl-bom.txt"))
+	}
+
+	install {
+		repositories.mavenInstaller {
+			pom.whenConfigured {
+				packaging = "pom"
+				withXml {
+					asNode().children().last() + {
+						delegate.dependencyManagement {
+							delegate.dependencies {
+								parent.subprojects.sort { "$it.name" }.each { p ->
+									if (!p.name.contains('spring-dsl-samples') &&
+											p != project) {
+										delegate.dependency {
+											delegate.groupId(p.group)
+											delegate.artifactId(p.name)
+											delegate.version(p.version)
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+}
+
+configure(sampleProjects()) {
+	// for now publish all samples
+	// need to thing how not to publish to bintray and central
+	//tasks.findByPath("artifactoryPublish")?.enabled = false
+}
+
+project('spring-dsl-samples-common') {
+	description = "Spring Dsl Samples Common"
+	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+	tasks.findByPath("artifactoryPublish")?.enabled = false
+	dependencies {
+		compile project(':spring-dsl-core')
+		compile 'org.springframework.boot:spring-boot-starter'
+		optional 'org.springframework:spring-web'
+	}
+}
+
+project('spring-dsl-build-tests') {
+	description = "Spring Dsl Build Tests"
+	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+	tasks.findByPath("artifactoryPublish")?.enabled = false
+
+	dependencies {
+		testCompile project(":spring-dsl-lsp-core")
+		testCompile project(":spring-dsl-autoconfigure")
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
+	}
+}
+
+project('spring-dsl-starter-lspserver') {
+	description = "Spring Dsl Lsp Server Starter"
+	dependencies {
+		compile project(":spring-dsl-autoconfigure")
+		compile project(":spring-dsl-lsp-core")
+		compile "org.springframework.boot:spring-boot-starter"
+	}
+
+	install {
+		repositories.mavenInstaller {
+			pom.whenConfigured {
+				withXml {
+					asNode().children().first() + {
+						delegate.parent {
+							delegate.groupId('org.springframework.boot')
+							delegate.artifactId('spring-boot-starter-parent')
+							delegate.version("$springBootVersion")
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+configure(rootProject) {
+	apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+	apply from: "${rootProject.projectDir}/publish-maven.gradle"
+	configurations.archives.artifacts.clear()
+
+	asciidoctorj {
+		version = '1.5.2'
+	}
+
+	asciidoctor {
+		sourceDir = file("docs/src/reference/asciidoc")
+		backends = ['html']
+		options eruby: 'erubis'
+		attributes docinfo: '',
+			copycss : '',
+			icons : 'font',
+			'source-highlighter': 'prettify',
+			sectanchors : '',
+			toc2: '',
+			idprefix: '',
+			idseparator: '-',
+			doctype: 'book',
+			numbered: '',
+			'spring-dsl-version' : project.version,
+			'spring-version' : springVersion,
+			'spring-boot-version' : springBootVersion,
+			'antlr-version' : antlr4Version,
+			revnumber : project.version
+	}
+
+	task copyDocsSamples(/*type: Copy*/) {
+		copy {
+			from 'spring-dsl-core/src/test/java'
+			from 'spring-dsl-jsonrpc/src/test/java'
+			from 'spring-dsl-lsp-core/src/test/java'
+			include '**/docs/*.java'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+		copy {
+			from 'spring-dsl-samples/src/main/java'
+			include '**/*.java'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+		copy {
+			from 'spring-dsl-samples/simpledsl/src/main/java'
+			from 'spring-dsl-samples/simpledsleditor/src/main/java'
+			from 'spring-dsl-samples/wordcheckdsl/src/main/java'
+			from 'spring-dsl-samples/wordcheckdsleditor/src/main/java'
+			from 'spring-dsl-samples/dotdsl/src/main/java'
+			from 'spring-dsl-samples/showcase/src/main/java'
+			from 'spring-dsl-samples/showcaseeditor/src/main/java'
+			include '**/*.java'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+		copy {
+			from 'spring-dsl-samples'
+			include 'src/**/*.yml'
+			include 'simpledsleditor/src/**/*.yml'
+			include 'wordcheckdsleditor/src/**/*.yml'
+			into 'docs/src/reference/asciidoc/samples'
+		}
+	}
+
+	asciidoctor.dependsOn copyDocsSamples
+
+	task api(type: Javadoc) {
+		group = 'Documentation'
+		description = 'Generates aggregated Javadoc API documentation.'
+		title = "${rootProject.description} ${version} API"
+		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.author = true
+		options.header = rootProject.description
+		options.links(
+			'http://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
+		)
+		options.addStringOption('Xdoclint:none', '-quiet')
+
+		// disable javadocs for samples
+		source subprojects
+		.findAll { project ->
+			!project.name.contains('samples')
+		}
+		.collect { project ->
+			project.sourceSets.main.allJava
+		}
+
+		destinationDir = new File(buildDir, "api")
+		classpath = files(subprojects.collect { project ->
+			project.sourceSets.main.compileClasspath
+		})
+		maxMemory = '1024m'
+	}
+
+	task docsZip(type: Zip) {
+		group = 'Distribution'
+		classifier = 'docs'
+		description = "Builds -${classifier} archive containing api and reference for deployment."
+		from('src/dist') {
+			include 'changelog.txt'
+		}
+		from (api) {
+			into 'api'
+		}
+		from (asciidoctor) {
+			into 'reference'
+		}
+	}
+
+	artifacts {
+		archives docsZip
+	}
+
+	task wrapper(type: Wrapper) {
+		description = 'Generates gradlew[.bat] scripts'
+		gradleVersion = '4.1'
+	}
+}

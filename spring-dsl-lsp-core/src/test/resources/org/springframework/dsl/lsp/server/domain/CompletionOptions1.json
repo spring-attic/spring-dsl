@@ -1,0 +1,7 @@
+{
+  "resolveProvider": true,
+  "triggerCharacters": [
+    "a",
+    "b"
+  ]
+}

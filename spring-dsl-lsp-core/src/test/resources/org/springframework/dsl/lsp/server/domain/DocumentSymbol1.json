@@ -1,0 +1,34 @@
+{
+  "name": "name",
+  "detail": "detail",
+  "kind": 17,
+  "deprecated": true,
+  "range": {
+    "start": {
+      "line": 1,
+      "character": 1
+    },
+    "end": {
+      "line": 2,
+      "character": 2
+    }
+  },
+  "selectionRange": {
+    "start": {
+      "line": 1,
+      "character": 1
+    },
+    "end": {
+      "line": 2,
+      "character": 2
+    }
+  },
+  "children": [
+    {
+      "name": "name1"
+    },
+    {
+      "name": "name2"
+    }
+  ]
+}

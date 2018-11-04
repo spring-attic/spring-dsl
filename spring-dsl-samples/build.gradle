@@ -1,0 +1,286 @@
+description = 'Spring Dsl Samples Common'
+
+project('spring-dsl-samples-simpledsl') {
+	description = 'Spring Dsl Simple Dsl Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-samples-wordcheckdsl') {
+	description = 'Spring Dsl Wordcheck Dsl Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-samples-showcase') {
+	description = 'Spring Dsl Showcase Sample'
+	dependencies {
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-dotdsl')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+}
+
+project('spring-dsl-samples-dotdsl') {
+	apply plugin: 'antlr'
+
+	description = 'Spring Dsl Dot Sample'
+	dependencies {
+		antlr 'org.antlr:antlr4'
+		compile project(':spring-dsl-antlr')
+		testCompile 'junit:junit'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+	}
+
+	generateGrammarSource {
+		arguments += ["-visitor", "-long-messages", "-package", "demo.dotdsl"]
+		doLast {
+			def parserFilePattern = '*'
+			def outputPath = generateGrammarSource.outputDirectory.canonicalPath
+			def parserPackagePath = "${outputPath}/demo/dotdsl"
+			file(parserPackagePath).mkdirs()
+			copy {
+				from outputPath
+				into parserPackagePath
+				include parserFilePattern
+			}
+			delete fileTree(outputPath) {
+				include parserFilePattern
+			}
+		}
+	}
+
+}
+
+project('spring-dsl-samples-spring-dsl-editor-lib') {
+	apply plugin: 'com.moowork.node'
+	
+	description = 'Spring Dsl Angular Module'
+	
+	node {
+		version = "8.11.3"
+		npmVersion = "5.7.0"
+		download = true
+	}
+
+	task buildPackage(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'build'
+		description = 'Package editor'
+		args = ['run','package']
+	}
+
+	build.dependsOn buildPackage
+}
+
+project('spring-dsl-samples-simpledsleditor') {
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'com.moowork.node'
+	
+	description = 'Spring Dsl Simple Editor Sample'
+	
+	dependencies {
+		compile project(':spring-dsl-samples-common')
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-websocket')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
+		testCompile 'junit:junit'
+	}
+
+	bootJar {
+		into('BOOT-INF/classes/static') {
+			from "ui/dist/ui"
+		}
+	}
+	
+	node {
+		version = "8.11.3"
+		npmVersion = "5.7.0"
+		download = true
+		nodeModulesDir = file("ui")
+	}
+
+	task buildClientDev(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'build'
+		description = 'Compile client side folder for development'
+		args = ['run','buildDev']
+	}
+
+	task buildClient(type:NpmTask, dependsOn:'npmInstall') {
+		group = 'build'
+		description = "Compile client side folder for production"
+		args = ['run','build']
+	}
+
+	task buildClientWatch(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'application'
+		description = "Build and watches the client side assets for rebuilding"
+		args = ['run','buildWatch']
+	}
+
+	bootRun.dependsOn(buildClientDev)
+	bootJar.dependsOn(buildClient)
+	build.dependsOn bootJar 
+	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
+	install.dependsOn bootJar
+}
+
+project('spring-dsl-samples-simpledslprocessserver') {
+	apply plugin: 'org.springframework.boot'
+	description = 'Spring Dsl Simple Lsp Process Server Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
+		compile 'org.springframework.boot:spring-boot-starter'
+		testCompile 'junit:junit'
+	}
+	build.dependsOn bootJar
+	install.dependsOn bootJar
+}
+
+project('spring-dsl-samples-wordcheckdslprocessserver') {
+	apply plugin: 'org.springframework.boot'
+	description = 'Spring Dsl Wordcheck Lsp Process Server Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
+		compile 'org.springframework.boot:spring-boot-starter'
+		testCompile 'junit:junit'
+	}
+	build.dependsOn bootJar
+	install.dependsOn bootJar
+}
+
+project('spring-dsl-samples-simpledslsocketserver') {
+	apply plugin: 'org.springframework.boot'
+	description = 'Spring Dsl Simple Lsp Socket Server Sample'
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
+		compile 'org.springframework.boot:spring-boot-starter'
+		testCompile 'junit:junit'
+	}
+	build.dependsOn bootJar
+	install.dependsOn bootJar
+}
+
+project('spring-dsl-samples-wordcheckdsleditor') {
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'com.moowork.node'
+	
+	description = 'Spring Dsl Wordcheck Editor Sample'
+	
+	dependencies {
+		compile project(':spring-dsl-samples-common')
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-websocket')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
+		testCompile 'junit:junit'
+	}
+
+	bootJar {
+		into('BOOT-INF/classes/static') {
+			from "ui/dist/ui"
+		}
+	}
+	
+	node {
+		version = "8.11.3"
+		npmVersion = "5.7.0"
+		download = true
+		nodeModulesDir = file("ui")
+	}
+
+	task buildClientDev(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'build'
+		description = 'Compile client side folder for development'
+		args = ['run','buildDev']
+	}
+
+	task buildClient(type:NpmTask, dependsOn:'npmInstall') {
+		group = 'build'
+		description = "Compile client side folder for production"
+		args = ['run','build']
+	}
+
+	task buildClientWatch(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'application'
+		description = "Build and watches the client side assets for rebuilding"
+		args = ['run','buildWatch']
+	}
+
+	bootRun.dependsOn(buildClientDev)
+	bootJar.dependsOn(buildClient)
+	build.dependsOn bootJar 
+	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
+	install.dependsOn bootJar
+}
+
+project('spring-dsl-samples-showcaseeditor') {
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'com.moowork.node'
+	
+	description = 'Spring Dsl Showcase Editor Sample'
+	
+	dependencies {
+		compile project(':spring-dsl-samples-common')
+		compile project(':spring-dsl-lsp-core')
+		compile project(':spring-dsl-websocket')
+		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-showcase')
+		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
+		testCompile 'junit:junit'
+	}
+
+	bootJar {
+		into('BOOT-INF/classes/static') {
+			from "ui/dist/ui"
+		}
+	}
+	
+	node {
+		version = "8.11.3"
+		npmVersion = "5.7.0"
+		download = true
+		nodeModulesDir = file("ui")
+	}
+
+	task buildClientDev(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'build'
+		description = 'Compile client side folder for development'
+		args = ['run','buildDev']
+	}
+
+	task buildClient(type:NpmTask, dependsOn:'npmInstall') {
+		group = 'build'
+		description = "Compile client side folder for production"
+		args = ['run','build']
+	}
+
+	task buildClientWatch(type: NpmTask, dependsOn: 'npmInstall') {
+		group = 'application'
+		description = "Build and watches the client side assets for rebuilding"
+		args = ['run','buildWatch']
+	}
+
+	bootRun.dependsOn(buildClientDev)
+	bootJar.dependsOn(buildClient)
+	build.dependsOn bootJar 
+	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
+	install.dependsOn bootJar
+}
+

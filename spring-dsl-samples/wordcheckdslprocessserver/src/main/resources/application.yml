@@ -1,0 +1,25 @@
+logging:
+  file: wordcheckdslprocessserver.log
+  level:
+    org.springframework.dsl: trace
+spring:
+  main:
+    banner-mode: "off"
+  dsl:
+    lsp:
+      server:
+        mode: PROCESS
+        force-jvm-exit-on-shutdown: false
+demo:
+  wordcheckdsl:
+    words:
+    - "all"
+    - "work"
+    - "and"
+    - "no"
+    - "play"
+    - "makes"
+    - "jack"
+    - "a"
+    - "dull"
+    - "boy"

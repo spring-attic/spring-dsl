@@ -1,0 +1,11 @@
+{
+  "textDocument": {
+    "synchronization": {
+      "dynamicRegistration": true,
+      "willSave": true,
+      "willSaveWaitUntil": true,
+      "didSave": true
+    }
+  },
+  "experimental": "experimental"
+}

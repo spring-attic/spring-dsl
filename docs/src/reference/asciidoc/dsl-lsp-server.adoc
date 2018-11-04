@@ -1,0 +1,12 @@
+[[dsl-lsp-server]]
+=== Language Server
+This section describes how a _Language Server_ is created using _Spring Dsl_.
+
+==== With Language Services
+If you rely solely on services from <<dsl-core>> there is not that much you
+need to understand about _LSP_ itself.
+
+There are two server related controllers, `RootLanguageServerController`
+and `TextDocumentLanguageServerController` providing basis of a shared
+functionality for _Language Servers_.
+

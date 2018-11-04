@@ -1,0 +1,19 @@
+{
+  "name": "name",
+  "kind": 17,
+  "deprecated": true,
+  "location": {
+    "uri": "uri",
+    "range": {
+      "start": {
+        "line": 1,
+        "character": 1
+      },
+      "end": {
+        "line": 2,
+        "character": 2
+      }
+    }
+  },
+  "containerName": "containerName"
+}

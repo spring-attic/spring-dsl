@@ -1,0 +1,28 @@
+[[dsl-core-domain]]
+=== LSP Domain Classes
+LSP itself have a set of domain classes defining a contract in a JSONRPC json structures.
+While some of these classes are only useful with an actual integration between IDE and
+a Language Server, some classes are generally useful as a generic way to pass information
+between components.
+
+All these domain classes are kept in a _Spring Dsl_ core and generally contain _Builder_
+and other convenience methods to construct instances of these classes. For example below
+we create an instances of a `Position` class.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/DomainClassesDocs.java[tags=snippet1]
+----
+
+And an instances of a `Range` class.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/DomainClassesDocs.java[tags=snippet2]
+----
+
+[NOTE]
+====
+Rest of a _LSP_ domain classes follow same pattern.
+====
+

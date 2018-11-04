@@ -1,0 +1,28 @@
+[[dsl-core-languageid]]
+=== Language Id
+_LSP_ itself defines a set or languages it knows natively. We thought it would be a
+good idea to have an abstraction over `LanguageId` class. _Spring Dsl_ have mappings
+for all languages defined in _LSP_ itself, but if you want to have your own, just
+defined it like:
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/CoreDocs.java[tags=snippet1]
+----
+
+First time one is about to use `LanguageId` is with <<dsl-core-dslservice>>.
+
+`LanguageId` also have a method `isCompatibleWith(LanguageId other)` which allows
+to check if one language support other type of languages.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/CoreDocs.java[tags=snippet3]
+----
+
+[TIP]
+====
+`LanguageId.ALL` supports all languages and can be used in services which
+want to support everything. For example `DefaultReconciler` which is dispatching
+to all linters, naturally support all languages.
+====

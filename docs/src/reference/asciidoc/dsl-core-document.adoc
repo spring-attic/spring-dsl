@@ -1,0 +1,4 @@
+[[dsl-core-document]]
+=== Document
+`Document` is an abstraction over tbd.
+

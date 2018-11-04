@@ -1,0 +1,24 @@
+[[dsl-core-reconcile]]
+=== Reconciling
+Base interface for _reconciliation_ is a _Linter_ which implements a method shown below.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/ReconcileDocs.java[tags=snippet1]
+----
+
+[NOTE]
+====
+Bear in mind that we're just throwing out concepts like `Document` and `ReconcileProblem`.
+We need to get started from one concept until we get to next one and then glue all
+these together.
+====
+
+Other interface for _reconciliation_ is a _Reconciler_ which is similar than _Linter_
+but works on a LSP's `PublishDiagnosticsParams`. Together these two interfaces allow
+flexible ways to choose how different documents are reconciled.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/docs/ReconcileDocs.java[tags=snippet2]
+----

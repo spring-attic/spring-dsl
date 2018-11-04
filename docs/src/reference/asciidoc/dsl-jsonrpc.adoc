@@ -1,0 +1,38 @@
+[[dsl-jsonrpc]]
+
+== JSONRPC
+<<glossary-jsonrpc, JSONRPC>> is a core foundation living in its own module to
+provide support for <<glossary-lsp, LSP>> integration. It is kept separate
+mostly to have a relatively easy path to extract it out from a _Spring Dsl_ if
+that is seen benefitial in future to provide _JSONRPC_ services atop of a core
+_Spring WebFlux_ framework. _Spring Dsl JSONRCP_ is currently sharing a lot of
+concepts with _Spring WebFlux_ in terms of how it internally works. For
+_Spring Dsl JSONRCP_ to work as documented in this section, it needs various
+adapters to dispatch requests to it, handle processing, and then dispatch
+responses back to a caller. These adapter implementations currently only exist
+in <<dsl-lsp>> module which is a heavy user of a protocol.
+
+We're following similar *Controller* concepts found from other parts of a
+_Spring Framework_ to define classes to be a candidates for handling _JSONRPC_
+requests. In a below sample a class is annotated with `@JsonRpcController` making
+it a candidate and methods in that class are searched to do mapping for requests
+using `@JsonRpcRequestMapping` annotations. Below sample would return _hi_ for
+_JSONRPC_ request having method defined as _hi_.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet1]
+----
+
+If same controller is used to handle same subset of _JSONRPC_ requests, class itself can also
+have `@JsonRpcRequestMapping` and all methods in that class would be prefixed with _prefix_ value.
+For example in a below sample _hi_ method would be actually mapped to _prefix/hi_.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet2]
+----
+
+include::dsl-jsonrpc-controller.adoc[]
+include::dsl-jsonrpc-session.adoc[]
+

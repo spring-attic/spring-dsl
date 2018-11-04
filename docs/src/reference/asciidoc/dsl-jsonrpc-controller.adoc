@@ -1,0 +1,28 @@
+[[dsl-jsonrpc-controller]]
+=== Controller Methods
+You can also return any other reactive type similarly as it is possible in
+a _Spring WebFlux_. In below example method is annotated with `JsonRpcResponseResult`
+which means that returned values needs to be sent back to client.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet3]
+----
+
+Methods can just be a plain notification endpoints which is instructed using
+`JsonRpcNotification` annotation.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet4]
+----
+
+`JsonRpcNotification` annotation also takes an optional _method_ parameter which
+modifies how notification is processed. If _method_ parameter exists then values
+from a method are sent back as notifications using using same method parameter.
+
+[source,java,indent=0]
+----
+include::samples/org/springframework/dsl/jsonrpc/docs/ControllerDocs.java[tags=snippet5]
+----
+

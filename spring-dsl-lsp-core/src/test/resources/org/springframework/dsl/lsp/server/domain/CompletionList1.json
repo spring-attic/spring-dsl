@@ -1,0 +1,35 @@
+{
+  "isIncomplete": true,
+  "items": [
+    {
+      "label": "label1",
+      "kind": null,
+      "detail": null,
+      "documentation": null,
+      "sortText": null,
+      "filterText": null,
+      "insertText": null,
+      "insertTextFormat": null,
+      "textEdit": null,
+      "additionalTextEdits": null,
+      "commitCharacters": null,
+      "command": null,
+      "data": null
+    },
+    {
+      "label": "label2",
+      "kind": null,
+      "detail": null,
+      "documentation": null,
+      "sortText": null,
+      "filterText": null,
+      "insertText": null,
+      "insertTextFormat": null,
+      "textEdit": null,
+      "additionalTextEdits": null,
+      "commitCharacters": null,
+      "command": null,
+      "data": null
+    }
+  ]
+}

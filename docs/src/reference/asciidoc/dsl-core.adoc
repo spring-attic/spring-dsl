@@ -1,0 +1,23 @@
+[[dsl-core]]
+== Core Language Services
+As you've already seen from an introduction _Spring Dsl_ is heavily based on concepts
+around <<glossary-lsp,LSP>>. _LSP_ is pretty much based on _JSON_ structures defined
+in a protocol itself and these structures are generally quite useful because their
+base on a design of a interaction between IDE and a server implementing
+_Language Services_. However things tends to get quite low level when working with
+plain raw _JSON_ structures so we've think about a lot to abstract away some generic
+concepts how _Language Services_ could be made more user friendly.
+
+To get one started to understand these concepts, lets first tackle the most common
+problem of a language or a dsl, that being a <<glossary-linter, linting>> a language.
+Other term is a _reconcile_ which pretty much is a synonym to _linter_.
+
+include::dsl-core-languageid.adoc[]
+include::dsl-core-dslservice.adoc[]
+include::dsl-core-domain.adoc[]
+include::dsl-core-reconcile.adoc[]
+include::dsl-core-codecompletion.adoc[]
+include::dsl-core-hover.adoc[]
+include::dsl-core-symbol.adoc[]
+include::dsl-core-rename.adoc[]
+
