@@ -1,10 +1,10 @@
-SPRING CLOUD IOT
+SPRING CLOUD DSL
 ------------------------
-http://cloud.spring.io/spring-cloud-iot
+http://spring.io/spring-dsl
 
 1. INTRODUCTION
 
-Spring Cloud IOT is a framework extension introducing IoT
+Spring Cloud DSL is a framework extension introducing DSL
 concepts in a spring world.
 
 2. RELEASE NOTES
