@@ -15,9 +15,6 @@
  */
 package org.springframework.dsl.lsp.server.jsonrpc;
 
-import java.net.BindException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.time.Duration;
 
 import org.slf4j.Logger;
@@ -27,8 +24,9 @@ import org.springframework.dsl.lsp.server.LspServerException;
 import org.springframework.dsl.lsp.server.PortInUseException;
 import org.springframework.util.Assert;
 
-import reactor.ipc.netty.tcp.BlockingNettyContext;
-import reactor.ipc.netty.tcp.TcpServer;
+import reactor.netty.ChannelBindException;
+import reactor.netty.DisposableServer;
+import reactor.netty.tcp.TcpServer;
 
 /**
  * Main entry point to handle lifecycle of a {@link TcpServer} and its used handler.
@@ -42,7 +40,7 @@ public class NettyTcpServer implements LspServer {
 	private final TcpServer tcpServer;
 	private final ReactorJsonRpcHandlerAdapter handlerAdapter;
 	private final Duration lifecycleTimeout;
-	private BlockingNettyContext nettyContext;
+	private DisposableServer disposableServer;
 
 	/**
 	 * Instantiates a new netty tcp server.
@@ -62,67 +60,64 @@ public class NettyTcpServer implements LspServer {
 	@Override
 	public void start() {
 		log.debug("Netty start called");
-		if (this.nettyContext == null) {
+		if (this.disposableServer == null) {
 			try {
-				nettyContext = startServer();
+				disposableServer = startServer();
 			} catch (Exception e) {
-				if (findBindException(e) != null) {
-					SocketAddress address = this.tcpServer.options().getAddress();
-					if (address instanceof InetSocketAddress) {
-						throw new PortInUseException(
-								((InetSocketAddress) address).getPort());
-					}
+				ChannelBindException bindException = findBindException(e);
+				if (bindException != null) {
+					throw new PortInUseException(bindException.localPort());
 				}
 				throw new LspServerException("Unable to start Netty", e);
 			}
 			log.info("Netty started on port(s) {}", getPort());
-			startDaemonAwaitThread(this.nettyContext);
+			startDaemonAwaitThread(this.disposableServer, getClass().getClassLoader());
 		}
 	}
 
 	@Override
 	public void stop() {
 		log.debug("Netty stop called");
-		if (nettyContext != null) {
-			nettyContext.shutdown();
-			nettyContext = null;
+		if (disposableServer != null) {
+			disposableServer.disposeNow();
+			disposableServer = null;
 		}
 	}
 
 	@Override
 	public int getPort() {
-		if (nettyContext != null) {
-			return nettyContext.getPort();
+		if (disposableServer != null) {
+			return disposableServer.port();
 		}
 		return -1;
 	}
 
-	private BlockingNettyContext startServer() {
+	private DisposableServer startServer() {
 		if (this.lifecycleTimeout != null) {
-			return tcpServer.start(handlerAdapter, lifecycleTimeout);
+			return tcpServer.handle(handlerAdapter).bindNow(this.lifecycleTimeout);
 		}
-		return tcpServer.start(handlerAdapter);
+		return tcpServer.handle(handlerAdapter).bindNow();
 	}
 
-	private void startDaemonAwaitThread(BlockingNettyContext nettyContext) {
+	private static void startDaemonAwaitThread(DisposableServer disposableServer, ClassLoader classLoader) {
 		Thread awaitThread = new Thread("server") {
 
 			@Override
 			public void run() {
-				nettyContext.getContext().onClose().block();
+				disposableServer.onDispose().block();
 			}
 
 		};
-		awaitThread.setContextClassLoader(getClass().getClassLoader());
+		awaitThread.setContextClassLoader(classLoader);
 		awaitThread.setDaemon(false);
 		awaitThread.start();
 	}
 
-	private BindException findBindException(Exception ex) {
+	private ChannelBindException findBindException(Exception ex) {
 		Throwable candidate = ex;
 		while (candidate != null) {
-			if (candidate instanceof BindException) {
-				return (BindException) candidate;
+			if (candidate instanceof ChannelBindException) {
+				return (ChannelBindException) candidate;
 			}
 			candidate = candidate.getCause();
 		}

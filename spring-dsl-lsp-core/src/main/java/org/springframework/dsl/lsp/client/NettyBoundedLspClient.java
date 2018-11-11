@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyOutbound;
+import reactor.netty.NettyOutbound;
 
 /**
  * {@link LspClient} bound to existing netty channels.

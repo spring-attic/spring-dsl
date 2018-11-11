@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyOutbound;
+import reactor.netty.NettyOutbound;
 
 public class ReactorJsonRpcOutputMessage extends AbstractJsonRpcOutputMessage {
 

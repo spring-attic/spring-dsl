@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springVersion = '5.0.7.RELEASE'
-		springBootVersion = '2.0.3.RELEASE'
+		springVersion = '5.1.2.RELEASE'
+		springBootVersion = '2.1.0.RELEASE'
 		antlr4Version = '4.7.1'
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
@@ -152,7 +152,7 @@ project('spring-dsl-lsp-core') {
 		compile 'org.springframework:spring-messaging'
 		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor:reactor-core'
-		compile 'io.projectreactor.ipc:reactor-netty'
+		compile 'io.projectreactor.netty:reactor-netty'
 		compile 'org.javolution:javolution-core-java'
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
@@ -238,7 +238,6 @@ project('spring-dsl-jsonrpc') {
 	dependencies {
 		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor:reactor-core'
-		//compile 'io.projectreactor.ipc:reactor-netty'
 		compile 'com.fasterxml.jackson.core:jackson-core'
 		compile 'com.fasterxml.jackson.core:jackson-databind'
 		optional 'com.google.code.findbugs:jsr305'
@@ -464,6 +463,6 @@ configure(rootProject) {
 
 	task wrapper(type: Wrapper) {
 		description = 'Generates gradlew[.bat] scripts'
-		gradleVersion = '4.1'
+		gradleVersion = '4.4.1'
 	}
 }

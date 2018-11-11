@@ -21,8 +21,8 @@ import org.reactivestreams.Processor;
 
 import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyInbound;
-import reactor.ipc.netty.NettyOutbound;
+import reactor.netty.NettyInbound;
+import reactor.netty.NettyOutbound;
 
 /**
  * A non-blocking, reactive client for performing {@code LSP} related

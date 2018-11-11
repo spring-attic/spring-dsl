@@ -15,9 +15,9 @@
  */
 package org.springframework.dsl.jsonrpc.session;
 
-import java.util.List;
-
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+
+import reactor.core.publisher.Flux;
 
 /**
  * Contract for session id resolution strategies. Allows for session id
@@ -33,7 +33,7 @@ public interface JsonRpcSessionIdResolver {
 	 * Resolve the session id's associated with the request.
 	 *
 	 * @param exchange the current exchange
-	 * @return the session id's or an empty list
+	 * @return the session id's
 	 */
-	List<String> resolveSessionIds(ServerJsonRpcExchange exchange);
+	Flux<String> resolveSessionIds(ServerJsonRpcExchange exchange);
 }

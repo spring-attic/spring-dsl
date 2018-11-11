@@ -41,9 +41,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyInbound;
-import reactor.ipc.netty.NettyOutbound;
-import reactor.ipc.netty.NettyPipeline;
+import reactor.netty.NettyInbound;
+import reactor.netty.NettyOutbound;
+import reactor.netty.NettyPipeline;
 
 /**
  * Adapter to hook into netty's channels to dispatch messages into {@link RpcHandler}.
@@ -91,8 +91,12 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 		NettyDataBufferFactory bufferFactory = new NettyDataBufferFactory(out.alloc());
 		Map<String, Disposable> disposables = new HashMap<>();
 
-		in.context().addHandlerLast(new LspJsonRpcDecoder());
-		out.context().addHandlerLast(new LspJsonRpcEncoder());
+		in.withConnection(c -> {
+			c.addHandlerLast(new LspJsonRpcDecoder());
+		});
+		out.withConnection(c -> {
+			c.addHandlerLast(new LspJsonRpcEncoder());
+		});
 
 		// we can only have one subscriber to NettyInbound, so need to dispatch
 		// relevant responses to client.
@@ -140,36 +144,34 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 
 					@Override
 					public Mono<String> getSessionId() {
-						return Mono.fromSupplier(() -> in.context().channel().id().asLongText());
+						return Mono.create(sink -> {
+							in.withConnection(c -> sink.success(c.channel().id().asLongText()));
+						});
 					}
 				};
 
 				JsonRpcOutputMessage adaptedResponse = new ReactorJsonRpcOutputMessage(out, bufferFactory);
 
-				String disposableId = null;
-				Disposable disposable = null;
-				if (request.getId() != null) {
-					disposableId = in.context().channel().id().asLongText() + request.getId();
-				}
-
 				if (ObjectUtils.nullSafeEquals("$/cancelRequest", request.getMethod())) {
-					if (disposableId != null) {
-						disposable = disposables.remove(disposableId);
-						if (disposable != null) {
-							disposable.dispose();
-							String error = "{\"jsonrpc\":\"2.0\", \"id\":" + request.getId() + ", \"error\":{\"code\":-32800, \"message\": \"cancel\"}}";
-							DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
-							Flux<DataBuffer> body = Flux.just(buffer);
-							adaptedResponse.writeWith(body).subscribe();
-							adaptedResponse.setComplete().subscribe();
-						}
-					} else {
-						log.error("Cancel request but no existing disposable");
+
+					if (request.getId() != null) {
+						in.withConnection(c -> {
+							String disposableId = c.channel().id().asLongText() + request.getId();
+							if (disposableId != null) {
+								Disposable disposable = disposables.remove(disposableId);
+								disposable.dispose();
+								String error = "{\"jsonrpc\":\"2.0\", \"id\":" + request.getId() + ", \"error\":{\"code\":-32800, \"message\": \"cancel\"}}";
+								DataBuffer buffer = bufferFactory.wrap(error.getBytes(Charset.defaultCharset()));
+								Flux<DataBuffer> body = Flux.just(buffer);
+								adaptedResponse.writeWith(body).subscribe();
+								adaptedResponse.setComplete().subscribe();
+							}
+						});
 					}
 					return;
 				}
 
-				disposable = rpcHandler.handle(inputMessage, adaptedResponse, customizer)
+				Disposable disposable = rpcHandler.handle(inputMessage, adaptedResponse, customizer)
 						.doOnError(ex -> {
 							log.error("Handling completed with error", ex);
 
@@ -183,8 +185,14 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 						.doOnSuccess(aVoid -> log.debug("Handling completed with success"))
 						.subscribe();
 
-				if (disposableId != null) {
-					disposables.put(disposableId, disposable);
+
+				if (request.getId() != null) {
+					in.withConnection(c -> {
+						String disposableId = c.channel().id().asLongText() + request.getId();
+						if (disposableId != null) {
+							disposables.put(disposableId, disposable);
+						}
+					});
 				}
 			});
 

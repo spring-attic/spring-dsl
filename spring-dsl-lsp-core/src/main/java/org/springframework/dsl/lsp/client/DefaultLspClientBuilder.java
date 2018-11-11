@@ -22,8 +22,8 @@ import org.springframework.dsl.lsp.client.LspClient.Builder;
 
 import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyInbound;
-import reactor.ipc.netty.NettyOutbound;
+import reactor.netty.NettyInbound;
+import reactor.netty.NettyOutbound;
 
 /**
  * Default implementation of a {@link Builder} currently building instances of a

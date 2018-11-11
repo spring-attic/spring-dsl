@@ -31,9 +31,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 import reactor.core.scheduler.Schedulers;
-import reactor.ipc.netty.NettyContext;
-import reactor.ipc.netty.NettyPipeline;
-import reactor.ipc.netty.tcp.TcpClient;
+import reactor.netty.Connection;
+import reactor.netty.NettyPipeline;
+import reactor.netty.tcp.TcpClient;
 
 public class StdioSocketBridge {
 
@@ -41,7 +41,7 @@ public class StdioSocketBridge {
 	private NettyTcpServer server;
 	private BufferedReader reader;
 	private BufferedWriter writer;
-	private NettyContext nettyContext;
+	private Connection connection;
 
 	public StdioSocketBridge(NettyTcpServer server) {
 		reader = new BufferedReader(new InputStreamReader(System.in));
@@ -83,24 +83,12 @@ public class StdioSocketBridge {
 	public void start() {
 		log.trace("start 1 {}", server.getPort());
 
-//		Flux.generate(generator)
-
 		StdioGenerator generator = new StdioGenerator(reader);
 		Flux<byte[]> flux = Flux.generate(generator);
-//		Flux<byte[]> flux = Flux.generate(generator).log("ddd1");
-//		Flux<byte[]> flux = Flux.fromStream(reader.lines())
-//				.log()
-//				.map(l -> l.getBytes())
-//				.log();
 
-//		flux.doOnNext(b -> {
-//			log.info("ddd {}", b);
-//		})
-//		.subscribeOn(Schedulers.parallel())
-//		.subscribe();
-
-		nettyContext = TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		connection = TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in.receive()
 						.subscribe(c -> {
 							String data = c.retain().duplicate().toString(Charset.defaultCharset());
@@ -113,48 +101,29 @@ public class StdioSocketBridge {
 							}
 						});
 
-//					out.options(NettyPipeline.SendOptions::flushOnEach);
 					flux.doOnNext(b -> {
 						log.trace("sending {}", b);
-//						out.options(opt -> opt.flushOnEach()).sendByteArray(Mono.just(b));
-//						out.sendByteArray(Mono.just("test".getBytes(Charset.defaultCharset())));
 						out.sendByteArray(Mono.just(b)).then().subscribe();
-//						out.send(Flux.just(Unpooled.copiedBuffer("hi".getBytes())));
 					})
 					.subscribeOn(Schedulers.parallel())
 					.subscribe();
 
-//					out.sendByteArray(flux);
-//					return Mono.never();
 
 					return out.options(NettyPipeline.SendOptions::flushOnEach)
 							.neverComplete();
 
 				})
+				.connect()
 				.block();
 
 		log.trace("start 2");
 	}
 
 	public void stop() {
-		log.trace("stop 1");
-//		try {
-//			reader.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		log.trace("stop 2");
-
-//		try {
-//			writer.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		log.trace("stop 3");
-		if (nettyContext != null) {
-			nettyContext.dispose();
+		if (connection != null) {
+			connection.disposeNow();
 		}
-		log.trace("stop 4");
+		connection = null;
 	}
 
 }

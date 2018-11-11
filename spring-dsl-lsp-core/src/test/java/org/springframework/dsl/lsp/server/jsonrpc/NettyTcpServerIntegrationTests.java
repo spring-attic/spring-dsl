@@ -56,8 +56,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.Unpooled;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.tcp.TcpClient;
-import reactor.ipc.netty.tcp.TcpServer;
+import reactor.netty.tcp.TcpClient;
+import reactor.netty.tcp.TcpServer;
 
 public class NettyTcpServerIntegrationTests {
 
@@ -130,8 +130,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -143,6 +144,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT15), Unpooled.copiedBuffer(CONTENT16)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(2, TimeUnit.SECONDS)).isTrue();
@@ -162,9 +164,11 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(10);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
-					in.context().addHandlerLast(new LspJsonRpcDecoder());
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
+					in.withConnection(c -> c.addHandlerLast(new LspJsonRpcDecoder()));
+//					in.context().addHandlerLast(new LspJsonRpcDecoder());
 					in.receiveObject()
 						.ofType(String.class)
 						.subscribe(c -> {
@@ -178,6 +182,7 @@ public class NettyTcpServerIntegrationTests {
 							}))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -197,9 +202,10 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(2);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
-					in.context().addHandlerLast(new LspJsonRpcDecoder());
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
+					in.withConnection(c -> c.addHandlerLast(new LspJsonRpcDecoder()));
 					in.receiveObject()
 						.ofType(String.class)
 						.subscribe(c -> {
@@ -211,6 +217,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT2), Unpooled.copiedBuffer(CONTENT3)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -230,8 +237,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -243,6 +251,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT5)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -262,8 +271,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -275,6 +285,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT18)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -294,8 +305,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -307,6 +319,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT7)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isFalse();
@@ -322,8 +335,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -335,6 +349,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT8)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isFalse();
@@ -350,8 +365,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -363,6 +379,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT6)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -382,8 +399,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -395,6 +413,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT11)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -414,8 +433,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -427,6 +447,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT9)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -447,8 +468,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -460,6 +482,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT19)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -479,9 +502,10 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(2);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
-					in.context().addHandlerLast(new LspJsonRpcDecoder());
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
+					in.withConnection(c -> c.addHandlerLast(new LspJsonRpcDecoder()));
 					in.receiveObject()
 						.ofType(String.class)
 						.subscribe(c -> {
@@ -493,6 +517,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT10)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -513,8 +538,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.log()
@@ -527,6 +553,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT4)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		String response = "Content-Length: 86\r\n\r\n{\"jsonrpc\":\"2.0\", \"id\":3, \"error\":{\"code\":-32603, \"message\": \"internal server error\"}}";
@@ -547,8 +574,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(1);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -560,6 +588,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT12)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -579,8 +608,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(2);
 		final List<String> responses = new ArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -592,6 +622,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT13), Unpooled.copiedBuffer(CONTENT14)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();
@@ -673,7 +704,6 @@ public class NettyTcpServerIntegrationTests {
 		assertThat(responses.get(0).getResult()).isEqualTo("clienthi");
 	}
 
-
 	@Test
 	public void testClientServerToClientNotification() throws InterruptedException {
 		context = new AnnotationConfigApplicationContext();
@@ -722,8 +752,9 @@ public class NettyTcpServerIntegrationTests {
 		CountDownLatch dataLatch = new CountDownLatch(2);
 		final List<String> responses = new CopyOnWriteArrayList<>();
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -735,10 +766,12 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT17)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
-		TcpClient.create(server.getPort())
-				.newHandler((in, out) -> {
+		TcpClient.create()
+				.port(server.getPort())
+				.handle((in, out) -> {
 					in
 					.receive()
 					.subscribe(c -> {
@@ -750,6 +783,7 @@ public class NettyTcpServerIntegrationTests {
 							.send(Flux.just(Unpooled.copiedBuffer(CONTENT17)))
 							.neverComplete();
 				})
+				.connect()
 				.block(Duration.ofSeconds(30));
 
 		assertThat(dataLatch.await(1, TimeUnit.SECONDS)).isTrue();

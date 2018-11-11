@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 
-import reactor.ipc.netty.tcp.TcpServer;
+import reactor.netty.tcp.TcpServer;
 
 /**
  * Generic {@code LSP} configuration for a socket integration.
@@ -37,7 +37,7 @@ public class LspServerSocketConfiguration {
 
 	@Bean(initMethod = "start", destroyMethod = "stop")
 	public NettyTcpServer nettyTcpServer(ReactorJsonRpcHandlerAdapter handlerAdapter) {
-		TcpServer tcpServer = TcpServer.create(serverPort);
+		TcpServer tcpServer = TcpServer.create().port(serverPort);
 		NettyTcpServer nettyTcpServer = new NettyTcpServer(tcpServer, handlerAdapter, null);
 		return nettyTcpServer;
 	}

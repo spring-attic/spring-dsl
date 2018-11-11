@@ -35,10 +35,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.ipc.netty.NettyInbound;
-import reactor.ipc.netty.NettyOutbound;
-import reactor.ipc.netty.tcp.BlockingNettyContext;
-import reactor.ipc.netty.tcp.TcpClient;
+import reactor.netty.Connection;
+import reactor.netty.NettyInbound;
+import reactor.netty.NettyOutbound;
+import reactor.netty.tcp.TcpClient;
 
 /**
  * {@link LspClient} connecting to a known {@code Language Server} address.
@@ -51,7 +51,7 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 	private static final Logger log = LoggerFactory.getLogger(NettyTcpClientLspClient.class);
 	private final String host;
 	private final Integer port;
-	private BlockingNettyContext blockingNettyContext;
+	private Connection connection;
 	private BiFunction<NettyInbound, NettyOutbound, Mono<Void>> function;
 	private Processor<ByteBuf, LspClientResponse> processor;
 
@@ -73,17 +73,17 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 
 	@Override
 	public void doStart() {
-		if (blockingNettyContext == null) {
+		if (connection == null) {
 			init();
 		}
 	}
 
 	@Override
 	public void doStop() {
-		if (blockingNettyContext != null) {
-			blockingNettyContext.shutdown();
+		if (connection != null) {
+			connection.disposeNow();
 		}
-		blockingNettyContext = null;
+		connection = null;
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class NettyTcpClientLspClient extends AbstractLspClient {
 	}
 
 	private void init() {
-		blockingNettyContext = TcpClient.create(host, port).start(function);
+		connection = TcpClient.create().host(host).port(port).handle(function).connect().block();
 	}
 
 	private class DefaultExchangeRequestFunction implements ExchangeRequestFunction {

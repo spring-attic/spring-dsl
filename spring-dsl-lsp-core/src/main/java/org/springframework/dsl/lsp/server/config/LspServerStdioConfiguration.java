@@ -21,7 +21,7 @@ import org.springframework.dsl.lsp.server.jsonrpc.NettyTcpServer;
 import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.support.StdioSocketBridge;
 
-import reactor.ipc.netty.tcp.TcpServer;
+import reactor.netty.tcp.TcpServer;
 
 /**
  * Generic {@code LSP} configuration for a stdio integration.

@@ -15,12 +15,9 @@
  */
 package org.springframework.dsl.jsonrpc.session;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 /**
  * Request-based {@link JsonRpcSessionIdResolver}.
@@ -31,8 +28,7 @@ import reactor.core.publisher.Mono;
 public class RequestSessionIdJsonRpcSessionIdResolver implements JsonRpcSessionIdResolver {
 
 	@Override
-	public List<String> resolveSessionIds(ServerJsonRpcExchange exchange) {
-		Mono<String> sessionId = exchange.getRequest().getSessionId();
-		return Arrays.asList(sessionId.block());
+	public Flux<String> resolveSessionIds(ServerJsonRpcExchange exchange) {
+		return exchange.getRequest().getSessionId().flux();
 	}
 }

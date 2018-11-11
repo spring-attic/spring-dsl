@@ -18,7 +18,6 @@ package org.springframework.dsl.jsonrpc.session;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.util.Assert;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -37,7 +36,9 @@ public class DefaultJsonRpcSessionManager implements JsonRpcSessionManager {
 	@Override
 	public Mono<JsonRpcSession> getSession(ServerJsonRpcExchange exchange) {
 		return Mono.defer(() -> retrieveSession(exchange)
-				.switchIfEmpty(this.sessionStore.createSession(exchange.getRequest().getSessionId().block()))
+				.switchIfEmpty(exchange.getRequest().getSessionId()
+						.map(id -> this.sessionStore.createSession(id))
+						.flatMap(session -> session))
 				.doOnNext(session -> exchange.getResponse().beforeCommit(() -> save(exchange, session))));
 	}
 
@@ -84,7 +85,7 @@ public class DefaultJsonRpcSessionManager implements JsonRpcSessionManager {
 	}
 
 	private Mono<JsonRpcSession> retrieveSession(ServerJsonRpcExchange exchange) {
-		return Flux.fromIterable(getSessionIdResolver().resolveSessionIds(exchange))
+		return getSessionIdResolver().resolveSessionIds(exchange)
 				.concatMap(this.sessionStore::retrieveSession)
 				.next();
 	}

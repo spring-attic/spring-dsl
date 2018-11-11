@@ -23,13 +23,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
-import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.client.ClientReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.client.config.EnableLanguageClient;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
-import org.springframework.dsl.lsp.server.jsonrpc.ReactorJsonRpcHandlerAdapter;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
-import org.springframework.dsl.lsp.server.jsonrpc.RpcJsonRpcHandlerAdapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,24 +48,8 @@ public class LspClientAutoConfiguration {
 	}
 
 	@Bean
-	public DispatcherJsonRpcHandler dispatcherJsonRpcHandler() {
-		return new DispatcherJsonRpcHandler();
-	}
-
-	@Bean
 	public ClientReactorJsonRpcHandlerAdapter clientReactorJsonRpcHandlerAdapter(RpcHandler rpcHandler,
 			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
 		return new ClientReactorJsonRpcHandlerAdapter(rpcHandler, objectMapper);
-	}
-
-	@Bean
-	public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler) {
-		return new RpcJsonRpcHandlerAdapter(dispatcherJsonRpcHandler);
-	}
-
-	@Bean
-	public ReactorJsonRpcHandlerAdapter reactorJsonRpcHandlerAdapter(RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter,
-			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
-		return new ReactorJsonRpcHandlerAdapter(rpcJsonRpcHandlerAdapter, objectMapper);
 	}
 }
