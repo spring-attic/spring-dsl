@@ -24,8 +24,10 @@ import org.springframework.dsl.Test2Grammar.TargetIdContext;
 import org.springframework.dsl.Test2GrammarBaseVisitor;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.symboltable.SymbolTable;
 import org.springframework.dsl.symboltable.model.ClassSymbol;
 import org.springframework.dsl.symboltable.model.FieldSymbol;
@@ -106,14 +108,26 @@ public class Test2Visitor extends Test2GrammarBaseVisitor<AntlrParseResult<Objec
 			}
 
 			@Override
-			public Flux<DocumentSymbol> getDocumentSymbols() {
-				return getSymbolTable()
+			public SymbolizeInfo getSymbolizeInfo() {
+				Flux<DocumentSymbol> documentSymbols = getSymbolTable()
 					.flatMapMany(st -> Flux.fromIterable(st.getAllSymbols()))
 					.map(s -> DocumentSymbol.documentSymbol()
-							.name(s.getName())
-							.kind(SymbolKind.String)
+						.name(s.getName())
+						.kind(SymbolKind.String)
+						.range(s.getRange())
+						.build());
+
+				Flux<SymbolInformation> symbolInformations = getSymbolTable()
+					.flatMapMany(st -> Flux.fromIterable(st.getAllSymbols()))
+					.map(s -> SymbolInformation.symbolInformation()
+						.name(s.getName())
+						.kind(SymbolKind.String)
+						.location()
 							.range(s.getRange())
-							.build());
+							.and()
+						.build());
+
+				return SymbolizeInfo.of(documentSymbols, symbolInformations);
 			}
 		};
 	}

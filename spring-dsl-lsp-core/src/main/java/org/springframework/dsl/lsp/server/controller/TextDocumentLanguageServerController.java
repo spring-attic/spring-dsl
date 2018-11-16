@@ -33,6 +33,7 @@ import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.domain.RenameParams;
+import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.domain.TextEdit;
 import org.springframework.dsl.domain.WillSaveTextDocumentParams;
@@ -43,6 +44,8 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspSystemConstants;
+import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.config.DslConfigurationProperties.DocumentSymbolPrefer;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
@@ -66,15 +69,20 @@ public class TextDocumentLanguageServerController {
 
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
 	private DslServiceRegistry registry;
+	private DslConfigurationProperties properties;
 
 	/**
 	 * Instantiates a new text document language server controller.
 	 *
 	 * @param dslServiceRegistry the dsl service registry
+	 * @param properties the properties
 	 */
-	public TextDocumentLanguageServerController(DslServiceRegistry dslServiceRegistry) {
+	public TextDocumentLanguageServerController(DslServiceRegistry dslServiceRegistry,
+			DslConfigurationProperties properties) {
 		Assert.notNull(dslServiceRegistry, "dslServiceRegistry must be set");
+		Assert.notNull(properties, "properties must be set");
 		this.registry = dslServiceRegistry;
+		this.properties = properties;
 	}
 
 	/**
@@ -258,19 +266,35 @@ public class TextDocumentLanguageServerController {
 	 *
 	 * @param params the {@link DocumentSymbolParams}
 	 * @param session the {@link JsonRpcSession}
-	 * @return a mono of document symbol array
+	 * @return a mono of arbitrary object processed from a symbolizer
 	 */
 	@JsonRpcRequestMapping(method = "documentSymbol")
 	@JsonRpcResponseResult
-	public Mono<DocumentSymbol[]> documentSymbol(DocumentSymbolParams params, JsonRpcSession session) {
+	public Mono<Object> documentSymbol(DocumentSymbolParams params, JsonRpcSession session) {
+		// return is just Object as we either return arrays of SymbolInformation
+		// or DocumentSymbol, types are handled at runtime.
 		log.debug("documentSymbol {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 
-		return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-				.concatMap(symbolizer -> symbolizer.symbolize(document))
-				.collectList()
+		// TODO: should probably fix this so that if we prefer either one, and that
+		//       is empty, we also check other one.
+		if (properties.getLsp().getServer().getTextDocument().getDocumentSymbol()
+				.getPrefer() == DocumentSymbolPrefer.SymbolInformation) {
+			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
+				.map(symbolizer -> symbolizer.symbolize(document))
+				.map(si -> si.symbolInformations())
+				.next()
+				.flatMap(ds -> ds.collectList())
+				.map(list -> list.toArray(new SymbolInformation[0]));
+		} else {
+			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
+				.map(symbolizer -> symbolizer.symbolize(document))
+				.map(si -> si.documentSymbols())
+				.next()
+				.flatMap(ds -> ds.collectList())
 				.map(list -> list.toArray(new DocumentSymbol[0]));
+		}
 	}
 
 	/**

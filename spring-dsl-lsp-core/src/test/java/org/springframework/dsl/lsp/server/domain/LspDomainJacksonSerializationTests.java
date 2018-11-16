@@ -901,6 +901,15 @@ public class LspDomainJacksonSerializationTests {
 		to = mapper.readValue(json, Location.class);
 		assertObjects(from, to);
 
+		from = Location.location()
+				.uri("uri")
+				.range(Range.from(1, 1, 2, 2))
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, Location.class);
+		assertObjects(from, to);
+
 		String expect = loadResourceAsString("Location1.json");
 		to = mapper.readValue(expect, Location.class);
 		assertObjects(from, to);

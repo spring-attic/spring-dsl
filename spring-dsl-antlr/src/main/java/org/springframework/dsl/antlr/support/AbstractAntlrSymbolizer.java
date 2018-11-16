@@ -22,7 +22,9 @@ import org.springframework.dsl.antlr.AntlrParseResult;
 import org.springframework.dsl.antlr.AntlrParseService;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
 import reactor.core.publisher.Flux;
@@ -63,9 +65,17 @@ public abstract class AbstractAntlrSymbolizer<T> extends AbstractAntlrDslService
 	}
 
 	@Override
-	public Flux<DocumentSymbol> symbolize(Document document) {
-		return getAntlrParseService().parse(document, getAntlrParseResultFunction())
-				.map(r -> r.getDocumentSymbols())
-				.flatMapMany(r -> r.cache());
+	public SymbolizeInfo symbolize(Document document) {
+		AntlrParseService<T> x1 = getAntlrParseService();
+		Mono<AntlrParseResult<T>> x2 = x1.parse(document, getAntlrParseResultFunction());
+		Mono<SymbolizeInfo> map = x2.map(x -> x.getSymbolizeInfo());
+
+		Mono<Flux<DocumentSymbol>> map2 = map.map(si -> si.documentSymbols());
+		Flux<DocumentSymbol> flatMapMany1 = map2.flatMapMany(x -> x);
+		Mono<Flux<SymbolInformation>> map3 = map.map(si -> si.symbolInformations());
+		Flux<SymbolInformation> flatMapMany2 = map3.flatMapMany(x -> x);
+
+		SymbolizeInfo symbolizeInfo = SymbolizeInfo.of(flatMapMany1, flatMapMany2);
+		return symbolizeInfo;
 	}
 }

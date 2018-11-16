@@ -17,8 +17,12 @@ package org.springframework.dsl.symboltable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.symboltable.model.ClassSymbol;
 import org.springframework.dsl.symboltable.model.FieldSymbol;
 import org.springframework.dsl.symboltable.model.PredefinedScope;
@@ -41,9 +45,12 @@ public class DocumentSymbolTableVisitorTests {
 
 		DocumentSymbolTableVisitor visitor = new DocumentSymbolTableVisitor();
 		scope.accept(visitor);
-		assertThat(visitor.getDocumentSymbols()).hasSize(2);
+		assertThat(visitor.getSymbolizeInfo()).isNotNull();
 
-		for (DocumentSymbol ds : visitor.getDocumentSymbols()) {
+		List<DocumentSymbol> documentSymbols = visitor.getSymbolizeInfo().documentSymbols().toStream()
+				.collect(Collectors.toList());
+		assertThat(documentSymbols).hasSize(2);
+		for (DocumentSymbol ds : documentSymbols) {
 			if (ds.getName() == "classA") {
 				assertThat(ds.getChildren()).isNull();
 			}
@@ -52,5 +59,9 @@ public class DocumentSymbolTableVisitorTests {
 				assertThat(ds.getChildren().get(0).getName()).isEqualTo("fieldA");
 			}
 		}
+
+		List<SymbolInformation> symbolInformations = visitor.getSymbolizeInfo().symbolInformations().toStream()
+				.collect(Collectors.toList());
+		assertThat(symbolInformations).hasSize(2);
 	}
 }

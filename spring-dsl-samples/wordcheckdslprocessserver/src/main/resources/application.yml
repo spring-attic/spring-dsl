@@ -23,3 +23,14 @@ demo:
     - "a"
     - "dull"
     - "boy"
+
+---
+# eclipse really doesn't work with DocumentSymbol so prefer SymbolInformation
+spring:
+  profiles: eclipse
+  dsl:
+    lsp:
+      server:
+        text-document:
+          document-symbol:
+            prefer: SymbolInformation

@@ -49,7 +49,7 @@ public class WordcheckLanguageRenamer extends WordcheckLanguageSupport implement
 
 	@Override
 	public Mono<WorkspaceEdit> rename(Document document, Position position, String newName) {
-		Flux<DocumentSymbol> symbols = symbolizer.symbolize(document);
+		Flux<DocumentSymbol> symbols = symbolizer.symbolize(document).documentSymbols();
 		Mono<DocumentSymbol> symbol = symbols
 			.filter(s -> DslUtils.isPositionInRange(position, s.getRange())).next();
 		return symbols

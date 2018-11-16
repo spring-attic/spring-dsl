@@ -23,10 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.DocumentSymbol.DocumentSymbolBuilder;
+import org.springframework.dsl.domain.SymbolInformation;
+import org.springframework.dsl.domain.SymbolInformation.SymbolInformationBuilder;
 import org.springframework.dsl.domain.SymbolKind;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
 import org.springframework.dsl.symboltable.SymbolTableVisitor;
+
+import reactor.core.publisher.Flux;
 
 /**
  * {@link SymbolTableVisitor} which builds a {@link DocumentSymbol}.
@@ -38,7 +43,25 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 
 	private static final Logger log = LoggerFactory.getLogger(DocumentSymbolTableVisitor.class);
 	private final List<DocumentSymbol> documentSymbols = new ArrayList<>();
-	private final Stack<DocumentSymbolBuilder<?>> stack = new Stack<>();
+	private final List<SymbolInformation> symbolInformations = new ArrayList<>();
+	private final Stack<BuilderHolder> stack = new Stack<>();
+	private final String uri;
+
+	/**
+	 * Instantiates a new document symbol table visitor.
+	 */
+	public DocumentSymbolTableVisitor() {
+		this(null);
+	}
+
+	/**
+	 * Instantiates a new document symbol table visitor.
+	 *
+	 * @param uri the uri
+	 */
+	public DocumentSymbolTableVisitor(String uri) {
+		this.uri = uri;
+	}
 
 	@Override
 	public void enterVisitScope(Scope scope) {
@@ -53,30 +76,49 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 	@Override
 	public void enterVisitSymbol(Symbol symbol) {
 		log.debug("enterVisitSymbol {}", symbol);
-		DocumentSymbolBuilder<?> builder = DocumentSymbol.documentSymbol()
+		DocumentSymbolBuilder<?> documentSymbolBuilder = DocumentSymbol.documentSymbol()
 			.name(symbol.getName())
 			.kind(SymbolKind.String)
 			.range(symbol.getRange())
 			.selectionRange(symbol.getRange());
-		stack.push(builder);
+		SymbolInformationBuilder<?> symbolInformationBuilder = SymbolInformation.symbolInformation()
+			.name(symbol.getName())
+			.kind(SymbolKind.String)
+			.location()
+				.uri(uri)
+				.range(symbol.getRange())
+				.and();
+		stack.push(new BuilderHolder(documentSymbolBuilder, symbolInformationBuilder));
 	}
 
-	public List<DocumentSymbol> getDocumentSymbols() {
-		return documentSymbols;
+	public SymbolizeInfo getSymbolizeInfo() {
+		return SymbolizeInfo.of(Flux.fromIterable(documentSymbols), Flux.fromIterable(symbolInformations));
 	}
 
 	@Override
 	public void exitVisitSymbol(Symbol symbol) {
 		log.debug("exitVisitSymbol {}", symbol);
-		DocumentSymbolBuilder<?> builder = stack.pop();
+		BuilderHolder builderHolder = stack.pop();
 		if (stack.isEmpty()) {
-			documentSymbols.add(builder.build());
+			documentSymbols.add(builderHolder.documentSymbolBuilder.build());
+			symbolInformations.add(builderHolder.symbolInformationBuilder.build());
 		} else {
-			stack.peek().child(builder.build());
+			stack.peek().documentSymbolBuilder.child(builderHolder.documentSymbolBuilder.build());
 		}
 	}
 
 	protected SymbolKind getSymbolKind(Symbol symbol) {
 		return SymbolKind.String;
+	}
+
+	private static class BuilderHolder {
+		DocumentSymbolBuilder<?> documentSymbolBuilder;
+		SymbolInformationBuilder<?> symbolInformationBuilder;
+
+		public BuilderHolder(DocumentSymbolBuilder<?> documentSymbolBuilder,
+				SymbolInformationBuilder<?> symbolInformationBuilder) {
+			this.documentSymbolBuilder = documentSymbolBuilder;
+			this.symbolInformationBuilder = symbolInformationBuilder;
+		}
 	}
 }

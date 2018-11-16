@@ -121,6 +121,14 @@ public class Location {
 		 * @return the builder for chaining
 		 */
 		RangeBuilder<LocationBuilder<P>> range();
+
+		/**
+		 * Sets a range for a {@code range}. Will take presence of range set from
+		 * via @{@link #range()}.
+		 *
+		 * @return the builder for chaining
+		 */
+		LocationBuilder<P> range(Range range);
 	}
 
 	/**
@@ -140,7 +148,8 @@ public class Location {
 		extends AbstractDomainBuilder<Location, P> implements LocationBuilder<P> {
 
 		private String uri;
-		private RangeBuilder<LocationBuilder<P>> range;
+		private RangeBuilder<LocationBuilder<P>> rangeBuilder;
+		private Range range;
 
 		InternalLocationBuilder(P parent) {
 			super(parent);
@@ -154,8 +163,14 @@ public class Location {
 
 		@Override
 		public RangeBuilder<LocationBuilder<P>> range() {
-			this.range = Range.range(this);
-			return range;
+			this.rangeBuilder = Range.range(this);
+			return rangeBuilder;
+		}
+
+		@Override
+		public LocationBuilder<P> range(Range range) {
+			this.range = range;
+			return this;
 		}
 
 		@Override
@@ -163,7 +178,9 @@ public class Location {
 			Location location = new Location();
 			location.setUri(uri);
 			if (range != null) {
-				location.setRange(range.build());
+				location.setRange(range);
+			} else if (rangeBuilder != null) {
+				location.setRange(rangeBuilder.build());
 			}
 			return location;
 		}

@@ -54,7 +54,7 @@ public class AntlrSymbolizerTests {
 		Test2AntlrParseResultFunction antlrParseResultFunction = new Test2AntlrParseResultFunction();
 
 		Test2AntlrSymbolizer symbolizer = new Test2AntlrSymbolizer(antlrParseService, antlrParseResultFunction);
-		Flux<DocumentSymbol> symbolizes = symbolizer.symbolize(document);
+		Flux<DocumentSymbol> symbolizes = symbolizer.symbolize(document).documentSymbols();
 		List<DocumentSymbol> items = symbolizes.toStream().collect(Collectors.toList());
 		List<String> names = items.stream().map(item -> item.getName()).collect(Collectors.toList());
 		assertThat(names, containsInAnyOrder(expect.toArray(new String[0])));

@@ -77,6 +77,7 @@ public class DslConfigurationProperties {
 		private LspServerSocketMode mode = LspServerSocketMode.PROCESS;
 		private boolean forceJvmExitOnShutdown;
 		private WebSocketProperties websocket = new WebSocketProperties();
+		private TextDocumentProperties textDocument = new TextDocumentProperties();
 
 		public LspServerSocketMode getMode() {
 			return mode;
@@ -109,6 +110,14 @@ public class DslConfigurationProperties {
 		public void setWebsocket(WebSocketProperties websocket) {
 			this.websocket = websocket;
 		}
+
+		public TextDocumentProperties getTextDocument() {
+			return textDocument;
+		}
+
+		public void setTextDocument(TextDocumentProperties textDocument) {
+			this.textDocument = textDocument;
+		}
 	}
 
 	public static class LspClientProperties {
@@ -128,5 +137,34 @@ public class DslConfigurationProperties {
 		PROCESS,
 		SOCKET,
 		WEBSOCKET;
+	}
+
+	public static class TextDocumentProperties {
+
+		private DocumentSymbolProperties documentSymbol = new DocumentSymbolProperties();
+
+		public DocumentSymbolProperties getDocumentSymbol() {
+			return documentSymbol;
+		}
+
+		public void setDocumentSymbol(DocumentSymbolProperties documentSymbol) {
+			this.documentSymbol = documentSymbol;
+		}
+	}
+
+	public static class DocumentSymbolProperties {
+		DocumentSymbolPrefer prefer = DocumentSymbolPrefer.DocumentSymbol;
+
+		public DocumentSymbolPrefer getPrefer() {
+			return prefer;
+		}
+
+		public void setPrefer(DocumentSymbolPrefer prefer) {
+			this.prefer = prefer;
+		}
+	}
+
+	public enum DocumentSymbolPrefer {
+		DocumentSymbol,SymbolInformation;
 	}
 }

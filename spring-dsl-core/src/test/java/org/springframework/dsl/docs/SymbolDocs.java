@@ -16,10 +16,8 @@
 package org.springframework.dsl.docs;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
-
-import reactor.core.publisher.Flux;
 
 public class SymbolDocs {
 
@@ -27,7 +25,7 @@ public class SymbolDocs {
 
 		@Override
 // tag::snippet1[]
-		Flux<DocumentSymbol> symbolize(Document document);
+		SymbolizeInfo symbolize(Document document);
 // end::snippet1[]
 	}
 }

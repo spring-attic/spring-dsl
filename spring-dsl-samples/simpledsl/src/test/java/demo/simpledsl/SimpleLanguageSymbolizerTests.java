@@ -43,7 +43,7 @@ public class SimpleLanguageSymbolizerTests {
 	public void testSymbolize() {
 		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content1);
 
-		Flux<DocumentSymbol> symbolize = symbolizer.symbolize(document);
+		Flux<DocumentSymbol> symbolize = symbolizer.symbolize(document).documentSymbols();
 		List<DocumentSymbol> symbols = symbolize.toStream().collect(Collectors.toList());
 		assertThat(symbols).isNotNull();
 		assertThat(symbols).hasSize(4);

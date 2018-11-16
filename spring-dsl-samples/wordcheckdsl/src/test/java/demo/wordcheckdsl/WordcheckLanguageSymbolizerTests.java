@@ -39,7 +39,10 @@ public class WordcheckLanguageSymbolizerTests {
 		WordcheckLanguageSymbolizer symbolizer = new WordcheckLanguageSymbolizer();
 		symbolizer.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
-		List<String> symbols = symbolizer.symbolize(document).toStream().map(s -> s.getName())
+		List<String> symbols = symbolizer.symbolize(document).documentSymbols().toStream().map(s -> s.getName())
+				.collect(Collectors.toList());
+		assertThat(symbols).containsExactlyInAnyOrder("jack", "is", "a", "dull", "boy");
+		symbols = symbolizer.symbolize(document).symbolInformations().toStream().map(s -> s.getName())
 				.collect(Collectors.toList());
 		assertThat(symbols).containsExactlyInAnyOrder("jack", "is", "a", "dull", "boy");
 	}

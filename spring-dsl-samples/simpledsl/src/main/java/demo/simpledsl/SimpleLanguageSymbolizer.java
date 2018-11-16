@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.SymbolKind;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
 import demo.simpledsl.SimpleLanguage.Line;
@@ -37,8 +38,8 @@ import reactor.core.publisher.Flux;
 public class SimpleLanguageSymbolizer extends SimpleLanguageDslService implements Symbolizer {
 
 	@Override
-	public Flux<DocumentSymbol> symbolize(Document document) {
-		return Flux.defer(() -> {
+	public SymbolizeInfo symbolize(Document document) {
+		return SymbolizeInfo.ofDocumentSymbol(Flux.defer(() -> {
 			List<DocumentSymbol> symbols = new ArrayList<>();
 			for (Line line : SimpleLanguage.build(document).getLines()) {
 				symbols.add(DocumentSymbol.documentSymbol()
@@ -49,7 +50,7 @@ public class SimpleLanguageSymbolizer extends SimpleLanguageDslService implement
 					.build());
 			}
 			return Flux.fromIterable(symbols);
-		});
+		}));
 	}
 }
 //end::snippet1[]

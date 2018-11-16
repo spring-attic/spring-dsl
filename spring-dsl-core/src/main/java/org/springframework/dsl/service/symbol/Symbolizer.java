@@ -16,13 +16,10 @@
 package org.springframework.dsl.service.symbol;
 
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.service.DslService;
 
-import reactor.core.publisher.Flux;
-
 /**
- * Strategy interface providing {@link DocumentSymbol} info for a document.
+ * Strategy interface providing {@link SymbolizeInfo} for a document.
  *
  * @author Janne Valkealahti
  *
@@ -33,7 +30,7 @@ public interface Symbolizer extends DslService {
 	 * Provide symbol information for a given document.
 	 *
 	 * @param document the document
-	 * @return a {@link Flux} of {@link DocumentSymbol}
+	 * @return a symbolize info
 	 */
-	Flux<DocumentSymbol> symbolize(Document document);
+	SymbolizeInfo symbolize(Document document);
 }

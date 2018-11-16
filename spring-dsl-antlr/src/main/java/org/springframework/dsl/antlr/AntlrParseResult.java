@@ -18,10 +18,10 @@ package org.springframework.dsl.antlr;
 import java.util.List;
 
 import org.springframework.dsl.domain.CompletionItem;
-import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.symboltable.SymbolTable;
 
 import reactor.core.publisher.Flux;
@@ -88,12 +88,12 @@ public interface AntlrParseResult<T> {
 	}
 
 	/**
-	 * Gets the document symbols.
+	 * Gets the symbolize info.
 	 *
-	 * @return the document symbols
+	 * @return the  symbolize info
 	 */
-	default Flux<DocumentSymbol> getDocumentSymbols() {
-		return Flux.empty();
+	default SymbolizeInfo getSymbolizeInfo() {
+		return SymbolizeInfo.empty();
 	}
 
 	/**

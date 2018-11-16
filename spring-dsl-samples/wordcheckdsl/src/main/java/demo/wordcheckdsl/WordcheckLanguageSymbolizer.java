@@ -20,7 +20,9 @@ import java.util.regex.Pattern;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.DocumentRegion;
 import org.springframework.dsl.domain.DocumentSymbol;
+import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.domain.SymbolKind;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
 import reactor.core.publisher.Flux;
@@ -37,8 +39,8 @@ public class WordcheckLanguageSymbolizer extends WordcheckLanguageSupport implem
 	private static final Pattern SPACE = Pattern.compile("[^\\w]+");
 
 	@Override
-	public Flux<DocumentSymbol> symbolize(Document document) {
-		return Flux.defer(() -> {
+	public SymbolizeInfo symbolize(Document document) {
+		Flux<DocumentSymbol> documentSymbols = Flux.defer(() -> {
 			return Flux.fromArray(new DocumentRegion(document).split(SPACE))
 				.filter(w -> w.length() > 0)
 				.map(r -> DocumentSymbol.documentSymbol()
@@ -48,5 +50,20 @@ public class WordcheckLanguageSymbolizer extends WordcheckLanguageSupport implem
 					.selectionRange(r.toRange())
 					.build());
 		});
+
+		Flux<SymbolInformation> symbolInformations = Flux.defer(() -> {
+			return Flux.fromArray(new DocumentRegion(document).split(SPACE))
+				.filter(w -> w.length() > 0)
+				.map(r -> SymbolInformation.symbolInformation()
+					.name(r.toString())
+					.kind(SymbolKind.String)
+					.location()
+						.uri(document.uri())
+						.range(r.toRange())
+						.and()
+					.build());
+		});
+
+		return SymbolizeInfo.of(documentSymbols, symbolInformations);
 	}
 }
