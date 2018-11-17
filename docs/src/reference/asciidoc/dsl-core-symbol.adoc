@@ -12,8 +12,9 @@ or checking, what can be said is that with `Symbol` information you can identify
 centain parts of a `Document` which most likely are interested when _LSP_
 is used with an real _IDE_. Well that was a mouthful, so lets go through what is
 a _Symbol_. In _Spring Lsp_ we are basing this interface as a
-`DocumentSymbol` which is a base defining various _LSP_ properties about
-a _Symbol_ itself.
+`SymbolizeInfo` which itself is an interface providing optional methods
+returning a `Flux` of `DocumentSymbol` or a `SymbolInformation`. These maps
+to a _LSP_ domain with similar structure.
 
 [NOTE]
 ====
