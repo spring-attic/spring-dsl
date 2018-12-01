@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Inject, Injectable, OnDestroy, Optional} from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { BaseLanguageClient, CloseAction, createConnection, ErrorAction, MonacoLanguageClient,
   MonacoServices} from 'monaco-languageclient';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
 import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
 
 const normalizeUrl = require('normalize-url');
+const ReconnectingWebSocket = require('reconnecting-websocket');
 
 /**
  * Service providing various features.
@@ -52,14 +53,12 @@ export class SpringDslEditorService implements OnDestroy {
     this.initialised = true;
     MonacoServices.install(<monaco.editor.IStandaloneCodeEditor>{});
     const url = this.createUrl('ws');
-    const webSocket = new WebSocket(url);
+    const webSocket = this.createWebSocket(url);
 
     listen({
       webSocket,
       onConnection: connection => {
         // create and start the language client
-        // const languageClient = this.createLanguageClient(connection);
-        // const disposable = languageClient.start();
         this.languageClient = this.createLanguageClient(connection);
         const disposable = this.languageClient.start();
         connection.onClose(() => disposable.dispose());
@@ -93,5 +92,16 @@ export class SpringDslEditorService implements OnDestroy {
   private createUrl(path: string): string {
     const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
     return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
+  }
+
+  private createWebSocket(url: string): WebSocket {
+    return new ReconnectingWebSocket(url, undefined, {
+      maxReconnectionDelay: 10000,
+      minReconnectionDelay: 1000,
+      reconnectionDelayGrowFactor: 1.3,
+      connectionTimeout: 10000,
+      maxRetries: Infinity,
+      debug: false
+    });
   }
 }
