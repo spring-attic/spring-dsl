@@ -360,6 +360,22 @@ project('spring-dsl-starter-lspserver') {
 	}
 }
 
+project('spring-dsl-starter-lspserver-reactive') {
+	description = "Spring Dsl Lsp Reactive Server Starter"
+	dependencies {
+		compile project(":spring-dsl-starter-lspserver")
+		compile project(":spring-dsl-websocket-reactive")
+	}
+}
+
+project('spring-dsl-starter-lspserver-servlet') {
+	description = "Spring Dsl Lsp Reactive Server Starter"
+	dependencies {
+		compile project(":spring-dsl-starter-lspserver")
+		compile project(":spring-dsl-websocket-servlet")
+	}
+}
+
 configure(rootProject) {
 	apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 	apply from: "${rootProject.projectDir}/publish-maven.gradle"

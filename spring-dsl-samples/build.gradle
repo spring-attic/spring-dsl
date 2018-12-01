@@ -87,10 +87,8 @@ project('spring-dsl-samples-simpledsleditor') {
 	description = 'Spring Dsl Simple Editor Sample'
 	
 	dependencies {
+		compile project(':spring-dsl-starter-lspserver-reactive')
 		compile project(':spring-dsl-samples-common')
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket-reactive')
-		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
 		testCompile 'junit:junit'
@@ -138,8 +136,7 @@ project('spring-dsl-samples-simpledslprocessserver') {
 	apply plugin: 'org.springframework.boot'
 	description = 'Spring Dsl Simple Lsp Process Server Sample'
 	dependencies {
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-starter-lspserver')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile 'org.springframework.boot:spring-boot-starter'
 		testCompile 'junit:junit'
@@ -152,8 +149,7 @@ project('spring-dsl-samples-wordcheckdslprocessserver') {
 	apply plugin: 'org.springframework.boot'
 	description = 'Spring Dsl Wordcheck Lsp Process Server Sample'
 	dependencies {
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-starter-lspserver')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
 		compile 'org.springframework.boot:spring-boot-starter'
 		testCompile 'junit:junit'
@@ -166,8 +162,7 @@ project('spring-dsl-samples-simpledslsocketserver') {
 	apply plugin: 'org.springframework.boot'
 	description = 'Spring Dsl Simple Lsp Socket Server Sample'
 	dependencies {
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-autoconfigure')
+		compile project(':spring-dsl-starter-lspserver')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile 'org.springframework.boot:spring-boot-starter'
 		testCompile 'junit:junit'
@@ -183,10 +178,8 @@ project('spring-dsl-samples-wordcheckdsleditor') {
 	description = 'Spring Dsl Wordcheck Editor Reactive Sample'
 	
 	dependencies {
+		compile project(':spring-dsl-starter-lspserver-reactive')
 		compile project(':spring-dsl-samples-common')
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket-reactive')
-		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
 		testCompile 'junit:junit'
@@ -237,10 +230,8 @@ project('spring-dsl-samples-wordcheckdsleditorservlet') {
 	description = 'Spring Dsl Wordcheck Editor Servlet Sample'
 	
 	dependencies {
+		compile project(':spring-dsl-starter-lspserver-servlet')
 		compile project(':spring-dsl-samples-common')
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket-servlet')
-		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
 		testCompile 'junit:junit'
@@ -291,10 +282,8 @@ project('spring-dsl-samples-showcaseeditor') {
 	description = 'Spring Dsl Showcase Editor Sample'
 	
 	dependencies {
+		compile project(':spring-dsl-starter-lspserver-reactive')
 		compile project(':spring-dsl-samples-common')
-		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket-reactive')
-		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-showcase')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
 		testCompile 'junit:junit'
