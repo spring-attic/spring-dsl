@@ -17,7 +17,7 @@ package org.springframework.dsl.lsp.server.websocket.servlet;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.config.DslProperties;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -34,10 +34,10 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Import(LspServletWebSocketHandlerConfig.class)
 public class LspServletWebSocketConfig implements WebSocketConfigurer {
 
-	private final DslConfigurationProperties properties;
+	private final DslProperties properties;
 	private final WebSocketHandler lspServletWebSocketHandler;
 
-	public LspServletWebSocketConfig(DslConfigurationProperties properties,
+	public LspServletWebSocketConfig(DslProperties properties,
 			WebSocketHandler lspServletWebSocketHandler) {
 		this.properties = properties;
 		this.lspServletWebSocketHandler = lspServletWebSocketHandler;

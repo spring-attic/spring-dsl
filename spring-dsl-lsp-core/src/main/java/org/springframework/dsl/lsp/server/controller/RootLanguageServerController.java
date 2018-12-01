@@ -30,7 +30,7 @@ import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspSystemConstants;
 import org.springframework.dsl.lsp.LspVersionDetector;
 import org.springframework.dsl.lsp.LspVersionDetector.LspVersion;
-import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.config.DslProperties;
 import org.springframework.dsl.lsp.server.jsonrpc.LspSessionState;
 import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.dsl.service.DefaultDocumentStateTracker;
@@ -52,7 +52,7 @@ public class RootLanguageServerController {
 	private static final Logger log = LoggerFactory.getLogger(RootLanguageServerController.class);
 	private final DslServiceRegistry registry;
 	private LspExiter lspExiter = LspExiter.NOOP_LSPEXITER;
-	private DslConfigurationProperties properties;
+	private DslProperties properties;
 
 	/**
 	 * Instantiate a base language server controller.
@@ -60,7 +60,7 @@ public class RootLanguageServerController {
 	 * @param dslServiceRegistry the dsl service registry
 	 * @param properties the properties
 	 */
-	public RootLanguageServerController(DslServiceRegistry dslServiceRegistry, DslConfigurationProperties properties) {
+	public RootLanguageServerController(DslServiceRegistry dslServiceRegistry, DslProperties properties) {
 		this.registry = dslServiceRegistry;
 		this.properties = properties;
 	}

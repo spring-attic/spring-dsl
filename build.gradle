@@ -152,11 +152,9 @@ project('spring-dsl-lsp-core') {
 		compile project(':spring-dsl-jsonrpc')
 		testCompile project(':spring-dsl-jsonrpc').sourceSets.test.output
 		compile 'org.springframework:spring-messaging'
-		compile 'org.springframework.boot:spring-boot-starter'
 		compile 'io.projectreactor:reactor-core'
 		compile 'io.projectreactor.netty:reactor-netty'
 		compile 'org.javolution:javolution-core-java'
-		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		optional 'com.google.code.gson:gson'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 		testCompile 'com.jayway.jsonpath:json-path'
@@ -254,8 +252,8 @@ project('spring-dsl-autoconfigure') {
 		optional project(':spring-dsl-antlr')
 		optional project(':spring-dsl-websocket-reactive')
 		optional project(':spring-dsl-websocket-servlet')
-		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		compile 'org.springframework.boot:spring-boot-autoconfigure'
+		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 }

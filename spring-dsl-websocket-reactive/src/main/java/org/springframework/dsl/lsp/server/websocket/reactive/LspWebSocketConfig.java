@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
-import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
+import org.springframework.dsl.lsp.server.config.DslProperties;
 import org.springframework.dsl.lsp.server.jsonrpc.RpcHandler;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
@@ -41,9 +41,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class LspWebSocketConfig {
 
-	private DslConfigurationProperties properties;
+	private DslProperties properties;
 
-	public LspWebSocketConfig(DslConfigurationProperties properties) {
+	public LspWebSocketConfig(DslProperties properties) {
 		this.properties = properties;
 	}
 

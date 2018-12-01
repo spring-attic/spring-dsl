@@ -44,8 +44,8 @@ import org.springframework.dsl.jsonrpc.annotation.JsonRpcRequestMapping;
 import org.springframework.dsl.jsonrpc.annotation.JsonRpcResponseResult;
 import org.springframework.dsl.jsonrpc.session.JsonRpcSession;
 import org.springframework.dsl.lsp.LspSystemConstants;
-import org.springframework.dsl.lsp.server.config.DslConfigurationProperties;
-import org.springframework.dsl.lsp.server.config.DslConfigurationProperties.DocumentSymbolPrefer;
+import org.springframework.dsl.lsp.server.config.DslProperties;
+import org.springframework.dsl.lsp.server.config.DslProperties.DocumentSymbolPrefer;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslServiceRegistry;
@@ -69,7 +69,7 @@ public class TextDocumentLanguageServerController {
 
 	private static final Logger log = LoggerFactory.getLogger(TextDocumentLanguageServerController.class);
 	private DslServiceRegistry registry;
-	private DslConfigurationProperties properties;
+	private DslProperties properties;
 
 	/**
 	 * Instantiates a new text document language server controller.
@@ -78,7 +78,7 @@ public class TextDocumentLanguageServerController {
 	 * @param properties the properties
 	 */
 	public TextDocumentLanguageServerController(DslServiceRegistry dslServiceRegistry,
-			DslConfigurationProperties properties) {
+			DslProperties properties) {
 		Assert.notNull(dslServiceRegistry, "dslServiceRegistry must be set");
 		Assert.notNull(properties, "properties must be set");
 		this.registry = dslServiceRegistry;

@@ -15,16 +15,13 @@
  */
 package org.springframework.dsl.lsp.server.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
- * {@link ConfigurationProperties} for settings under {@code spring.dsl}.
+ * Generic properties for dsl.
  *
  * @author Janne Valkealahti
  *
  */
-@ConfigurationProperties(prefix = "spring.dsl")
-public class DslConfigurationProperties {
+public class DslProperties {
 
 	private LspProperties lsp = new LspProperties();
 
