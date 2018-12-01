@@ -89,7 +89,7 @@ project('spring-dsl-samples-simpledsleditor') {
 	dependencies {
 		compile project(':spring-dsl-samples-common')
 		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket')
+		compile project(':spring-dsl-websocket-reactive')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-simpledsl')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
@@ -185,7 +185,7 @@ project('spring-dsl-samples-wordcheckdsleditor') {
 	dependencies {
 		compile project(':spring-dsl-samples-common')
 		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket')
+		compile project(':spring-dsl-websocket-reactive')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-wordcheckdsl')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')
@@ -293,7 +293,7 @@ project('spring-dsl-samples-showcaseeditor') {
 	dependencies {
 		compile project(':spring-dsl-samples-common')
 		compile project(':spring-dsl-lsp-core')
-		compile project(':spring-dsl-websocket')
+		compile project(':spring-dsl-websocket-reactive')
 		compile project(':spring-dsl-autoconfigure')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-showcase')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')

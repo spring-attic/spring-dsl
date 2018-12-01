@@ -177,8 +177,8 @@ project('spring-dsl-jsonrpc') {
 	}
 }
 
-project('spring-dsl-websocket') {
-	description = "Spring Dsl Websocket"
+project('spring-dsl-websocket-reactive') {
+	description = "Spring Dsl Websocket Reactive"
 
 	dependencies {
 		compile project(':spring-dsl-lsp-core')
@@ -249,7 +249,7 @@ project('spring-dsl-autoconfigure') {
 		optional project(':spring-dsl-jsonrpc')
 		optional project(':spring-dsl-lsp-core')
 		optional project(':spring-dsl-antlr')
-		optional project(':spring-dsl-websocket')
+		optional project(':spring-dsl-websocket-reactive')
 		optional project(':spring-dsl-websocket-servlet')
 		optional 'org.springframework.boot:spring-boot-configuration-processor'
 		compile 'org.springframework.boot:spring-boot-autoconfigure'

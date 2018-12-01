@@ -30,7 +30,7 @@ import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
 import org.springframework.dsl.lsp.server.support.JvmLspExiter;
 import org.springframework.dsl.lsp.server.support.LspExiter;
-import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
+import org.springframework.dsl.lsp.server.websocket.reactive.LspWebSocketConfig;
 import org.springframework.dsl.lsp.server.websocket.servlet.LspServletWebSocketConfig;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
