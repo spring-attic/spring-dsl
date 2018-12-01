@@ -8,6 +8,9 @@ buildscript {
 		asciidoctorVersion = '1.5.3'
 		javolutionVersion = '6.0.0'
 		findBugsVersion = '3.0.2'
+		nodeVersion = '8.11.3'
+		npmVersion = '5.7.0'
+		asciidoctorjVersion = '1.5.2'
 	}
 	repositories {
 		mavenCentral()
@@ -363,7 +366,7 @@ configure(rootProject) {
 	configurations.archives.artifacts.clear()
 
 	asciidoctorj {
-		version = '1.5.2'
+		version = "${asciidoctorjVersion}"
 	}
 
 	asciidoctor {
