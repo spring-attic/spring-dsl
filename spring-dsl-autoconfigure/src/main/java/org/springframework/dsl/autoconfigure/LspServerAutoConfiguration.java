@@ -31,6 +31,7 @@ import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
 import org.springframework.dsl.lsp.server.support.JvmLspExiter;
 import org.springframework.dsl.lsp.server.support.LspExiter;
 import org.springframework.dsl.lsp.server.websocket.LspWebSocketConfig;
+import org.springframework.dsl.lsp.server.websocket.servlet.LspServletWebSocketConfig;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
 /**
@@ -62,6 +63,13 @@ public class LspServerAutoConfiguration {
 	@Configuration
 	@Import({ LspWebSocketConfig.class })
 	public static class LspServerWebsocketConfig {
+	}
+
+	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "WEBSOCKET")
+	@ConditionalOnClass(value = LspServletWebSocketConfig.class)
+	@Configuration
+	@Import({ LspServletWebSocketConfig.class })
+	public static class LspServerWebsocketServletConfig {
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "PROCESS")

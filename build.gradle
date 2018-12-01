@@ -131,7 +131,6 @@ project('spring-dsl-core') {
 
 	dependencies {
 		compile 'org.springframework:spring-context'
-		//compile 'org.springframework:spring-web'
 		compile 'org.slf4j:slf4j-api'
 		compile 'io.projectreactor:reactor-core'
 		compile 'org.javolution:javolution-core-java'
@@ -162,17 +161,18 @@ project('spring-dsl-lsp-core') {
 	}
 }
 
-project('spring-dsl-autoconfigure') {
-	description = "Spring Dsl Autoconfigure"
+project('spring-dsl-jsonrpc') {
+	description = "Spring Dsl JSON RPC"
 
 	dependencies {
-		compile project(':spring-dsl-core')
-		optional project(':spring-dsl-jsonrpc')
-		optional project(':spring-dsl-lsp-core')
-		optional project(':spring-dsl-antlr')
-		optional project(':spring-dsl-websocket')
-		optional 'org.springframework.boot:spring-boot-configuration-processor'
-		compile 'org.springframework.boot:spring-boot-autoconfigure'
+		compile 'org.springframework.boot:spring-boot-starter'
+		compile 'io.projectreactor:reactor-core'
+		compile 'com.fasterxml.jackson.core:jackson-core'
+		compile 'com.fasterxml.jackson.core:jackson-databind'
+		optional 'com.google.code.findbugs:jsr305'
+		testCompile 'org.hamcrest:hamcrest-core'
+		testCompile 'org.hamcrest:hamcrest-library'
+		testCompile 'junit:junit'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 }
@@ -183,6 +183,15 @@ project('spring-dsl-websocket') {
 	dependencies {
 		compile project(':spring-dsl-lsp-core')
 		compile 'org.springframework.boot:spring-boot-starter-webflux'
+	}
+}
+
+project('spring-dsl-websocket-servlet') {
+	description = "Spring Dsl Websocket Servlet"
+
+	dependencies {
+		compile project(':spring-dsl-lsp-core')
+		compile 'org.springframework.boot:spring-boot-starter-websocket'
 	}
 }
 
@@ -232,18 +241,18 @@ project('spring-dsl-symboltable') {
 	}
 }
 
-project('spring-dsl-jsonrpc') {
-	description = "Spring Dsl JSON RPC"
+project('spring-dsl-autoconfigure') {
+	description = "Spring Dsl Autoconfigure"
 
 	dependencies {
-		compile 'org.springframework.boot:spring-boot-starter'
-		compile 'io.projectreactor:reactor-core'
-		compile 'com.fasterxml.jackson.core:jackson-core'
-		compile 'com.fasterxml.jackson.core:jackson-databind'
-		optional 'com.google.code.findbugs:jsr305'
-		testCompile 'org.hamcrest:hamcrest-core'
-		testCompile 'org.hamcrest:hamcrest-library'
-		testCompile 'junit:junit'
+		compile project(':spring-dsl-core')
+		optional project(':spring-dsl-jsonrpc')
+		optional project(':spring-dsl-lsp-core')
+		optional project(':spring-dsl-antlr')
+		optional project(':spring-dsl-websocket')
+		optional project(':spring-dsl-websocket-servlet')
+		optional 'org.springframework.boot:spring-boot-configuration-processor'
+		compile 'org.springframework.boot:spring-boot-autoconfigure'
 		testCompile 'org.springframework.boot:spring-boot-starter-test'
 	}
 }
@@ -347,7 +356,6 @@ project('spring-dsl-starter-lspserver') {
 		}
 	}
 }
-
 
 configure(rootProject) {
 	apply plugin: 'org.asciidoctor.gradle.asciidoctor'
