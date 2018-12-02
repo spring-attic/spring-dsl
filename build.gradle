@@ -8,8 +8,8 @@ buildscript {
 		asciidoctorVersion = '1.5.3'
 		javolutionVersion = '6.0.0'
 		findBugsVersion = '3.0.2'
-		nodeVersion = '8.14.0'
-		npmVersion = '5.8.0'
+		mooworkNodeVersion = '8.14.0'
+		mooworkNpmVersion = '5.8.0'
 		asciidoctorjVersion = '1.5.2'
 	}
 	repositories {
