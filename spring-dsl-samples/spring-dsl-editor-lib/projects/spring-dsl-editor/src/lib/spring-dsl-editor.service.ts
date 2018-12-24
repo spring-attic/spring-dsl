@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { Observable, Subject } from "rxjs";
 import { BaseLanguageClient, CloseAction, createConnection, ErrorAction, MonacoLanguageClient,
   MonacoServices} from 'monaco-languageclient';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
@@ -28,18 +29,22 @@ const ReconnectingWebSocket = require('reconnecting-websocket');
  * @author Janne Valkealahti
  */
 @Injectable()
-export class SpringDslEditorService implements OnDestroy {
+export class SpringDslEditorService {
 
   private initialised: boolean;
   private editorConfig: SpringDslEditorConfig;
   private languageClient: BaseLanguageClient;
+  private saveRequestSource = new Subject<string>();
+
+  public saveRequests: Observable<string> = this.saveRequestSource.asObservable();
 
   constructor(@Inject(SPRING_DSL_EDITOR_CONFIG) editorConfig: SpringDslEditorConfig) {
     this.initialised = false;
     this.editorConfig = editorConfig;
   }
 
-  ngOnDestroy() {
+  public saveRequest(uri: string) {
+    this.saveRequestSource.next(uri);
   }
 
   public getLanguageClient(): BaseLanguageClient {

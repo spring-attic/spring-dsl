@@ -15,6 +15,11 @@
  */
 import { Injectable } from '@angular/core';
 
+/**
+ * Abstract interface defining monaco editor service.
+ *
+ * @author Janne Valkealahti
+ */
 export abstract class MonacoEditorService {
 
     abstract create(domElement: HTMLElement,
@@ -23,6 +28,11 @@ export abstract class MonacoEditorService {
 
 }
 
+/**
+ * Default implementation of a MonacoEditorService.
+ *
+ * @author Janne Valkealahti
+ */
 @Injectable()
 export class DefaultMonacoEditorService extends MonacoEditorService {
 

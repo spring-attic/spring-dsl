@@ -31,10 +31,6 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
   @Output()
   public editorChange = new EventEmitter<any>();
 
-  protected windowResizeSubscription: Subscription;
-  protected editor: any;
-  private editorOptions: any;
-
   @Input('options')
   set options(options: any) {
     this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
@@ -48,7 +44,15 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
     return this.editorOptions;
   }
 
-  constructor(private config: SpringMonacoEditorConfig, private monacoLoaderService: MonacoLoaderService) {
+  private windowResizeSubscription: Subscription;
+  private editor: any;
+  private editorOptions: any;
+  private config: SpringMonacoEditorConfig;
+  private monacoLoaderService: MonacoLoaderService
+
+  constructor(config: SpringMonacoEditorConfig, monacoLoaderService: MonacoLoaderService) {
+    this.config = config;
+    this.monacoLoaderService = monacoLoaderService;
   }
 
   ngAfterViewInit(): void {
@@ -62,10 +66,32 @@ export abstract class BaseEditor implements AfterViewInit, OnDestroy {
       this.windowResizeSubscription.unsubscribe();
     }
     if (this.editor) {
+      this.editor.getModel().dispose();
       this.editor.dispose();
       this.editor = undefined;
     }
   }
 
+  /**
+   * Called to initialize a monaco editor.
+   *
+   * @param options
+   */
   protected abstract initMonaco(options: any): void;
+
+  protected getWindowResizeSubscription(): Subscription {
+    return this.windowResizeSubscription;
+  }
+
+  protected setWindowResizeSubscription(subscription: Subscription): void {
+    this.windowResizeSubscription = subscription;
+  }
+
+  public getEditor(): any {
+    return this.editor;
+  }
+
+  protected setEditor(editor: any): void {
+    this.editor = editor;
+  }
 }

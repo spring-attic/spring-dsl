@@ -22,7 +22,12 @@ import { FormControl } from '@angular/forms';
  * @author Janne Valkealahti
  */
 export class TabInfo {
-  constructor(public name: string, public language: string) {}
+
+  // tab mat icon defaulting to close, can be changed to represent
+  // dirty state for whatever icon represent that.
+  public icon: string = 'close';
+
+  constructor(public name: string, public language: string, public uri: string) {}
 }
 
 /**
@@ -40,12 +45,26 @@ export class EditorTabGroupComponent {
   public tabs: TabInfo[] = [];
   public selected = new FormControl(0);
 
+  public onDirty(dirty: boolean, name: string) {
+    const index = this.findTabIndex(name);
+    if (index > -1) {
+      this.tabs[index].icon = dirty ? 'lens' : 'close';
+    }
+  }
+
+  public onMouseOver(over: boolean, name: string) {
+    const index = this.findTabIndex(name);
+    if (index > -1) {
+      this.tabs[index].icon = over ? 'close' : 'lens';
+    }
+  }
+
   public openTab(name: string, language?: string) {
     const index = this.findTabIndex(name);
     if (index > -1) {
       this.selected.setValue(index);
     } else {
-      this.tabs.push(new TabInfo(name, language));
+      this.tabs.push(new TabInfo(name, language, 'inmemory://' + name));
       this.selected.setValue(this.tabs.length - 1);
     }
   }

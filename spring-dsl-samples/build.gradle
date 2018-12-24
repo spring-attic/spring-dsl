@@ -283,6 +283,7 @@ project('spring-dsl-samples-showcaseeditor') {
 	
 	dependencies {
 		compile project(':spring-dsl-starter-lspserver-reactive')
+		compile project(':spring-dsl-lsp-web')
 		compile project(':spring-dsl-samples-common')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-showcase')
 		compile project(':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib')

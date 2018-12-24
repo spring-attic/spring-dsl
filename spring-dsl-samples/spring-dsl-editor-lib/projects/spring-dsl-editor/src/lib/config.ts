@@ -16,8 +16,20 @@
 import { InjectionToken } from '@angular/core';
 import { DocumentSelector } from 'vscode-languageserver-protocol';
 
+/**
+ * Injection token identifier for SpringDslEditorConfig.
+ */
 export const SPRING_DSL_EDITOR_CONFIG = new InjectionToken('SPRING_DSL_EDITOR_CONFIG');
 
+/**
+ * Interface providing configuration for a SpringDslEditor features.
+ */
 export interface SpringDslEditorConfig {
   documentSelector?: DocumentSelector | string[];
+
+  /**
+   * Defines what Spring Dsl document service path is, defaults
+   * to '/document'.
+   */
+  documentServiceBasePath?: string;
 }

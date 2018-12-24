@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Component, OnInit, forwardRef, Inject, Input, NgZone, Optional} from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {Component, EventEmitter, forwardRef, Inject, NgZone, Optional, Output} from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent } from 'rxjs';
 import { BaseEditor } from './base-editor';
 import { SPRING_DSL_ACTION, SPRING_MONACO_EDITOR_CONFIG, SpringDslAction, SpringMonacoEditorConfig } from './config';
 import { MonacoLoaderService } from "./monaco-loader.service";
 import { MonacoEditorService } from "./monaco-editor.service";
-// import { SpringMonacoEditorModel } from './types';
 
 /**
  * Component handling low level integration with a monaco editor.
@@ -37,20 +36,13 @@ import { MonacoEditorService } from "./monaco-editor.service";
     multi: true
   }]
 })
-export class SpringMonacoEditorComponent extends BaseEditor implements ControlValueAccessor {
-  private _value: string = '';
+export class SpringMonacoEditorComponent extends BaseEditor {
 
   propagateChange = (_: any) => {};
   onTouched = () => {};
 
-  // @Input('model')
-  // set model(model: SpringMonacoEditorModel) {
-  //   this.options.model = model;
-  //   if (this.editor) {
-  //     this.editor.dispose();
-  //     this.initMonaco(this.options);
-  //   }
-  // }
+  @Output('editorDirty')
+  editorDirty = new EventEmitter<boolean>();
 
   constructor(private zone: NgZone,
               @Inject(SPRING_MONACO_EDITOR_CONFIG) private editorConfig: SpringMonacoEditorConfig,
@@ -60,62 +52,45 @@ export class SpringMonacoEditorComponent extends BaseEditor implements ControlVa
     super(editorConfig, monacoLoaderService);
   }
 
-  writeValue(value: any): void {
-    // this._value = value || '';
-    // // Fix for value change while dispose in process.
-    // setTimeout(() => {
-    //   if (this.editor && !this.options.model) {
-    //     this.editor.setValue(this._value);
-    //   }
-    // });
-  }
-
-  registerOnChange(fn: any): void {
+  public registerOnChange(fn: any): void {
     this.propagateChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  public registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
 
   protected initMonaco(options: any): void {
-
     const hasModel = !!options.model;
 
     if (hasModel) {
       options.model = monaco.editor.createModel(options.model.value, options.model.language, options.model.uri);
     }
-    // this.editor = monaco.editor.create(this.editorContainer.nativeElement, options);
-    this.editor = this.monacoEditorService.create(this.editorContainer.nativeElement, options);
-
+    this.setEditor(this.monacoEditorService.create(this.editorContainer.nativeElement, options));
 
     if (this.actions) {
       this.actions.forEach( (action) => {
-        this.editor.addAction(action);
+        this.getEditor().addAction(action);
       });
     }
 
-    if (!hasModel) {
-      this.editor.setValue(this._value);
-    }
-
-    this.editor.onDidChangeModelContent((e: any) => {
-      const value = this.editor.getValue();
+    this.getEditor().onDidChangeModelContent((e: any) => {
+      const value = this.getEditor().getValue();
       this.propagateChange(value);
+      this.editorDirty.emit(true);
       // value is not propagated to parent when executing outside zone.
-      this.zone.run(() => this._value = value);
+      // this.zone.run(() => this._value = value);
     });
 
-    this.editor.onDidBlurEditor((e: any) => {
+    this.getEditor().onDidBlurEditor((e: any) => {
       this.onTouched();
     });
 
     // refresh layout on resize event.
-    if (this.windowResizeSubscription) {
-      this.windowResizeSubscription.unsubscribe();
+    if (this.getWindowResizeSubscription()) {
+      this.getWindowResizeSubscription().unsubscribe();
     }
-    this.windowResizeSubscription = fromEvent(window, 'resize').subscribe(() => this.editor.layout());
-    this.editorChange.emit(this.editor);
+    this.setWindowResizeSubscription(fromEvent(window, 'resize').subscribe(() => this.getEditor().layout()));
+    this.editorChange.emit(this.getEditor());
   }
-
 }

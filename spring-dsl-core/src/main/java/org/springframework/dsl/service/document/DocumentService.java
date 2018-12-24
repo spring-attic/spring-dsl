@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TestBed, inject } from '@angular/core/testing';
+package org.springframework.dsl.service.document;
 
-import { MonacoEditorService } from './monaco-editor.service';
+/**
+ * Interface providing service handling document uris for get and save
+ * operations.
+ *
+ * @author Janne Valkealahti
+ *
+ */
+public interface DocumentService {
 
-describe('MonacoEditorService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        MonacoEditorService
-      ]
-    });
-  });
+	/**
+	 * Gets the content of a document.
+	 *
+	 * @param uri the uri
+	 * @return the content
+	 */
+	String get(String uri);
 
-  it('should be created', inject([MonacoEditorService], (service: MonacoEditorService) => {
-    expect(service).toBeTruthy();
-  }));
-});
+	/**
+	 * Save the content of a document.
+	 *
+	 * @param uri the uri
+	 * @param document the document
+	 */
+	void save(String uri, String document);
+}

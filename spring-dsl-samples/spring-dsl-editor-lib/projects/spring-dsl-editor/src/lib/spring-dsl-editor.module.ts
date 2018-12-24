@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 import { ModuleWithProviders, NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SpringDslEditorComponent } from './spring-dsl-editor.component';
 import { SpringMonacoEditorComponent } from './spring-monaco-editor/spring-monaco-editor.component';
 import { SpringDslEditorService } from './spring-dsl-editor.service';
+import { SpringDslDocumentService } from "./spring-dsl-document.service";
 import { SPRING_MONACO_EDITOR_CONFIG, SpringMonacoEditorConfig } from './spring-monaco-editor/config';
 import { SPRING_DSL_EDITOR_CONFIG, SpringDslEditorConfig } from './config';
 import { MonacoLoaderService } from "./spring-monaco-editor/monaco-loader.service";
@@ -30,7 +32,8 @@ import { DefaultMonacoEditorService, MonacoEditorService } from "./spring-monaco
  */
 @NgModule({
   imports: [
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   declarations: [
     SpringDslEditorComponent,
@@ -42,6 +45,7 @@ import { DefaultMonacoEditorService, MonacoEditorService } from "./spring-monaco
   ],
   providers: [
     SpringDslEditorService,
+    SpringDslDocumentService,
     MonacoLoaderService,
     { provide: MonacoEditorService, useClass: DefaultMonacoEditorService }
   ]

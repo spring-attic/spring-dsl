@@ -16,11 +16,17 @@
 package org.springframework.dsl.autoconfigure;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
 import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
+import org.springframework.dsl.lsp.web.DocumentController;
+import org.springframework.dsl.service.document.DefaultDocumentService;
+import org.springframework.dsl.service.document.DocumentService;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} configuring built-in
@@ -33,8 +39,22 @@ import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerC
 public class LanguageServerControllerAutoConfiguration {
 
 	@Configuration
+	@ConditionalOnClass({RootLanguageServerController.class})
 	@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server.language-services", name = "enabled", havingValue = "true", matchIfMissing = true)
 	public static class BuiltInControllerConfig {
+	}
+
+	@Configuration
+	@ConditionalOnClass({DocumentController.class})
+	@Import({DocumentController.class})
+	@ConditionalOnProperty(prefix = "spring.dsl.lsp.web.document-services", name = "enabled", havingValue = "true", matchIfMissing = true)
+	public static class DocumentControllerConfig {
+
+		@ConditionalOnMissingBean(DocumentService.class)
+		@Bean
+		public DocumentService lspDocumentService() {
+			return new DefaultDocumentService();
+		}
 	}
 }

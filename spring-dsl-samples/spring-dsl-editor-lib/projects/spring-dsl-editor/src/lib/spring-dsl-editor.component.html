@@ -1,4 +1,7 @@
 <div>
-  <!--<spring-monaco-editor [(ngModel)]="code" [options]="editorOptions" (editorChange)="initLanguageClient($event)"></spring-monaco-editor>-->
-  <spring-monaco-editor [options]="editorOptions" (editorChange)="initLanguageClient($event)"></spring-monaco-editor>
+  <spring-monaco-editor
+    [options]="editorOptions"
+    (editorDirty)="editorDirty.emit($event)"
+    (editorChange)="initLanguageClient($event)">
+  </spring-monaco-editor>
 </div>

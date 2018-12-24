@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "postinstall": "node ./node_modules/vscode/bin/install && node patch.js",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

@@ -5,10 +5,17 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "paths": {
+      "vscode": [ "node_modules/monaco-languageclient/lib/vscode-compatibility.js" ],
+      "net": [
+        "projects/spring-dsl-editor/src/empty.ts"
+      ]
+    }
   },
   "files": [
-    "src/test.ts"
+    "src/test.ts",
+    "src/empty.ts"
   ],
   "include": [
     "**/*.spec.ts",

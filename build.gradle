@@ -162,6 +162,18 @@ project('spring-dsl-lsp-core') {
 	}
 }
 
+project('spring-dsl-lsp-web') {
+	description = "Spring Dsl Lsp Web"
+
+	dependencies {
+		compile project(':spring-dsl-core')
+		compile 'org.springframework:spring-web'
+		testCompile 'org.springframework.boot:spring-boot-starter-test'
+		testCompile 'com.jayway.jsonpath:json-path'
+		testRuntime 'org.springframework.boot:spring-boot-starter'
+	}
+}
+
 project('spring-dsl-jsonrpc') {
 	description = "Spring Dsl JSON RPC"
 
@@ -249,6 +261,7 @@ project('spring-dsl-autoconfigure') {
 		compile project(':spring-dsl-core')
 		optional project(':spring-dsl-jsonrpc')
 		optional project(':spring-dsl-lsp-core')
+		optional project(':spring-dsl-lsp-web')
 		optional project(':spring-dsl-antlr')
 		optional project(':spring-dsl-websocket-reactive')
 		optional project(':spring-dsl-websocket-servlet')

@@ -76,9 +76,26 @@ export class Action4 extends SpringDslAction {
   };
 }
 
+@Injectable()
+export class Action5 extends SpringDslAction {
+
+  constructor(private editorService: SpringDslEditorService) {
+    super();
+  }
+
+  id = 'action5';
+  label = 'Save';
+  contextMenuGroupId = 'navigation';
+  run(editor: monaco.editor.ICodeEditor): void {
+    this.editorService.saveRequest(editor.getModel().uri.toString());
+    return null;
+  };
+}
+
 export const ACTIONS = [
   { provide: SPRING_DSL_ACTION, multi: true, useClass: Action1 },
   { provide: SPRING_DSL_ACTION, multi: true, useClass: Action2 },
   { provide: SPRING_DSL_ACTION, multi: true, useClass: Action3 },
-  { provide: SPRING_DSL_ACTION, multi: true, useClass: Action4 }
+  { provide: SPRING_DSL_ACTION, multi: true, useClass: Action4 },
+  { provide: SPRING_DSL_ACTION, multi: true, useClass: Action5 }
 ];
