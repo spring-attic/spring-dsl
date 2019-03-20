@@ -1,6 +1,6 @@
 SPRING DSL CHANGELOG
 ==========================
-http://spring.io/spring-dsl/
+https://spring.io/spring-dsl/
 
 Issues: https://github.com/spring-project/spring-dsl/issues
 
