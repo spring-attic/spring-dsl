@@ -15,8 +15,8 @@
  */
 package org.springframework.dsl.docs;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 import org.springframework.dsl.service.reconcile.Reconciler;
@@ -29,7 +29,7 @@ public class ReconcileDocs {
 
 		@Override
 // tag::snippet1[]
-		Flux<ReconcileProblem> lint(Document document);
+		Flux<ReconcileProblem> lint(DslContext context);
 // end::snippet1[]
 	}
 
@@ -37,7 +37,7 @@ public class ReconcileDocs {
 
 		@Override
 // tag::snippet2[]
-		Flux<PublishDiagnosticsParams> reconcile(Document document);
+		Flux<PublishDiagnosticsParams> reconcile(DslContext context);
 // end::snippet2[]
 	}
 }

@@ -26,6 +26,7 @@ import org.springframework.dsl.antlr.support.DefaultAntlrParseService;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
@@ -47,7 +48,7 @@ public class AntlrLinterTests {
 		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
 
 		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
-		Flux<ReconcileProblem> lint = linter.lint(document);
+		Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).isEmpty();
 	}
@@ -62,7 +63,7 @@ public class AntlrLinterTests {
 
 		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
 
-		Flux<ReconcileProblem> lint = linter.lint(document);
+		Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).hasSize(1);
 		assertThat(lints.get(0).getMessage()).isEqualTo("missing '}' at 'state'");
@@ -79,7 +80,7 @@ public class AntlrLinterTests {
 
 		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
 
-		Flux<ReconcileProblem> lint = linter.lint(document);
+		Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).hasSize(2);
 		// TODO: it sucks, antlr don't give correct end position, find if we can fix it
@@ -97,7 +98,7 @@ public class AntlrLinterTests {
 
 		Test2AntlrLinter linter = new Test2AntlrLinter(antlrParseService, antlrParseResultSupplier);
 
-		Flux<ReconcileProblem> lint = linter.lint(document);
+		Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 		List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 		assertThat(lints).hasSize(1);
 		assertThat(lints.get(0).getRange()).isEqualTo(Range.from(0, 0, 0, 0));

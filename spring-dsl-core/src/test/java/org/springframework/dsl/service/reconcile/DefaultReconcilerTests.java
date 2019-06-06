@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 
@@ -48,7 +48,7 @@ public class DefaultReconcilerTests {
 			}
 
 			@Override
-			public Flux<ReconcileProblem> lint(Document document) {
+			public Flux<ReconcileProblem> lint(DslContext context) {
 				return Flux.just(new ReconcileProblem() {
 
 					@Override
@@ -71,7 +71,7 @@ public class DefaultReconcilerTests {
 
 		DefaultReconciler reconciler = new DefaultReconciler(Arrays.asList(linter));
 		TextDocument document = new TextDocument("", LanguageId.TXT, 0, "");
-		Flux<PublishDiagnosticsParams> reconcile = reconciler.reconcile(document);
+		Flux<PublishDiagnosticsParams> reconcile = reconciler.reconcile(DslContext.builder().document(document).build());
 		assertThat(reconcile).isNotNull();
 		List<PublishDiagnosticsParams> lints = reconcile.toStream().collect(Collectors.toList());
 		assertThat(lints).hasSize(1);

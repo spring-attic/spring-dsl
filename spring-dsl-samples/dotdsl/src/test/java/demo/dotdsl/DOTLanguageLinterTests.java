@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.springframework.boot.context.annotation.UserConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 import reactor.core.publisher.Flux;
@@ -50,7 +51,7 @@ public class DOTLanguageLinterTests {
 			.run((context) -> {
 				DOTLanguageLinter linter = context.getBean(DOTLanguageLinter.class);
 				TextDocument document = new TextDocument("", DOTLanguageConfiguration.LANGUAGEID, 0, "graph xxx {}");
-				Flux<ReconcileProblem> lint = linter.lint(document);
+				Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 				List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 				assertThat(lints).isEmpty();
 			});
@@ -59,7 +60,7 @@ public class DOTLanguageLinterTests {
 			.run((context) -> {
 				DOTLanguageLinter linter = context.getBean(DOTLanguageLinter.class);
 				TextDocument document = new TextDocument("", DOTLanguageConfiguration.LANGUAGEID, 0, "");
-				Flux<ReconcileProblem> lint = linter.lint(document);
+				Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 				List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 				assertThat(lints).hasSize(1);
 				assertThat(lints.get(0).getMessage()).contains("expecting", "GRAPH", "DIGRAPH");
@@ -69,7 +70,7 @@ public class DOTLanguageLinterTests {
 			.run((context) -> {
 				DOTLanguageLinter linter = context.getBean(DOTLanguageLinter.class);
 				TextDocument document = new TextDocument("", DOTLanguageConfiguration.LANGUAGEID, 0, "xxx");
-				Flux<ReconcileProblem> lint = linter.lint(document);
+				Flux<ReconcileProblem> lint = linter.lint(DslContext.builder().document(document).build());
 				List<ReconcileProblem> lints = lint.toStream().collect(Collectors.toList());
 				assertThat(lints).hasSize(1);
 				assertThat(lints.get(0).getMessage()).contains("expecting", "GRAPH", "DIGRAPH");

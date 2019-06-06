@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 package org.springframework.dsl.service.reconcile;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.DslService;
 
 import reactor.core.publisher.Flux;
 
 /**
- * Strategy interface for linting a {@link Document}.
+ * Strategy interface for linting a {@link Document} from a {@link DslContext}.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
@@ -30,10 +31,10 @@ import reactor.core.publisher.Flux;
 public interface Linter extends DslService {
 
 	/**
-	 * Reconcile a {@link Document}.
+	 * Reconcile a document from a context.
 	 *
-	 * @param document the document to reconcile
+	 * @param context the dsl context
 	 * @return a {@link Flux} of {@link ReconcileProblem}s
 	 */
-	Flux<ReconcileProblem> lint(Document document);
+	Flux<ReconcileProblem> lint(DslContext context);
 }

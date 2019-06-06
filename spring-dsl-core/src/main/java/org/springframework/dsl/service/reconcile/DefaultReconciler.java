@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.AbstractDslService;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -58,13 +59,15 @@ public class DefaultReconciler extends AbstractDslService implements Reconciler 
 	}
 
 	@Override
-	public Flux<PublishDiagnosticsParams> reconcile(Document document) {
+	public Flux<PublishDiagnosticsParams> reconcile(DslContext context) {
+		// TODO: handle null document
+		Document document = context.getDocument();
 		log.debug("Reconciling {}", document);
 
 		return Flux.fromIterable(linters)
 			.filter(linter -> linter.getSupportedLanguageIds().contains(document.languageId()))
 			.map(linter -> {
-				return linter.lint(document);
+				return linter.lint(context);
 			})
 			.flatMap(r -> r)
 			.filter(p -> getDiagnosticSeverity(p) != null)

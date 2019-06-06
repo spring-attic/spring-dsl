@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +50,7 @@ import org.springframework.dsl.lsp.server.config.DslProperties;
 import org.springframework.dsl.lsp.server.config.DslProperties.DocumentSymbolPrefer;
 import org.springframework.dsl.service.Completioner;
 import org.springframework.dsl.service.DocumentStateTracker;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.DslServiceRegistry;
 import org.springframework.dsl.service.Hoverer;
 import org.springframework.dsl.service.reconcile.Reconciler;
@@ -101,11 +104,15 @@ public class TextDocumentLanguageServerController {
 		log.debug("clientDocumentOpened {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didOpen(params))
-				.flatMap(document -> Flux.fromIterable(registry.getReconcilers())
+				.map(document -> DslContext.builder()
+					.document(document)
+					.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session)
+					.build())
+				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
 					.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
-						.anyMatch(l -> l.isCompatibleWith(document.languageId()))
+						.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId()))
 					)
-					.flatMap(reconciler -> reconciler.reconcile(document))
+					.flatMap(reconciler -> reconciler.reconcile(context))
 				)
 				.reduce((l, r) -> {
 					l.setDiagnostics(
@@ -130,11 +137,15 @@ public class TextDocumentLanguageServerController {
 		log.debug("clientDocumentChanged {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didChange(params))
-				.flatMap(document -> Flux.fromIterable(registry.getReconcilers())
+				.map(document -> DslContext.builder()
+					.document(document)
+					.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session)
+					.build())
+				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
 					.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
-						.anyMatch(l -> l.isCompatibleWith(document.languageId()))
+						.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId()))
 					)
-					.flatMap(reconciler -> reconciler.reconcile(document))
+					.flatMap(reconciler -> reconciler.reconcile(context))
 				)
 				.reduce((l, r) -> {
 					l.setDiagnostics(
@@ -222,12 +233,13 @@ public class TextDocumentLanguageServerController {
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
+		DslContext context = DslContext.builder().document(document).build();
 
 		return Flux.fromIterable(registry.getHoverers())
 			.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
 					.anyMatch(l -> l.isCompatibleWith(document.languageId())))
 			.next()
-			.flatMap(hoverer -> hoverer.hover(document, position));
+			.flatMap(hoverer -> hoverer.hover(context, position));
 	}
 
 	/**
@@ -310,9 +322,10 @@ public class TextDocumentLanguageServerController {
 		log.debug("rename {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+		DslContext context = DslContext.builder().document(document).build();
 
 		return Flux.fromIterable(registry.getRenamers(document.languageId()))
-				.concatMap(renamer -> renamer.rename(document, params.getPosition(), params.getNewName()))
+				.concatMap(renamer -> renamer.rename(context, params.getPosition(), params.getNewName()))
 				.next();
 	}
 

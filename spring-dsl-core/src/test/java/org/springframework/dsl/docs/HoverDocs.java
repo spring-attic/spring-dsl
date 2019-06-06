@@ -15,9 +15,9 @@
  */
 package org.springframework.dsl.docs;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.Hoverer;
 
 import reactor.core.publisher.Mono;
@@ -28,7 +28,7 @@ public class HoverDocs {
 
 		@Override
 // tag::snippet1[]
-		Mono<Hover> hover(Document document, Position position);
+		Mono<Hover> hover(DslContext context, Position position);
 // end::snippet1[]
 	}
 

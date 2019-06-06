@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.WorkspaceEdit;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 /**
  * Tests for {@link WordcheckLanguageRenamer}.
@@ -41,7 +42,8 @@ public class WordcheckLanguageRenamerTests {
 		WordcheckLanguageRenamer renamer = new WordcheckLanguageRenamer(symbolizer);
 		renamer.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
-		WorkspaceEdit workspaceEdit = renamer.rename(document, Position.from(0, 0), "xxx").block();
+		WorkspaceEdit workspaceEdit = renamer
+				.rename(DslContext.builder().document(document).build(), Position.from(0, 0), "xxx").block();
 		WorkspaceEdit expect = WorkspaceEdit.workspaceEdit()
 			.changes("fakeuri")
 				.newText("xxx")
@@ -65,7 +67,8 @@ public class WordcheckLanguageRenamerTests {
 		WordcheckLanguageRenamer renamer = new WordcheckLanguageRenamer(symbolizer);
 		renamer.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
-		WorkspaceEdit workspaceEdit = renamer.rename(document, Position.from(0, 6), "xxx").block();
+		WorkspaceEdit workspaceEdit = renamer
+				.rename(DslContext.builder().document(document).build(), Position.from(0, 6), "xxx").block();
 		WorkspaceEdit expect = WorkspaceEdit.workspaceEdit()
 			.changes("fakeuri")
 				.newText("xxx")

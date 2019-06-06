@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 package demo.wordcheckdsl;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.TextEdit;
 import org.springframework.dsl.domain.WorkspaceEdit;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.Renamer;
 import org.springframework.dsl.service.symbol.Symbolizer;
 import org.springframework.dsl.support.DslUtils;
@@ -48,8 +48,8 @@ public class WordcheckLanguageRenamer extends WordcheckLanguageSupport implement
 	}
 
 	@Override
-	public Mono<WorkspaceEdit> rename(Document document, Position position, String newName) {
-		Flux<DocumentSymbol> symbols = symbolizer.symbolize(document).documentSymbols();
+	public Mono<WorkspaceEdit> rename(DslContext context, Position position, String newName) {
+		Flux<DocumentSymbol> symbols = symbolizer.symbolize(context.getDocument()).documentSymbols();
 		Mono<DocumentSymbol> symbol = symbols
 			.filter(s -> DslUtils.isPositionInRange(position, s.getRange())).next();
 		return symbols
@@ -61,7 +61,7 @@ public class WordcheckLanguageRenamer extends WordcheckLanguageSupport implement
 			.collectList()
 			.map(list -> {
 				return WorkspaceEdit.workspaceEdit()
-					.changes(document.uri(), list)
+					.changes(context.getDocument().uri(), list)
 					.build();
 			});
 	}

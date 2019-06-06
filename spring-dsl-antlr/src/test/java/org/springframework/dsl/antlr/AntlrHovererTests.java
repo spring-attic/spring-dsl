@@ -25,6 +25,7 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Mono;
 
@@ -43,7 +44,7 @@ public class AntlrHovererTests {
 		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
 
 		Test2AntlrHoverer hoverer = new Test2AntlrHoverer(antlrParseService, antlrParseResultSupplier);
-		Mono<Hover> hover = hoverer.hover(document, new Position(0, 0));
+		Mono<Hover> hover = hoverer.hover(DslContext.builder().document(document).build(), new Position(0, 0));
 		Hover h = hover.block();
 		assertThat(h, notNullValue());
 		assertThat(h.getRange(), notNullValue());

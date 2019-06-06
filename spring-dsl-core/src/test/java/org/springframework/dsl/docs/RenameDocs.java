@@ -15,9 +15,9 @@
  */
 package org.springframework.dsl.docs;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.WorkspaceEdit;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.Renamer;
 
 import reactor.core.publisher.Mono;
@@ -28,7 +28,7 @@ public class RenameDocs {
 
 		@Override
 // tag::snippet1[]
-		Mono<WorkspaceEdit> rename(Document document, Position position, String newName);
+		Mono<WorkspaceEdit> rename(DslContext context, Position position, String newName);
 // end::snippet1[]
 	}
 }
