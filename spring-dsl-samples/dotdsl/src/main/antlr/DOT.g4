@@ -25,7 +25,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-/** Derived from http://www.graphviz.org/doc/info/lang.html.
+/** Derived from https://www.graphviz.org/doc/info/lang.html.
     Comments pulled from spec.
  */
 grammar DOT;

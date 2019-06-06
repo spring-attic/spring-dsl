@@ -1,6 +1,6 @@
 SPRING CLOUD DSL
 ------------------------
-http://spring.io/spring-dsl
+https://spring.io/spring-dsl
 
 1. INTRODUCTION
 
@@ -19,6 +19,6 @@ The Spring DSL jars files can be found in the 'dist' directory.
 4. GETTING STARTED
 
 Please see the reference documentation.
-Additionally the blog at http://blog.spring.io as well
+Additionally the blog at https://blog.spring.io as well
 as sections of interest in the reference documentation.
 
