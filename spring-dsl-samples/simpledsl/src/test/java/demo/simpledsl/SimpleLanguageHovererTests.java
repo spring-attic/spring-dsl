@@ -23,6 +23,7 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Mono;
 
@@ -40,7 +41,7 @@ public class SimpleLanguageHovererTests {
 	public void testHovers() {
 		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content1);
 
-		Mono<Hover> hover = hoverer.hover(document, new Position(0, 1));
+		Mono<Hover> hover = hoverer.hover(DslContext.builder().document(document).build(), new Position(0, 1));
 		assertThat(hover).isNotNull();
 		assertThat(hover.block()).isNotNull();
 		assertThat(hover.block().getContents()).isNotNull();
@@ -51,7 +52,7 @@ public class SimpleLanguageHovererTests {
 	public void testInvalidToken() {
 		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content8);
 
-		Mono<Hover> hover = hoverer.hover(document, new Position(0, 1));
+		Mono<Hover> hover = hoverer.hover(DslContext.builder().document(document).build(), new Position(0, 1));
 		assertThat(hover).isNotNull();
 		assertThat(hover.block()).isNull();
 	}

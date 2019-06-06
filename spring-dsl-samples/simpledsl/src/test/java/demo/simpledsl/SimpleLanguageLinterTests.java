@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 /**
@@ -39,23 +40,23 @@ public class SimpleLanguageLinterTests {
 	@Test
 	public void testLints() {
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content1);
-		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
+		List<ReconcileProblem> problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content2);
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content3);
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content4);
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content5);
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 		ReconcileProblem problem = problems.get(0);
 		assertThat(problem.getRange().getStart().getLine()).isEqualTo(0);
@@ -67,22 +68,22 @@ public class SimpleLanguageLinterTests {
 	@Test
 	public void testUnknownKeyType() {
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content8);
-		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
+		List<ReconcileProblem> problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 	}
 
 	@Test
 	public void testWrongValueType() {
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content7);
-		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
+		List<ReconcileProblem> problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content9);
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, SimpleLanguageTests.content10);
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.service;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 
@@ -34,9 +33,9 @@ public interface Hoverer extends DslService {
 	/**
 	 * Provide hover for a given position in a document.
 	 *
-	 * @param document the  document
+	 * @param context the dsl context
 	 * @param position the position in a document
 	 * @return a {@link Mono} completing as {@link Hover}
 	 */
-	Mono<Hover> hover(Document document, Position position);
+	Mono<Hover> hover(DslContext context, Position position);
 }

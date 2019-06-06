@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.springframework.dsl.service.reconcile;
 
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.DslService;
 
 import reactor.core.publisher.Flux;
@@ -38,8 +39,8 @@ public interface Reconciler extends DslService {
 	/**
 	 * Reconcile a {@link Document} and return {@link Mono} for completion.
 	 *
-	 * @param document the document
+	 * @param context the dsl context
 	 * @return a {@link Mono} indicating reconcile operation completion
 	 */
-	Flux<PublishDiagnosticsParams> reconcile(Document document);
+	Flux<PublishDiagnosticsParams> reconcile(DslContext context);
 }

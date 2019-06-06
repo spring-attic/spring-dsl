@@ -17,12 +17,12 @@ package demo.showcase;
 
 import java.util.Arrays;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.AbstractDslService;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.Hoverer;
 
 import reactor.core.publisher.Mono;
@@ -41,7 +41,7 @@ public class ShowcaseHoverer extends AbstractDslService implements Hoverer {
 	}
 
 	@Override
-	public Mono<Hover> hover(Document document, Position position) {
+	public Mono<Hover> hover(DslContext context, Position position) {
 		return Mono.defer(() ->
 			Mono.just(Hover.hover()
 				.contents()

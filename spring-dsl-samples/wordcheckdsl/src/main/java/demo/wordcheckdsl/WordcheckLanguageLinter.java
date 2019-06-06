@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package demo.wordcheckdsl;
 
 import java.util.regex.Pattern;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.DocumentRegion;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ProblemSeverity;
@@ -41,8 +41,8 @@ public class WordcheckLanguageLinter extends WordcheckLanguageSupport implements
 	private static final Pattern SPACE = Pattern.compile("[^\\w]+");
 
 	@Override
-	public Flux<ReconcileProblem> lint(Document document) {
-		return Flux.defer(() -> Flux.fromArray(new DocumentRegion(document).split(SPACE)))
+	public Flux<ReconcileProblem> lint(DslContext context) {
+		return Flux.defer(() -> Flux.fromArray(new DocumentRegion(context.getDocument()).split(SPACE)))
 				.filter(w -> w.length() > 0)
 				.filter(w -> !getProperties().getWords().contains(w.toString()))
 				.map(this::problem);

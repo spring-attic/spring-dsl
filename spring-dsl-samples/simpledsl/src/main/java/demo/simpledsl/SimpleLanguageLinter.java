@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.DefaultReconcileProblem;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ProblemSeverity;
@@ -39,9 +40,9 @@ import reactor.core.publisher.Flux;
 public class SimpleLanguageLinter extends SimpleLanguageDslService implements Linter {
 
 	@Override
-	public Flux<ReconcileProblem> lint(Document document) {
+	public Flux<ReconcileProblem> lint(DslContext context) {
 		return Flux.defer(() -> {
-			return Flux.fromIterable(lintProblems(document));
+			return Flux.fromIterable(lintProblems(context.getDocument()));
 		});
 	}
 

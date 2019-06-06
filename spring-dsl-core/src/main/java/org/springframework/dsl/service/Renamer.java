@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.service;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.WorkspaceEdit;
 
@@ -33,10 +32,10 @@ public interface Renamer extends DslService {
 	/**
 	 * Provide {@link WorkspaceEdit} for a given {@link Position} with a {@code newName}.
 	 *
-	 * @param document the  document
+	 * @param context the dsl context
 	 * @param position the position in a document
 	 * @param newName the new name
 	 * @return a {@link Mono} completing as {@link WorkspaceEdit}
 	 */
-	Mono<WorkspaceEdit> rename(Document document, Position position, String newName);
+	Mono<WorkspaceEdit> rename(DslContext context, Position position, String newName);
 }

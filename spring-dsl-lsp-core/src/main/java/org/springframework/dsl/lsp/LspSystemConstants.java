@@ -44,4 +44,9 @@ public abstract class LspSystemConstants {
 	 * Session attribute containing added lsp client
 	 */
 	public final static String SESSION_ATTRIBUTE_LSP_CLIENT = "lspClient";
+
+	/**
+	 * Context session attribute containing added json rpc session
+	 */
+	public final static String CONTEXT_SESSION_ATTRIBUTE = "jsonRpcSession";
 }

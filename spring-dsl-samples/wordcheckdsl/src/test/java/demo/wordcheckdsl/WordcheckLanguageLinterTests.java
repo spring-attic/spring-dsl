@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
 /**
@@ -41,23 +42,23 @@ public class WordcheckLanguageLinterTests {
 		linter.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "");
-		List<ReconcileProblem> problems = linter.lint(document).toStream().collect(Collectors.toList());
+		List<ReconcileProblem> problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).isEmpty();
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "xxx");
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(0);
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a xxx dull xxx boy");
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(2);
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy\nxxx\njack is a dull boy");
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(1);
 		ReconcileProblem problem = problems.get(0);
 		assertThat(problem.getRange().getStart().getLine()).isEqualTo(1);
@@ -66,7 +67,7 @@ public class WordcheckLanguageLinterTests {
 		assertThat(problem.getRange().getEnd().getCharacter()).isEqualTo(3);
 
 		document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack\nxxx\njack\nddd\njack");
-		problems = linter.lint(document).toStream().collect(Collectors.toList());
+		problems = linter.lint(DslContext.builder().document(document).build()).toStream().collect(Collectors.toList());
 		assertThat(problems).hasSize(2);
 		problem = problems.get(0);
 		assertThat(problem.getRange().getStart().getLine()).isEqualTo(1);

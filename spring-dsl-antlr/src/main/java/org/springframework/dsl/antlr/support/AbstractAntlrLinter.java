@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.springframework.dsl.antlr.AntlrParseResult;
 import org.springframework.dsl.antlr.AntlrParseService;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.reconcile.Linter;
 import org.springframework.dsl.service.reconcile.ReconcileProblem;
 
@@ -63,8 +64,8 @@ public abstract class AbstractAntlrLinter<T> extends AbstractAntlrDslService<T> 
 	}
 
 	@Override
-	public Flux<ReconcileProblem> lint(Document document) {
-		return getAntlrParseService().parse(document, getAntlrParseResultFunction())
+	public Flux<ReconcileProblem> lint(DslContext context) {
+		return getAntlrParseService().parse(context.getDocument(), getAntlrParseResultFunction())
 			.map(r -> r.getReconcileProblems())
 			.flatMapMany(r -> r.cache());
 	}
