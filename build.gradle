@@ -377,6 +377,22 @@ project('spring-dsl-starter-lspserver-reactive') {
 		compile project(":spring-dsl-starter-lspserver")
 		compile project(":spring-dsl-websocket-reactive")
 	}
+
+	install {
+		repositories.mavenInstaller {
+			pom.whenConfigured {
+				withXml {
+					asNode().children().first() + {
+						delegate.parent {
+							delegate.groupId('org.springframework.boot')
+							delegate.artifactId('spring-boot-starter-parent')
+							delegate.version("$springBootVersion")
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 project('spring-dsl-starter-lspserver-servlet') {
@@ -384,6 +400,22 @@ project('spring-dsl-starter-lspserver-servlet') {
 	dependencies {
 		compile project(":spring-dsl-starter-lspserver")
 		compile project(":spring-dsl-websocket-servlet")
+	}
+
+	install {
+		repositories.mavenInstaller {
+			pom.whenConfigured {
+				withXml {
+					asNode().children().first() + {
+						delegate.parent {
+							delegate.groupId('org.springframework.boot')
+							delegate.artifactId('spring-boot-starter-parent')
+							delegate.version("$springBootVersion")
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
