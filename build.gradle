@@ -460,7 +460,7 @@ configure(rootProject) {
 		options.author = true
 		options.header = rootProject.description
 		options.links(
-			'http://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
+			'https://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
 		)
 		options.addStringOption('Xdoclint:none', '-quiet')
 
