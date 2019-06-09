@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.domain;
 
+import org.springframework.dsl.domain.CodeLensOptions.CodeLensOptionsBuilder;
 import org.springframework.dsl.domain.CompletionOptions.CompletionOptionsBuilder;
 import org.springframework.dsl.domain.TextDocumentSyncOptions.TextDocumentSyncOptionsBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
@@ -40,6 +41,7 @@ public class ServerCapabilities {
 	private Boolean renameProvider;
 	private CompletionOptions completionProvider;
 	private Boolean documentSymbolProvider;
+	private CodeLensOptions codeLensProvider;
 
 	public ServerCapabilities() {
 	}
@@ -58,6 +60,14 @@ public class ServerCapabilities {
 
 	public void setTextDocumentSyncOptions(TextDocumentSyncOptions textDocumentSyncOptions) {
 		this.textDocumentSyncOptions = textDocumentSyncOptions;
+	}
+
+	public CodeLensOptions getCodeLensProvider() {
+		return codeLensProvider;
+	}
+
+	public void setCodeLensProvider(CodeLensOptions codeLensProvider) {
+		this.codeLensProvider = codeLensProvider;
 	}
 
 	public TextDocumentSyncKind getTextDocumentSyncKind() {
@@ -110,6 +120,7 @@ public class ServerCapabilities {
 		result = prime * result + ((renameProvider == null) ? 0 : renameProvider.hashCode());
 		result = prime * result + ((textDocumentSyncKind == null) ? 0 : textDocumentSyncKind.hashCode());
 		result = prime * result + ((textDocumentSyncOptions == null) ? 0 : textDocumentSyncOptions.hashCode());
+		result = prime * result + ((codeLensProvider == null) ? 0 : codeLensProvider.hashCode());
 		return result;
 	}
 
@@ -161,6 +172,13 @@ public class ServerCapabilities {
 				return false;
 			}
 		} else if (!textDocumentSyncOptions.equals(other.textDocumentSyncOptions)) {
+			return false;
+		}
+		if (codeLensProvider == null) {
+			if (other.codeLensProvider != null) {
+				return false;
+			}
+		} else if (!codeLensProvider.equals(other.codeLensProvider)) {
 			return false;
 		}
 		return true;
@@ -237,6 +255,24 @@ public class ServerCapabilities {
 		 * @return the builder for chaining
 		 */
 		CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider(boolean enabled);
+
+		/**
+		 * Gets a builder for a {@link CodeLensOptions}. Same as calling
+		 * {@link #codeLensProvider(boolean)} with {@code true}.
+		 *
+		 * @return the builder for chaining
+		 * @see #completionProvider(boolean)
+		 */
+		CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider();
+
+		/**
+		 * Gets a builder for a {@link CodeLensOptions}. Setting {@code enabled} to
+		 * {@code true} effectively disables builder.
+		 *
+		 * @param enabled the flag to disable whole builder
+		 * @return the builder for chaining
+		 */
+		CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider(boolean enabled);
 	}
 
 	/**
@@ -261,6 +297,7 @@ public class ServerCapabilities {
 		private Boolean renameProvider;
 		private Boolean documentSymbolProvider;
 		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
+		private CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider;
 
 		InternalServerCapabilitiesBuilder(P parent) {
 			super(parent);
@@ -321,6 +358,22 @@ public class ServerCapabilities {
 		}
 
 		@Override
+		public CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider() {
+			return codeLensProvider(true);
+		}
+
+		@Override
+		public CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider(boolean enabled) {
+			if (enabled) {
+				this.codeLensProvider = CodeLensOptions.codeLensOptions(this);
+				this.codeLensProvider.resolveProvider(true);
+				return codeLensProvider;
+			} else {
+				return CodeLensOptions.codeLensOptions(this);
+			}
+		}
+
+		@Override
 		public ServerCapabilities build() {
 			ServerCapabilities serverCapabilities = new ServerCapabilities();
 			if (textDocumentSyncOptions != null) {
@@ -333,6 +386,9 @@ public class ServerCapabilities {
 			serverCapabilities.setDocumentSymbolProvider(documentSymbolProvider);
 			if (completionProvider != null) {
 				serverCapabilities.setCompletionProvider(completionProvider.build());
+			}
+			if (codeLensProvider != null) {
+				serverCapabilities.setCodeLensProvider(codeLensProvider.build());
 			}
 			return serverCapabilities;
 		}

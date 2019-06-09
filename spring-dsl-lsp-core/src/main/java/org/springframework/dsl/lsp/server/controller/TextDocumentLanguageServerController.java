@@ -15,14 +15,15 @@
  */
 package org.springframework.dsl.lsp.server.controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.domain.CodeLens;
+import org.springframework.dsl.domain.CodeLensParams;
 import org.springframework.dsl.domain.CompletionList;
 import org.springframework.dsl.domain.CompletionParams;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
@@ -53,6 +54,7 @@ import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.DslServiceRegistry;
 import org.springframework.dsl.service.Hoverer;
+import org.springframework.dsl.service.Lenser;
 import org.springframework.dsl.service.reconcile.Reconciler;
 import org.springframework.util.Assert;
 
@@ -60,8 +62,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * A {@code JsonRpcController} implementation {@code textDocument} features
- * what a {@code Language Server} should provide.
+ * A {@code JsonRpcController} implementation {@code textDocument} features what
+ * a {@code Language Server} should provide.
  *
  * @author Janne Valkealahti
  *
@@ -78,10 +80,9 @@ public class TextDocumentLanguageServerController {
 	 * Instantiates a new text document language server controller.
 	 *
 	 * @param dslServiceRegistry the dsl service registry
-	 * @param properties the properties
+	 * @param properties         the properties
 	 */
-	public TextDocumentLanguageServerController(DslServiceRegistry dslServiceRegistry,
-			DslProperties properties) {
+	public TextDocumentLanguageServerController(DslServiceRegistry dslServiceRegistry, DslProperties properties) {
 		Assert.notNull(dslServiceRegistry, "dslServiceRegistry must be set");
 		Assert.notNull(properties, "properties must be set");
 		this.registry = dslServiceRegistry;
@@ -95,73 +96,61 @@ public class TextDocumentLanguageServerController {
 	 * {@code didChanged}, {@code didSave} and {@code didClose} will be based on
 	 * information stored and dispatched in this method.
 	 *
-	 * @param params the {@link DidOpenTextDocumentParams}
+	 * @param params  the {@link DidOpenTextDocumentParams}
 	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didOpen")
 	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
-	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params, JsonRpcSession session) {
+	public Flux<PublishDiagnosticsParams> clientDocumentOpened(DidOpenTextDocumentParams params,
+			JsonRpcSession session) {
 		log.debug("clientDocumentOpened {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didOpen(params))
-				.map(document -> DslContext.builder()
-					.document(document)
-					.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session)
-					.build())
+				.map(document -> DslContext.builder().document(document)
+						.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session).build())
 				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
-					.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
-						.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId()))
-					)
-					.flatMap(reconciler -> reconciler.reconcile(context))
-				)
+						.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
+								.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
+						.flatMap(reconciler -> reconciler.reconcile(context)))
 				.reduce((l, r) -> {
-					l.setDiagnostics(
-							Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
-								.collect(Collectors.toList()));
+					l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+							.collect(Collectors.toList()));
 					return l;
-				})
-				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
-				.flux();
+				}).switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))).flux();
 	}
 
 	/**
 	 * Method handling {@code LSP client didChange} request and dispatching into
 	 * {@link Reconciler} if available.
 	 *
-	 * @param params the {@link DidChangeTextDocumentParams}
+	 * @param params  the {@link DidChangeTextDocumentParams}
 	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didChange")
 	@JsonRpcNotification(method = "textDocument/publishDiagnostics")
-	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params, JsonRpcSession session) {
+	public Flux<PublishDiagnosticsParams> clientDocumentChanged(DidChangeTextDocumentParams params,
+			JsonRpcSession session) {
 		log.debug("clientDocumentChanged {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didChange(params))
-				.map(document -> DslContext.builder()
-					.document(document)
-					.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session)
-					.build())
+				.map(document -> DslContext.builder().document(document)
+						.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session).build())
 				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
-					.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
-						.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId()))
-					)
-					.flatMap(reconciler -> reconciler.reconcile(context))
-				)
+						.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
+								.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
+						.flatMap(reconciler -> reconciler.reconcile(context)))
 				.reduce((l, r) -> {
-					l.setDiagnostics(
-							Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
-								.collect(Collectors.toList()));
+					l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+							.collect(Collectors.toList()));
 					return l;
-				})
-				.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri())))
-				.flux();
+				}).switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))).flux();
 	}
 
 	/**
 	 * Method handling {@code LSP client didClose} request and dispatching into
 	 * {@link DocumentStateTracker}.
 	 *
-	 * @param params the {@link DidCloseTextDocumentParams}
+	 * @param params  the {@link DidCloseTextDocumentParams}
 	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didClose")
@@ -169,15 +158,14 @@ public class TextDocumentLanguageServerController {
 	public Mono<Void> clientDocumentClosed(DidCloseTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentClosed {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
-		return Flux.from(documentStateTracker.didClose(params))
-				.then();
+		return Flux.from(documentStateTracker.didClose(params)).then();
 	}
 
 	/**
 	 * Method handling {@code LSP client didSave} request and dispatching into
 	 * {@link DocumentStateTracker}.
 	 *
-	 * @param params the {@link DidSaveTextDocumentParams}
+	 * @param params  the {@link DidSaveTextDocumentParams}
 	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "didSave")
@@ -185,15 +173,14 @@ public class TextDocumentLanguageServerController {
 	public Mono<Void> clientDocumentSaved(DidSaveTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentSaved {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
-		return Flux.from(documentStateTracker.didSave(params))
-				.then();
+		return Flux.from(documentStateTracker.didSave(params)).then();
 	}
 
 	/**
 	 * Method handling {@code LSP client willSave} request and dispatching into
 	 * {@link DocumentStateTracker}.
 	 *
-	 * @param params the {@link WillSaveTextDocumentParams}
+	 * @param params  the {@link WillSaveTextDocumentParams}
 	 * @param session the {@link JsonRpcSession}
 	 */
 	@JsonRpcRequestMapping(method = "willSave")
@@ -201,13 +188,12 @@ public class TextDocumentLanguageServerController {
 	public Mono<Void> clientDocumentWillSave(WillSaveTextDocumentParams params, JsonRpcSession session) {
 		log.debug("clientDocumentWillSave {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
-		return Flux.from(documentStateTracker.willSave(params))
-				.then();
+		return Flux.from(documentStateTracker.willSave(params)).then();
 	}
 
 	/**
-	 * Method handling {@code LSP client willSaveWaitUntil} request and dispatching into
-	 * {@link DocumentStateTracker}.
+	 * Method handling {@code LSP client willSaveWaitUntil} request and dispatching
+	 * into {@link DocumentStateTracker}.
 	 *
 	 * @param params the {@link WillSaveTextDocumentParams}
 	 * @return a flux of textedit's
@@ -222,7 +208,7 @@ public class TextDocumentLanguageServerController {
 	 * Method handling {@code LSP client hover} request and dispatching into
 	 * {@link Hoverer}.
 	 *
-	 * @param params the {@link TextDocumentPositionParams}
+	 * @param params  the {@link TextDocumentPositionParams}
 	 * @param session the {@link JsonRpcSession}
 	 * @return a mono of hover
 	 */
@@ -236,17 +222,16 @@ public class TextDocumentLanguageServerController {
 		DslContext context = DslContext.builder().document(document).build();
 
 		return Flux.fromIterable(registry.getHoverers())
-			.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
-					.anyMatch(l -> l.isCompatibleWith(document.languageId())))
-			.next()
-			.flatMap(hoverer -> hoverer.hover(context, position));
+				.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
+						.anyMatch(l -> l.isCompatibleWith(document.languageId())))
+				.next().flatMap(hoverer -> hoverer.hover(context, position));
 	}
 
 	/**
 	 * Method handling {@code LSP client completion} request and dispatching into
 	 * {@link Completioner}.
 	 *
-	 * @param params the {@link CompletionParams}
+	 * @param params  the {@link CompletionParams}
 	 * @param session the {@link JsonRpcSession}
 	 * @return a mono of completion list
 	 */
@@ -254,7 +239,7 @@ public class TextDocumentLanguageServerController {
 	@JsonRpcResponseResult
 	public Mono<CompletionList> completion(CompletionParams params, JsonRpcSession session) {
 		// TODO: spec is CompletionItem[] | CompletionList | null
-		//       not sure if there are clients which only supports CompletionItem[]
+		// not sure if there are clients which only supports CompletionItem[]
 		log.debug("completion {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
@@ -262,21 +247,15 @@ public class TextDocumentLanguageServerController {
 
 		// TODO: think how to integrate into isIncomplete setting
 		return Flux.fromIterable(registry.getCompletioners(document.languageId()))
-				.concatMap(completioner -> completioner.complete(document, position))
-				.buffer()
-				.map(completionItems -> {
-					return CompletionList.completionList()
-							.isIncomplete(false)
-							.items(completionItems)
-							.build();
-				})
-				.next();
+				.concatMap(completioner -> completioner.complete(document, position)).buffer().map(completionItems -> {
+					return CompletionList.completionList().isIncomplete(false).items(completionItems).build();
+				}).next();
 	}
 
 	/**
 	 * Method handling {@code LSP client documentSymbol} request.
 	 *
-	 * @param params the {@link DocumentSymbolParams}
+	 * @param params  the {@link DocumentSymbolParams}
 	 * @param session the {@link JsonRpcSession}
 	 * @return a mono of arbitrary object processed from a symbolizer
 	 */
@@ -290,29 +269,23 @@ public class TextDocumentLanguageServerController {
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 
 		// TODO: should probably fix this so that if we prefer either one, and that
-		//       is empty, we also check other one.
+		// is empty, we also check other one.
 		if (properties.getLsp().getServer().getTextDocument().getDocumentSymbol()
 				.getPrefer() == DocumentSymbolPrefer.SymbolInformation) {
 			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-				.map(symbolizer -> symbolizer.symbolize(document))
-				.map(si -> si.symbolInformations())
-				.next()
-				.flatMap(ds -> ds.collectList())
-				.map(list -> list.toArray(new SymbolInformation[0]));
+					.map(symbolizer -> symbolizer.symbolize(document)).map(si -> si.symbolInformations()).next()
+					.flatMap(ds -> ds.collectList()).map(list -> list.toArray(new SymbolInformation[0]));
 		} else {
 			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-				.map(symbolizer -> symbolizer.symbolize(document))
-				.map(si -> si.documentSymbols())
-				.next()
-				.flatMap(ds -> ds.collectList())
-				.map(list -> list.toArray(new DocumentSymbol[0]));
+					.map(symbolizer -> symbolizer.symbolize(document)).map(si -> si.documentSymbols()).next()
+					.flatMap(ds -> ds.collectList()).map(list -> list.toArray(new DocumentSymbol[0]));
 		}
 	}
 
 	/**
 	 * Method handling {@code LSP client rename} request.
 	 *
-	 * @param params the {@link RenameParams}
+	 * @param params  the {@link RenameParams}
 	 * @param session the {@link JsonRpcSession}
 	 * @return a mono of workspace edit
 	 */
@@ -325,8 +298,27 @@ public class TextDocumentLanguageServerController {
 		DslContext context = DslContext.builder().document(document).build();
 
 		return Flux.fromIterable(registry.getRenamers(document.languageId()))
-				.concatMap(renamer -> renamer.rename(context, params.getPosition(), params.getNewName()))
-				.next();
+				.concatMap(renamer -> renamer.rename(context, params.getPosition(), params.getNewName())).next();
+	}
+
+	/**
+	 * Method handling {@code LSP client codeLens} request.
+	 *
+	 * @param params the {@link RenameCodeLensParamsParams}
+	 * @param session the {@link JsonRpcSession}
+	 * @return a mono of code lenses
+	 */
+	@JsonRpcRequestMapping(method = "codeLens")
+	@JsonRpcResponseResult
+	public Mono<List<CodeLens>> codeLens(CodeLensParams params, JsonRpcSession session) {
+		log.debug("codeLens {}", params);
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+		DslContext context = DslContext.builder().document(document).build();
+
+		return Flux.fromIterable(registry.getLensers(document.languageId()))
+			.concatMap(lenser -> lenser.lense(context))
+			.collectList();
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {

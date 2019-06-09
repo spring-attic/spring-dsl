@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.dsl.domain.CodeLensParams;
 import org.springframework.dsl.domain.CompletionParams;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
@@ -72,7 +73,8 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 			CompletionParams.class,
 			DocumentSymbolParams.class,
 			TextDocumentPositionParams.class,
-			RenameParams.class
+			RenameParams.class,
+			CodeLensParams.class
 			).stream().collect(Collectors.toSet());
 
 	/**

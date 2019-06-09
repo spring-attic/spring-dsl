@@ -13,6 +13,9 @@
         "b"
       ]
     },
+    "codeLensProvider": {
+      "resolveProvider": true
+    },
     "renameProvider": true
   }
 }

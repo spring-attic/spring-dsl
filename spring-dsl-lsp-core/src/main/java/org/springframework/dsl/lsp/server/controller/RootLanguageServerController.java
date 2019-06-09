@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,7 @@ public class RootLanguageServerController {
 					.completionProvider(!registry.getCompletioners().isEmpty())
 						.resolveProvider(false)
 						.and()
+					.codeLensProvider(!registry.getLensers().isEmpty()).and()
 					.textDocumentSyncKind(lspVersion.is2x() ? TextDocumentSyncKind.Incremental : null)
 					.textDocumentSyncOptions(lspVersion.is3x())
 						.openClose(true)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.time.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.MethodParameter;
+import org.springframework.dsl.domain.CodeLensParams;
 import org.springframework.dsl.domain.CompletionParams;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
@@ -77,6 +78,8 @@ public class LspDomainArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
 		param = this.testMethod.arg(RenameParams.class);
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
+		param = this.testMethod.arg(CodeLensParams.class);
+		assertThat(this.resolver.supportsParameter(param)).isTrue();
 	}
 
 	@Test
@@ -122,6 +125,7 @@ public class LspDomainArgumentResolverTests {
 			CompletionParams completionParams,
 			TextDocumentPositionParams textDocumentPositionParams,
 			DocumentSymbolParams documentSymbolParams,
-			RenameParams renameParams
+			RenameParams renameParams,
+			CodeLensParams codeLensParams
 			) {}
 }

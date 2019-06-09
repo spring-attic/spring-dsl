@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.server.domain;
 
 import java.io.IOException;
 
+import org.springframework.dsl.domain.CodeLensOptions;
 import org.springframework.dsl.domain.CompletionOptions;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.TextDocumentSyncKind;
@@ -71,6 +72,12 @@ public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerC
 		if (completionProviderNode != null) {
 			object.setCompletionProvider(
 					completionProviderNode.traverse(p.getCodec()).readValueAs(CompletionOptions.class));
+		}
+
+		JsonNode codeLensProviderNode = node.get("codeLensProvider");
+		if (codeLensProviderNode != null) {
+			object.setCodeLensProvider(
+				codeLensProviderNode.traverse(p.getCodec()).readValueAs(CodeLensOptions.class));
 		}
 
 		return object;

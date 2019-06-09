@@ -29,6 +29,9 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dsl.domain.ClientCapabilities;
+import org.springframework.dsl.domain.CodeLens;
+import org.springframework.dsl.domain.CodeLensOptions;
+import org.springframework.dsl.domain.CodeLensParams;
 import org.springframework.dsl.domain.Command;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.CompletionItemKind;
@@ -138,6 +141,26 @@ public class LspDomainJacksonSerializationTests {
 	}
 
 	@Test
+	public void testCodeLensOptions() throws Exception {
+		CodeLensOptions from = new CodeLensOptions();
+		String json = mapper.writeValueAsString(from);
+		CodeLensOptions to = mapper.readValue(json, CodeLensOptions.class);
+		assertObjects(from, to);
+
+		from = CodeLensOptions.codeLensOptions()
+				.resolveProvider(true)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CodeLensOptions.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CodeLensOptions1.json");
+		to = mapper.readValue(expect, CodeLensOptions.class);
+		assertObjects(from, to);
+	}
+
+	@Test
 	public void testServerCapabilities() throws Exception {
 		ServerCapabilities from = new ServerCapabilities();
 		String json = mapper.writeValueAsString(from);
@@ -196,6 +219,7 @@ public class LspDomainJacksonSerializationTests {
 						.and()
 					.hoverProvider(true)
 					.renameProvider(true)
+					.codeLensProvider(true).and()
 					.completionProvider()
 						.resolveProvider(true)
 						.triggerCharacters(Arrays.asList("a", "b"))
@@ -467,6 +491,42 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("TextEdit1.json");
 		to = mapper.readValue(expect, TextEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCodeLens() throws Exception {
+		CodeLens from = new CodeLens();
+		String json = mapper.writeValueAsString(from);
+		CodeLens to = mapper.readValue(json, CodeLens.class);
+		assertObjects(from, to);
+
+		from = CodeLens.codeLens()
+				.range()
+					.start()
+						.line(0)
+						.character(0)
+						.and()
+					.end()
+						.line(1)
+						.character(1)
+						.and()
+					.and()
+				.command()
+					.title("title")
+					.command("command")
+					.argument("arg1")
+					.argument("arg2")
+					.and()
+				.data("data")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CodeLens.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CodeLens1.json");
+		to = mapper.readValue(expect, CodeLens.class);
 		assertObjects(from, to);
 	}
 
@@ -1132,6 +1192,27 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("TextDocumentPositionParams1.json");
 		to = mapper.readValue(expect, TextDocumentPositionParams.class);
+		assertObjects(from, to);
+	}
+	@Test
+	public void testCodeLensParams() throws Exception {
+		CodeLensParams from = new CodeLensParams();
+		String json = mapper.writeValueAsString(from);
+		CodeLensParams to = mapper.readValue(json, CodeLensParams.class);
+		assertObjects(from, to);
+
+		from = CodeLensParams.codeLensParams()
+				.textDocument()
+					.uri("uri")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CodeLensParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CodeLensParams1.json");
+		to = mapper.readValue(expect, CodeLensParams.class);
 		assertObjects(from, to);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	private List<Reconciler> reconcilers;
 	private List<Symbolizer> symbolizers;
 	private List<Renamer> renamers;
+	private List<Lenser> lensers;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -89,6 +90,14 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 	}
 
 	@Override
+	public List<Lenser> getLensers(LanguageId languageId) {
+		return lensers
+				.stream()
+				.filter(lenser -> lenser.getSupportedLanguageIds().contains(languageId))
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public List<Completioner> getCompletioners() {
 		return completioners;
 	}
@@ -113,6 +122,11 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 		return renamers;
 	}
 
+	@Override
+	public List<Lenser> getLensers() {
+		return lensers;
+	}
+
 	protected void initServices(ApplicationContext applicationContext) {
 		Map<String, Completioner> completionerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Completioner.class, true, false);
@@ -124,10 +138,13 @@ public class DefaultDslServiceRegistry implements DslServiceRegistry, Applicatio
 				Symbolizer.class, true, false);
 		Map<String, Renamer> renamerBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
 				Renamer.class, true, false);
+		Map<String, Lenser> lenserBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+				Lenser.class, true, false);
 		this.completioners = new ArrayList<>(completionerBeans.values());
 		this.hoverers = new ArrayList<>(hovererBeans.values());
 		this.reconcilers = new ArrayList<>(reconcilerBeans.values());
 		this.symbolizers = new ArrayList<>(symbolizerBeans.values());
 		this.renamers = new ArrayList<>(renamerBeans.values());
+		this.lensers = new ArrayList<>(lenserBeans.values());
 	}
 }
