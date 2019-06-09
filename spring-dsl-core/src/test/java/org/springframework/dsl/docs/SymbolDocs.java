@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.springframework.dsl.docs;
 
-import org.springframework.dsl.document.Document;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
@@ -25,7 +25,7 @@ public class SymbolDocs {
 
 		@Override
 // tag::snippet1[]
-		SymbolizeInfo symbolize(Document document);
+		SymbolizeInfo symbolize(DslContext context);
 // end::snippet1[]
 	}
 }

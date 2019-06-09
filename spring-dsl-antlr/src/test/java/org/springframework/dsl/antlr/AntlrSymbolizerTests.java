@@ -28,6 +28,7 @@ import org.springframework.dsl.antlr.support.DefaultAntlrParseService;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 
@@ -54,7 +55,8 @@ public class AntlrSymbolizerTests {
 		Test2AntlrParseResultFunction antlrParseResultFunction = new Test2AntlrParseResultFunction();
 
 		Test2AntlrSymbolizer symbolizer = new Test2AntlrSymbolizer(antlrParseService, antlrParseResultFunction);
-		Flux<DocumentSymbol> symbolizes = symbolizer.symbolize(document).documentSymbols();
+		Flux<DocumentSymbol> symbolizes = symbolizer.symbolize(DslContext.builder().document(document).build())
+				.documentSymbols();
 		List<DocumentSymbol> items = symbolizes.toStream().collect(Collectors.toList());
 		List<String> names = items.stream().map(item -> item.getName()).collect(Collectors.toList());
 		assertThat(names, containsInAnyOrder(expect.toArray(new String[0])));

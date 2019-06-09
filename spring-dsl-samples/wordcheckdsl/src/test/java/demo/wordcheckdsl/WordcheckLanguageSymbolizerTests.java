@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 /**
  * Tests for {@link WordcheckLanguageSymbolizer}.
@@ -39,11 +40,11 @@ public class WordcheckLanguageSymbolizerTests {
 		WordcheckLanguageSymbolizer symbolizer = new WordcheckLanguageSymbolizer();
 		symbolizer.getProperties().setWords(Arrays.asList("jack", "is", "a", "dull", "boy"));
 		Document document = new TextDocument("fakeuri", LanguageId.TXT, 0, "jack is a dull boy");
-		List<String> symbols = symbolizer.symbolize(document).documentSymbols().toStream().map(s -> s.getName())
-				.collect(Collectors.toList());
+		List<String> symbols = symbolizer.symbolize(DslContext.builder().document(document).build()).documentSymbols()
+				.toStream().map(s -> s.getName()).collect(Collectors.toList());
 		assertThat(symbols).containsExactlyInAnyOrder("jack", "is", "a", "dull", "boy");
-		symbols = symbolizer.symbolize(document).symbolInformations().toStream().map(s -> s.getName())
-				.collect(Collectors.toList());
+		symbols = symbolizer.symbolize(DslContext.builder().document(document).build()).symbolInformations().toStream()
+				.map(s -> s.getName()).collect(Collectors.toList());
 		assertThat(symbols).containsExactlyInAnyOrder("jack", "is", "a", "dull", "boy");
 	}
 }

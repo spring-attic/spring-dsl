@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.SymbolKind;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
@@ -38,9 +39,10 @@ import reactor.core.publisher.Flux;
 public class SimpleLanguageSymbolizer extends SimpleLanguageDslService implements Symbolizer {
 
 	@Override
-	public SymbolizeInfo symbolize(Document document) {
+	public SymbolizeInfo symbolize(DslContext context) {
 		return SymbolizeInfo.ofDocumentSymbol(Flux.defer(() -> {
 			List<DocumentSymbol> symbols = new ArrayList<>();
+			Document document = context.getDocument();
 			for (Line line : SimpleLanguage.build(document).getLines()) {
 				symbols.add(DocumentSymbol.documentSymbol()
 					.name(line.getKeyToken().getType().toString())

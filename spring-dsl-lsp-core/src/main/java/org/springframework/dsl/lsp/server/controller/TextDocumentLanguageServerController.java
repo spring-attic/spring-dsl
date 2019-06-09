@@ -267,18 +267,25 @@ public class TextDocumentLanguageServerController {
 		log.debug("documentSymbol {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+		DslContext context = DslContext.builder().document(document).build();
 
 		// TODO: should probably fix this so that if we prefer either one, and that
 		// is empty, we also check other one.
 		if (properties.getLsp().getServer().getTextDocument().getDocumentSymbol()
 				.getPrefer() == DocumentSymbolPrefer.SymbolInformation) {
 			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-					.map(symbolizer -> symbolizer.symbolize(document)).map(si -> si.symbolInformations()).next()
-					.flatMap(ds -> ds.collectList()).map(list -> list.toArray(new SymbolInformation[0]));
+					.map(symbolizer -> symbolizer.symbolize(context))
+					.map(si -> si.symbolInformations())
+					.next()
+					.flatMap(ds -> ds.collectList())
+					.map(list -> list.toArray(new SymbolInformation[0]));
 		} else {
 			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-					.map(symbolizer -> symbolizer.symbolize(document)).map(si -> si.documentSymbols()).next()
-					.flatMap(ds -> ds.collectList()).map(list -> list.toArray(new DocumentSymbol[0]));
+					.map(symbolizer -> symbolizer.symbolize(context))
+					.map(si -> si.documentSymbols())
+					.next()
+					.flatMap(ds -> ds.collectList())
+					.map(list -> list.toArray(new DocumentSymbol[0]));
 		}
 	}
 

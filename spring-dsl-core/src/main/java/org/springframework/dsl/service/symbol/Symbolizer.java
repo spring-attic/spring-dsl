@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.springframework.dsl.service.symbol;
 
-import org.springframework.dsl.document.Document;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.DslService;
 
 /**
@@ -29,8 +29,8 @@ public interface Symbolizer extends DslService {
 	/**
 	 * Provide symbol information for a given document.
 	 *
-	 * @param document the document
+	 * @param context the dsl context
 	 * @return a symbolize info
 	 */
-	SymbolizeInfo symbolize(Document document);
+	SymbolizeInfo symbolize(DslContext context);
 }

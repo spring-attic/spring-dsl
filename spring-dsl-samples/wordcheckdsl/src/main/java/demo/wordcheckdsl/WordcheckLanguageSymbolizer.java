@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.springframework.dsl.document.DocumentRegion;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.domain.SymbolKind;
+import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.service.symbol.Symbolizer;
 
@@ -39,8 +40,9 @@ public class WordcheckLanguageSymbolizer extends WordcheckLanguageSupport implem
 	private static final Pattern SPACE = Pattern.compile("[^\\w]+");
 
 	@Override
-	public SymbolizeInfo symbolize(Document document) {
+	public SymbolizeInfo symbolize(DslContext context) {
 		Flux<DocumentSymbol> documentSymbols = Flux.defer(() -> {
+			Document document = context.getDocument();
 			return Flux.fromArray(new DocumentRegion(document).split(SPACE))
 				.filter(w -> w.length() > 0)
 				.map(r -> DocumentSymbol.documentSymbol()
@@ -52,6 +54,7 @@ public class WordcheckLanguageSymbolizer extends WordcheckLanguageSupport implem
 		});
 
 		Flux<SymbolInformation> symbolInformations = Flux.defer(() -> {
+			Document document = context.getDocument();
 			return Flux.fromArray(new DocumentRegion(document).split(SPACE))
 				.filter(w -> w.length() > 0)
 				.map(r -> SymbolInformation.symbolInformation()
