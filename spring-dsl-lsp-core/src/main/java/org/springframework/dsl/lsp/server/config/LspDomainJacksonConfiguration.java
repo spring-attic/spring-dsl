@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.ServerCapabilities;
+import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilderCustomizer;
@@ -34,6 +35,8 @@ import org.springframework.dsl.lsp.server.domain.MessageTypeDeserializer;
 import org.springframework.dsl.lsp.server.domain.MessageTypeSerializer;
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonDeserializer;
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonSerializer;
+import org.springframework.dsl.lsp.server.domain.SymbolKindDeserializer;
+import org.springframework.dsl.lsp.server.domain.SymbolKindSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -54,6 +57,8 @@ public class LspDomainJacksonConfiguration {
 		builder.deserializerByType(ServerCapabilities.class, new ServerCapabilitiesJsonDeserializer());
 		builder.serializerByType(DiagnosticSeverity.class, new DiagnosticSeveritySerializer());
 		builder.deserializerByType(DiagnosticSeverity.class, new DiagnosticSeverityDeserializer());
+		builder.serializerByType(SymbolKind.class, new SymbolKindSerializer());
+		builder.deserializerByType(SymbolKind.class, new SymbolKindDeserializer());
 		builder.serializerByType(MarkupKind.class, new MarkupKindSerializer());
 		builder.deserializerByType(MarkupKind.class, new MarkupKindDeserializer());
 		builder.serializerByType(MessageType.class, new MessageTypeSerializer());
