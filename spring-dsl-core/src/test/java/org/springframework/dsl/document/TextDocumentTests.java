@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,14 +67,24 @@ public class TextDocumentTests {
 		assertThat(textDocument.toRange(0, 0)).isEqualTo(Range.from(0, 0, 0, 0));
 		assertThat(textDocument.toRange(0, 1)).isEqualTo(Range.from(0, 0, 0, 1));
 		assertThat(textDocument.toRange(0, 5)).isEqualTo(Range.from(0, 0, 0, 5));
+		assertThat(textDocument.getLineRange(0)).isEqualTo(Range.from(0, 0, 0, 5));
+
 		textDocument = new TextDocument(DOC2);
 		assertThat(textDocument.toRange(0, 6)).isEqualTo(Range.from(0, 0, 1, 0));
 		assertThat(textDocument.toRange(0, 7)).isEqualTo(Range.from(0, 0, 1, 1));
 		assertThat(textDocument.toRange(6, 0)).isEqualTo(Range.from(1, 0, 1, 0));
 		assertThat(textDocument.toRange(6, 1)).isEqualTo(Range.from(1, 0, 1, 1));
+		assertThat(textDocument.getLineRange(0)).isEqualTo(Range.from(0, 0, 0, 5));
+		assertThat(textDocument.getLineRange(1)).isEqualTo(Range.from(1, 0, 1, 5));
+		assertThat(textDocument.content(Range.from(1, 0, 1, 5))).isEqualTo("line2");
+
 		textDocument = new TextDocument(DOC3);
 		assertThat(textDocument.toRange(0, 12)).isEqualTo(Range.from(0, 0, 2, 0));
 		assertThat(textDocument.toRange(0, 13)).isEqualTo(Range.from(0, 0, 2, 1));
+		assertThat(textDocument.getLineRange(1)).isEqualTo(Range.from(1, 0, 1, 5));
+		assertThat(textDocument.getLineRange(0)).isEqualTo(Range.from(0, 0, 0, 5));
+		assertThat(textDocument.getLineRange(1)).isEqualTo(Range.from(1, 0, 1, 5));
+		assertThat(textDocument.getLineRange(2)).isEqualTo(Range.from(2, 0, 2, 5));
 	}
 
 	@Test

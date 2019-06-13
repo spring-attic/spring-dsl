@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,6 +118,14 @@ public interface Document {
 	String content(int start, int length);
 
 	/**
+	 * Get a content from a range.
+	 *
+	 * @param range a range
+	 * @return the string
+	 */
+	String content(Range range);
+
+	/**
 	 * Gets a position from a given offset.
 	 *
 	 * @param offset the offset
@@ -165,4 +173,12 @@ public interface Document {
 	 * @return the range
 	 */
 	Range toRange(int offset, int length);
+
+	/**
+	 * Gets a range for a given line.
+	 *
+	 * @param line the line
+	 * @return the range
+	 */
+	Range getLineRange(int line);
 }

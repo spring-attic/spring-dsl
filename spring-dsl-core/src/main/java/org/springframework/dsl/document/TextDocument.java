@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,6 +187,13 @@ public class TextDocument implements Document {
 	}
 
 	@Override
+	public String content(Range range) {
+		int startOffset = toOffset(range.getStart());
+		int endOffset = toOffset(range.getEnd());
+		return content(startOffset, endOffset - startOffset);
+	}
+
+	@Override
 	public int lineCount() {
 		return lineTracker.getNumberOfLines();
 	}
@@ -245,6 +252,11 @@ public class TextDocument implements Document {
 			//line doesn't exist
 		}
 		return null;
+	}
+
+	public Range getLineRange(int line) {
+		Region range = getLineInformation(line);
+		return toRange(range.getOffset(), range.getLength());
 	}
 
 	public int getLineOffset(int line) {
