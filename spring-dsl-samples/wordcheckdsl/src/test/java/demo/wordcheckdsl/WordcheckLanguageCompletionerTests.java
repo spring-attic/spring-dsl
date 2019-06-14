@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 
@@ -92,7 +93,8 @@ public class WordcheckLanguageCompletionerTests {
 	private static void assertCompletion(String text, List<String> words, List<String> expected, Position position) {
 		Document document = new TextDocument("", LanguageId.TXT, 0, text);
 		WordcheckLanguageCompletioner completioner = buildCompletioner(words);
-		Flux<CompletionItem> complete = completioner.complete(document, position);
+		Flux<CompletionItem> complete = completioner.complete(DslContext.builder().document(document).build(),
+				position);
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
 		assertThat(items).hasSize(expected.size());

@@ -244,10 +244,11 @@ public class TextDocumentLanguageServerController {
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
+		DslContext context = DslContext.builder().document(document).build();
 
 		// TODO: think how to integrate into isIncomplete setting
 		return Flux.fromIterable(registry.getCompletioners(document.languageId()))
-				.concatMap(completioner -> completioner.complete(document, position)).buffer().map(completionItems -> {
+				.concatMap(completioner -> completioner.complete(context, position)).buffer().map(completionItems -> {
 					return CompletionList.completionList().isIncomplete(false).items(completionItems).build();
 				}).next();
 	}

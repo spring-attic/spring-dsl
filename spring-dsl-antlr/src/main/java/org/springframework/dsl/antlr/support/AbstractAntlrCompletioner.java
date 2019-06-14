@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
 import org.springframework.dsl.service.Completioner;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -64,8 +65,8 @@ public abstract class AbstractAntlrCompletioner<T> extends AbstractAntlrDslServi
 	}
 
 	@Override
-	public Flux<CompletionItem> complete(Document document, Position position) {
-		return getAntlrParseService().parse(document, getAntlrParseResultFunction())
+	public Flux<CompletionItem> complete(DslContext context, Position position) {
+		return getAntlrParseService().parse(context.getDocument(), getAntlrParseResultFunction())
 				.map(r -> r.getCompletionItems(position))
 				// TODO: remove cache
 				.flatMapMany(r -> r.cache());

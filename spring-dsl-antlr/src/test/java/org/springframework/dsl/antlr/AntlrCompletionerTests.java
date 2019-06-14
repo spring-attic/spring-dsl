@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 
@@ -62,7 +63,8 @@ public class AntlrCompletionerTests {
 		Test2AntlrParseResultFunction antlrParseResultSupplier = new Test2AntlrParseResultFunction();
 
 		Test2AntlrCompletioner completioner = new Test2AntlrCompletioner(antlrParseService, antlrParseResultSupplier);
-		Flux<CompletionItem> completions = completioner.complete(document, new Position(9, 8));
+		Flux<CompletionItem> completions = completioner.complete(DslContext.builder().document(document).build(),
+				new Position(9, 8));
 		List<CompletionItem> items = completions.toStream().collect(Collectors.toList());
 		List<String> labels = items.stream().map(item -> item.getLabel()).collect(Collectors.toList());
 		assertThat(labels, containsInAnyOrder(expect.toArray(new String[0])));

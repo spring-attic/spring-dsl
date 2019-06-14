@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.springframework.dsl.document.TextDocument;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.model.LanguageId;
+import org.springframework.dsl.service.DslContext;
 
 import reactor.core.publisher.Flux;
 
@@ -44,7 +45,8 @@ public class SimpleLanguageCompletionerTests {
 	public void testCompletions() {
 		Document document = new TextDocument("", LanguageId.TXT, 0, SimpleLanguageTests.content1);
 
-		Flux<CompletionItem> complete = completioner.complete(document, new Position(0, 1));
+		Flux<CompletionItem> complete = completioner.complete(DslContext.builder().document(document).build(),
+				new Position(0, 1));
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
 		assertThat(items).hasSize(0);
@@ -53,7 +55,8 @@ public class SimpleLanguageCompletionerTests {
 	@Test
 	public void testEmptyShouldReturnAllKeyTokens() {
 		Document document = new TextDocument("", LanguageId.TXT, 0, "");
-		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 0));
+		Flux<CompletionItem> complete = completioner.complete(DslContext.builder().document(document).build(),
+				Position.from(0, 0));
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
 		assertThat(items).hasSize(4);
@@ -64,7 +67,8 @@ public class SimpleLanguageCompletionerTests {
 	@Test
 	public void testPartialKey() {
 		Document document = new TextDocument("", LanguageId.TXT, 0, "s");
-		Flux<CompletionItem> complete = completioner.complete(document, Position.from(0, 1));
+		Flux<CompletionItem> complete = completioner.complete(DslContext.builder().document(document).build(),
+				Position.from(0, 1));
 		assertThat(complete).isNotNull();
 		List<CompletionItem> items = complete.toStream().collect(Collectors.toList());
 		assertThat(items).hasSize(1);

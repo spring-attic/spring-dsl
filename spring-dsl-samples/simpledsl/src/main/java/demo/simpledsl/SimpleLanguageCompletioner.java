@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package demo.simpledsl;
 
 import java.util.Collection;
 
-import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.CompletionItem;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.service.Completioner;
+import org.springframework.dsl.service.DslContext;
 
 import demo.simpledsl.SimpleLanguage.TokenType;
 import reactor.core.publisher.Flux;
@@ -37,9 +37,9 @@ import reactor.core.publisher.Mono;
 public class SimpleLanguageCompletioner extends SimpleLanguageDslService implements Completioner {
 
 	@Override
-	public Flux<CompletionItem> complete(Document document, Position position) {
+	public Flux<CompletionItem> complete(DslContext context, Position position) {
 		return Flux.defer(() -> {
-			SimpleLanguage simpleLanguage = SimpleLanguage.build(document);
+			SimpleLanguage simpleLanguage = SimpleLanguage.build(context.getDocument());
 			Collection<TokenType> tokens = simpleLanguage.resolveLegalTokens(position);
 			return Flux.fromIterable(tokens)
 					.filter(tokenType -> tokenType != TokenType.VALUE)

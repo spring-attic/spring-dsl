@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ public interface Completioner extends DslService {
 	/**
 	 * Provide completion items for a document in a given position.
 	 *
-	 * @param document the document
+	 * @param context the dsl context
 	 * @param position the position
 	 * @return the flux of completion items
 	 */
-	Flux<CompletionItem> complete(Document document, Position position);
+	Flux<CompletionItem> complete(DslContext context, Position position);
 }
