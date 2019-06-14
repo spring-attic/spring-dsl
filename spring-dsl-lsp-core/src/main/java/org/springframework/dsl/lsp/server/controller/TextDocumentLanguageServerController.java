@@ -106,8 +106,7 @@ public class TextDocumentLanguageServerController {
 		log.debug("clientDocumentOpened {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didOpen(params))
-				.map(document -> DslContext.builder().document(document)
-						.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session).build())
+				.map(document -> buildCommonDslContext(document, session))
 				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
 						.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
 								.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
@@ -133,8 +132,7 @@ public class TextDocumentLanguageServerController {
 		log.debug("clientDocumentChanged {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didChange(params))
-				.map(document -> DslContext.builder().document(document)
-						.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session).build())
+				.map(document -> buildCommonDslContext(document, session))
 				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
 						.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
 								.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
@@ -219,7 +217,7 @@ public class TextDocumentLanguageServerController {
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
-		DslContext context = DslContext.builder().document(document).build();
+		DslContext context = buildCommonDslContext(document, session);
 
 		return Flux.fromIterable(registry.getHoverers())
 				.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
@@ -244,7 +242,7 @@ public class TextDocumentLanguageServerController {
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
 		Position position = params.getPosition();
-		DslContext context = DslContext.builder().document(document).build();
+		DslContext context = buildCommonDslContext(document, session);
 
 		// TODO: think how to integrate into isIncomplete setting
 		return Flux.fromIterable(registry.getCompletioners(document.languageId()))
@@ -268,7 +266,7 @@ public class TextDocumentLanguageServerController {
 		log.debug("documentSymbol {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
-		DslContext context = DslContext.builder().document(document).build();
+		DslContext context = buildCommonDslContext(document, session);
 
 		// TODO: should probably fix this so that if we prefer either one, and that
 		// is empty, we also check other one.
@@ -303,7 +301,7 @@ public class TextDocumentLanguageServerController {
 		log.debug("rename {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
-		DslContext context = DslContext.builder().document(document).build();
+		DslContext context = buildCommonDslContext(document, session);
 
 		return Flux.fromIterable(registry.getRenamers(document.languageId()))
 				.concatMap(renamer -> renamer.rename(context, params.getPosition(), params.getNewName())).next();
@@ -322,11 +320,18 @@ public class TextDocumentLanguageServerController {
 		log.debug("codeLens {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
-		DslContext context = DslContext.builder().document(document).build();
+		DslContext context = buildCommonDslContext(document, session);
 
 		return Flux.fromIterable(registry.getLensers(document.languageId()))
 			.concatMap(lenser -> lenser.lense(context))
 			.collectList();
+	}
+
+	private static DslContext buildCommonDslContext(Document document, JsonRpcSession session) {
+		return DslContext.builder()
+			.document(document)
+			.attribute(LspSystemConstants.CONTEXT_SESSION_ATTRIBUTE, session)
+			.build();
 	}
 
 	private static DocumentStateTracker getTracker(JsonRpcSession session) {
