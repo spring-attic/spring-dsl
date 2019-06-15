@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,33 @@ public class Position {
 		this.character = other.getCharacter();
 	}
 
+	/**
+	 * Build a position from given line and character positions.
+	 *
+	 * @param line line
+	 * @param character character position
+	 * @return
+	 */
+	public static Position from(int line, int character) {
+		return new Position(line, character);
+	}
+	/**
+	 * Builds a position out from other position.
+	 *
+	 * @param other other position
+	 * @return a new position
+	 */
 	public static Position from(Position other) {
 		return new Position(other);
+	}
+
+	/**
+	 * Builds a new position to a zero point.
+	 *
+	 * @return a new position
+	 */
+	public static Position zero() {
+		return new Position(0, 0);
 	}
 
 	public int getLine() {
@@ -67,10 +92,6 @@ public class Position {
 
 	public void setCharacter(int character) {
 		this.character = character;
-	}
-
-	public static Position from(int line, int character) {
-		return new Position(line, character);
 	}
 
 	@Override

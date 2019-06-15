@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,12 +60,37 @@ public class Range {
 		this.end = new Position(line, endCharacter);
 	}
 
+	/**
+	 * Builds a new range out from given lines and character positions.
+	 *
+	 * @param startLine start line
+	 * @param startCharacter start character position
+	 * @param endLine end line
+	 * @param endCharacter end charactor position
+	 * @return the new range
+	 */
 	public static Range from(int startLine, int startCharacter, int endLine, int endCharacter) {
 		return new Range(startLine, startCharacter, endLine, endCharacter);
 	}
 
+	/**
+	 * Builds a new range from given start and end {@link Position}'s.
+	 *
+	 * @param start start position
+	 * @param end end position
+	 * @return the new range
+	 */
 	public static Range from(Position start, Position end) {
 		return new Range(Position.from(start), Position.from(end));
+	}
+
+	/**
+	 * Builds a new range where positions are zeroed.
+	 *
+	 * @return the new range
+	 */
+	public static Range zero() {
+		return new Range(0, 0, 0, 0);
 	}
 
 	public Position getStart() {
