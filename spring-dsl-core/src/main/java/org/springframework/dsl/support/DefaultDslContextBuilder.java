@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.support;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
