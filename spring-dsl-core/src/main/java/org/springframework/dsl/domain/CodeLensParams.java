@@ -15,7 +15,6 @@
  */
 package org.springframework.dsl.domain;
 
-import org.springframework.dsl.domain.Position.PositionBuilder;
 import org.springframework.dsl.domain.TextDocumentIdentifier.TextDocumentIdentifierBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
@@ -106,7 +105,6 @@ public class CodeLensParams {
 			implements CodeLensParamsBuilder<P> {
 
 		private TextDocumentIdentifierBuilder<CodeLensParamsBuilder<P>> textDocument;
-		private PositionBuilder<CodeLensParamsBuilder<P>> position;
 
 		InternalCodeLensParamsBuilder(P parent) {
 			super(parent);
