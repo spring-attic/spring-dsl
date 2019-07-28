@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dsl.domain.Command.CommandBuilder;
@@ -35,6 +36,8 @@ public class CompletionItem {
 	private CompletionItemKind kind;
 	private String detail;
 	private MarkupContent documentation;
+	private Boolean deprecated;
+	private Boolean preselect;
 	private String sortText;
 	private String filterText;
 	private String insertText;
@@ -83,6 +86,22 @@ public class CompletionItem {
 
 	public void setDocumentation(MarkupContent documentation) {
 		this.documentation = documentation;
+	}
+
+	public Boolean getDeprecated() {
+		return deprecated;
+	}
+
+	public void setDeprecated(Boolean deprecated) {
+		this.deprecated = deprecated;
+	}
+
+	public Boolean getPreselect() {
+		return preselect;
+	}
+
+	public void setPreselect(Boolean preselect) {
+		this.preselect = preselect;
 	}
 
 	public String getSortText() {
@@ -167,6 +186,8 @@ public class CompletionItem {
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((detail == null) ? 0 : detail.hashCode());
 		result = prime * result + ((documentation == null) ? 0 : documentation.hashCode());
+		result = prime * result + ((deprecated == null) ? 0 : deprecated.hashCode());
+		result = prime * result + ((preselect == null) ? 0 : preselect.hashCode());
 		result = prime * result + ((filterText == null) ? 0 : filterText.hashCode());
 		result = prime * result + ((insertText == null) ? 0 : insertText.hashCode());
 		result = prime * result + ((insertTextFormat == null) ? 0 : insertTextFormat.hashCode());
@@ -215,6 +236,16 @@ public class CompletionItem {
 			if (other.documentation != null)
 				return false;
 		} else if (!documentation.equals(other.documentation))
+			return false;
+		if (deprecated == null) {
+			if (other.deprecated != null)
+				return false;
+		} else if (!deprecated.equals(other.deprecated))
+			return false;
+		if (preselect == null) {
+			if (other.preselect != null)
+				return false;
+		} else if (!preselect.equals(other.preselect))
 			return false;
 		if (filterText == null) {
 			if (other.filterText != null)
@@ -287,6 +318,22 @@ public class CompletionItem {
 		MarkupContentBuilder<CompletionItemBuilder<P>> documentation();
 
 		/**
+		 * Sets a deprecated.
+		 *
+		 * @param deprecated the deprecated
+		 * @return the builder for chaining
+		 */
+		CompletionItemBuilder<P> deprecated(Boolean deprecated);
+
+		/**
+		 * Sets a preselect.
+		 *
+		 * @param preselect the preselect
+		 * @return the builder for chaining
+		 */
+		CompletionItemBuilder<P> preselect(Boolean preselect);
+
+		/**
 		 * Sets a sort text.
 		 *
 		 * @param sortText the sortText
@@ -326,6 +373,29 @@ public class CompletionItem {
 		TextEditBuilder<CompletionItemBuilder<P>> textEdit();
 
 		/**
+		 * Gets a builder for {@link TextEdit} for additional text edit.
+		 *
+		 * @return the builder for chaining
+		 */
+		TextEditBuilder<CompletionItemBuilder<P>> additionalTextEdit();
+
+		/**
+		 * Sets a commit characters.
+		 *
+		 * @param filterText the filterText
+		 * @return the builder for chaining
+		 */
+		CompletionItemBuilder<P> commitCharacters(List<String> commitCharacters);
+
+		/**
+		 * Sets a data.
+		 *
+		 * @param data the data
+		 * @return the builder for chaining
+		 */
+		CompletionItemBuilder<P> data(Object data);
+
+		/**
 		 * Gets a builder for {@link Command}.
 		 *
 		 * @return the builder for chaining
@@ -353,15 +423,16 @@ public class CompletionItem {
 		private CompletionItemKind kind;
 		private String detail;
 		private MarkupContentBuilder<CompletionItemBuilder<P>> documentation;
+		private Boolean deprecated;
+		private Boolean preselect;
 		private String sortText;
 		private String filterText;
 		private String insertText;
 		private InsertTextFormat insertTextFormat;
 		private TextEditBuilder<CompletionItemBuilder<P>> textEdit;
-		// TODO: support vvv
-//		private List<TextEdit> additionalTextEdits;
-//		private List<String> commitCharacters;
-//		private Object data;
+		private List<TextEditBuilder<CompletionItemBuilder<P>>> additionalTextEditBuilders = new ArrayList<>();
+		private List<String> commitCharacters;
+		private Object data;
 		private CommandBuilder<CompletionItemBuilder<P>> command;
 
 		InternalCompletionItemBuilder(P parent) {
@@ -390,6 +461,18 @@ public class CompletionItem {
 		public MarkupContentBuilder<CompletionItemBuilder<P>> documentation() {
 			this.documentation = MarkupContent.markupContent(this);
 			return documentation;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> deprecated(Boolean deprecated) {
+			this.deprecated = deprecated;
+			return this;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> preselect(Boolean preselect) {
+			this.preselect = preselect;
+			return this;
 		}
 
 		@Override
@@ -423,6 +506,25 @@ public class CompletionItem {
 		}
 
 		@Override
+		public TextEditBuilder<CompletionItemBuilder<P>> additionalTextEdit() {
+			TextEditBuilder<CompletionItemBuilder<P>> additionalTextEditBuilder = TextEdit.textEdit(this);
+			this.additionalTextEditBuilders.add(additionalTextEditBuilder);
+			return additionalTextEditBuilder;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> commitCharacters(List<String> commitCharacters) {
+			this.commitCharacters = commitCharacters;
+			return this;
+		}
+
+		@Override
+		public CompletionItemBuilder<P> data(Object data) {
+			this.data = data;
+			return this;
+		}
+
+		@Override
 		public CommandBuilder<CompletionItemBuilder<P>> command() {
 			this.command = Command.command(this);
 			return this.command;
@@ -437,13 +539,24 @@ public class CompletionItem {
 			if (documentation != null) {
 				completionItem.setDocumentation(documentation.build());
 			}
+			completionItem.setDeprecated(deprecated);
+			completionItem.setPreselect(preselect);
 			if (textEdit != null) {
 				completionItem.setTextEdit(textEdit.build());
 			}
+			if (!additionalTextEditBuilders.isEmpty()) {
+				List<TextEdit> additionalTextEdits = new ArrayList<>();
+				for (TextEditBuilder<CompletionItemBuilder<P>> b : additionalTextEditBuilders) {
+					additionalTextEdits.add(b.build());
+				}
+				completionItem.setAdditionalTextEdits(additionalTextEdits);
+			}
+			completionItem.setCommitCharacters(commitCharacters);
 			completionItem.setSortText(sortText);
 			completionItem.setFilterText(filterText);
 			completionItem.setInsertText(insertText);
 			completionItem.setInsertTextFormat(insertTextFormat);
+			completionItem.setData(data);
 			if (command != null) {
 				completionItem.setCommand(command.build());
 			}

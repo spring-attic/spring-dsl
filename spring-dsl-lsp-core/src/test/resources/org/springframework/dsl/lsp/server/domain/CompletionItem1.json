@@ -6,6 +6,8 @@
     "kind": "markdown",
     "value": "value"
   },
+  "deprecated": true,
+  "preselect": false,
   "sortText": "sortText",
   "filterText": "filterText",
   "insertText": "insertText",
@@ -23,10 +25,39 @@
     },
     "newText": "newText"
   },
-  "additionalTextEdits": null,
-  "commitCharacters": null,
-  "command": null,
-  "data": null,
+  "additionalTextEdits": [
+    {
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 1,
+          "character": 1
+        }
+      },
+      "newText": "newText1"
+    },
+    {
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 2
+        },
+        "end": {
+          "line": 3,
+          "character": 3
+        }
+      },
+      "newText": "newText2"
+    }
+  ],
+  "commitCharacters": [
+    "a",
+    "b"
+  ],
+  "data": "foobar",
   "command": {
     "title": "title",
     "command": "command",
