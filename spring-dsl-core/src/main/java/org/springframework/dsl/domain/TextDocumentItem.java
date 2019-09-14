@@ -125,6 +125,11 @@ public class TextDocumentItem {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "TextDocumentItem [uri=" + uri + ", languageId=" + languageId + ", version=" + version + ", text=" + text
+				+ "]";
+	}
 
 	/**
 	 * Builder interface for {@link TextDocumentItem}.

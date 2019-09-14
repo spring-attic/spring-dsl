@@ -85,6 +85,11 @@ public class WillSaveTextDocumentParams {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "WillSaveTextDocumentParams [textDocument=" + textDocument + "]";
+	}
+
 	/**
 	 * Builder interface for {@link WillSaveTextDocumentParams}.
 	 *

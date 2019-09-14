@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 	@Override
 	public Mono<Document> didOpen(DidOpenTextDocumentParams params) {
+		log.debug("didOpen {}", params);
 		TextDocumentItem textDocument = params.getTextDocument();
 
 		String uri = textDocument.getUri();
@@ -79,6 +80,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 	@Override
 	public final Mono<Document> didChange(DidChangeTextDocumentParams params) {
+		log.debug("didChange {}", params);
 		VersionedTextDocumentIdentifier identifier = params.getTextDocument();
 		String url = identifier.getUri();
 		if (url != null) {
@@ -99,6 +101,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 	@Override
 	public Mono<Document> didSave(DidSaveTextDocumentParams params) {
+		log.debug("didSave {}", params);
 		return Mono.empty();
 	}
 
