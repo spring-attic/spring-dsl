@@ -29,6 +29,7 @@ import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
+import org.springframework.dsl.domain.TextDocumentIdentifier;
 import org.springframework.dsl.domain.TextDocumentItem;
 import org.springframework.dsl.domain.VersionedTextDocumentIdentifier;
 import org.springframework.dsl.domain.WillSaveTextDocumentParams;
@@ -75,6 +76,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 		String text = textDocument.getText();
 
 		TrackedDocument trackedDocument = createDocument(uri, languageId, version, text).open();
+		logState();
 		return Mono.just(trackedDocument.getDocument());
 	}
 
@@ -95,42 +97,33 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 				log.error("", e);
 			}
 		}
-
+		logState();
 		return Mono.empty();
 	}
 
 	@Override
 	public Mono<Document> didSave(DidSaveTextDocumentParams params) {
 		log.debug("didSave {}", params);
+		logState();
 		return Mono.empty();
 	}
 
 	@Override
 	public Mono<Document> didClose(DidCloseTextDocumentParams params) {
 		log.debug("didClose {}", params);
-//		TextDocumentIdentifier identifier = params.getTextDocument();
-//		String url = identifier.getUri();
-//		if (url != null) {
-//			TrackedDocument trackedDocument = documents.get(url);
-//		}
-
+		TextDocumentIdentifier identifier = params.getTextDocument();
+		String url = identifier.getUri();
+		documents.remove(url);
+		logState();
 		return Mono.empty();
 	}
 
 	@Override
 	public Mono<Document> willSave(WillSaveTextDocumentParams params) {
 		log.debug("willSave {}", params);
+		logState();
 		return Mono.empty();
 	}
-
-//	private synchronized TextDocument getOrCreateDocument(String url) {
-//		TrackedDocument doc = documents.get(url);
-//		if (doc==null) {
-//			log.warn("Trying to get document ["+url+"] but it did not exists. Creating it with language-id 'plaintext'");
-//			doc = createDocument(url, LanguageId.PLAINTEXT, 0, "");
-//		}
-//		return doc.getDocument();
-//	}
 
 	private synchronized TrackedDocument createDocument(String url, LanguageId languageId, int version, String text) {
 		TrackedDocument trackedDocument = documents.get(url);
@@ -141,5 +134,9 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 		trackedDocument = new TrackedDocument(new TextDocument(url, languageId, version, text));
 		documents.put(url, trackedDocument);
 		return trackedDocument;
+	}
+
+	private void logState() {
+		log.debug("Number of tracked documents is {}", documents.size());
 	}
 }
