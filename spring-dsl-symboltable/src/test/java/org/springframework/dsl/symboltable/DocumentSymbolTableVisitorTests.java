@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,6 @@ public class DocumentSymbolTableVisitorTests {
 
 		List<SymbolInformation> symbolInformations = visitor.getSymbolizeInfo().symbolInformations().toStream()
 				.collect(Collectors.toList());
-		assertThat(symbolInformations).hasSize(2);
+		assertThat(symbolInformations).hasSize(3);
 	}
 }

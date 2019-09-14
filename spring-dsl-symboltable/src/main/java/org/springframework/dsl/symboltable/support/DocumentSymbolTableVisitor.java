@@ -101,10 +101,11 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		BuilderHolder builderHolder = stack.pop();
 		if (stack.isEmpty()) {
 			documentSymbols.add(builderHolder.documentSymbolBuilder.build());
-			symbolInformations.add(builderHolder.symbolInformationBuilder.build());
 		} else {
 			stack.peek().documentSymbolBuilder.child(builderHolder.documentSymbolBuilder.build());
 		}
+		// SymbolInformation is flat, add all symbols
+		symbolInformations.add(builderHolder.symbolInformationBuilder.build());
 	}
 
 	protected SymbolKind getSymbolKind(Symbol symbol) {
