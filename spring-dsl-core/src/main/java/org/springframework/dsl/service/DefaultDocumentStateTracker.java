@@ -16,7 +16,9 @@
 package org.springframework.dsl.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,11 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	public Document getDocument(String uri) {
 		TrackedDocument trackedDocument = documents.get(uri);
 		return trackedDocument != null ? trackedDocument.getDocument() : null;
+	}
+
+	@Override
+	public List<Document> getDocuments() {
+		return documents.values().stream().map(td -> td.getDocument()).collect(Collectors.toList());
 	}
 
 	@Override

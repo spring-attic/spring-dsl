@@ -33,6 +33,7 @@ import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
 import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
+import org.springframework.dsl.domain.WorkspaceSymbolParams;
 import org.springframework.dsl.jsonrpc.ResolvableMethod;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.support.MockJsonRpcInputMessage;
@@ -80,6 +81,8 @@ public class LspDomainArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
 		param = this.testMethod.arg(CodeLensParams.class);
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
+		param = this.testMethod.arg(WorkspaceSymbolParams.class);
+		assertThat(this.resolver.supportsParameter(param)).isTrue();
 	}
 
 	@Test
@@ -126,6 +129,7 @@ public class LspDomainArgumentResolverTests {
 			TextDocumentPositionParams textDocumentPositionParams,
 			DocumentSymbolParams documentSymbolParams,
 			RenameParams renameParams,
-			CodeLensParams codeLensParams
+			CodeLensParams codeLensParams,
+			WorkspaceSymbolParams workspaceSymbolParams
 			) {}
 }

@@ -80,6 +80,11 @@ public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerC
 				codeLensProviderNode.traverse(p.getCodec()).readValueAs(CodeLensOptions.class));
 		}
 
+		JsonNode workspaceSymbolProviderNode = node.get("workspaceSymbolProvider");
+		if (workspaceSymbolProviderNode != null && workspaceSymbolProviderNode.isBoolean()) {
+			object.setWorkspaceSymbolProvider(workspaceSymbolProviderNode.asBoolean());
+		}
+
 		return object;
 	}
 }

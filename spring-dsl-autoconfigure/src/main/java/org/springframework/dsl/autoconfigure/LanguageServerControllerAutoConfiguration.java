@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
 import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
+import org.springframework.dsl.lsp.server.controller.WorkspaceLanguageServerController;
 import org.springframework.dsl.lsp.web.DocumentController;
 import org.springframework.dsl.service.document.DefaultDocumentService;
 import org.springframework.dsl.service.document.DocumentService;
@@ -40,7 +41,8 @@ public class LanguageServerControllerAutoConfiguration {
 
 	@Configuration
 	@ConditionalOnClass({RootLanguageServerController.class})
-	@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class })
+	@Import({ RootLanguageServerController.class, TextDocumentLanguageServerController.class,
+			WorkspaceLanguageServerController.class })
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server.language-services", name = "enabled", havingValue = "true", matchIfMissing = true)
 	public static class BuiltInControllerConfig {
 	}

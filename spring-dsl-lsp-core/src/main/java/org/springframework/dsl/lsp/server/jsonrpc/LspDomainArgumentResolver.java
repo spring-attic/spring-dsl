@@ -38,6 +38,7 @@ import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
 import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.TextDocumentPositionParams;
+import org.springframework.dsl.domain.WorkspaceSymbolParams;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
 import org.springframework.dsl.jsonrpc.result.method.JsonRpcHandlerMethodArgumentResolver;
 import org.springframework.util.Assert;
@@ -74,7 +75,8 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 			DocumentSymbolParams.class,
 			TextDocumentPositionParams.class,
 			RenameParams.class,
-			CodeLensParams.class
+			CodeLensParams.class,
+			WorkspaceSymbolParams.class
 			).stream().collect(Collectors.toSet());
 
 	/**

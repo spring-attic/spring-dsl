@@ -62,6 +62,10 @@ public class ServerCapabilitiesJsonSerializer extends JsonSerializer<ServerCapab
 			gen.writeObjectField("codeLensProvider", value.getCodeLensProvider());
 		}
 
+		if (value.getWorkspaceSymbolProvider() != null) {
+			gen.writeBooleanField("workspaceSymbolProvider", value.getWorkspaceSymbolProvider());
+		}
+
 		gen.writeEndObject();
 	}
 }

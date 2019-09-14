@@ -70,6 +70,7 @@ import org.springframework.dsl.domain.TextDocumentSyncOptions;
 import org.springframework.dsl.domain.TextEdit;
 import org.springframework.dsl.domain.Unregistration;
 import org.springframework.dsl.domain.WorkspaceEdit;
+import org.springframework.dsl.domain.WorkspaceSymbolParams;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilder;
 import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 import org.springframework.util.StreamUtils;
@@ -179,6 +180,7 @@ public class LspDomainJacksonSerializationTests {
 					.resolveProvider(true)
 					.triggerCharacters(Arrays.asList("a", "b"))
 					.and()
+				.workspaceSymbolProvider(true)
 				.build();
 
 		json = mapper.writeValueAsString(from);
@@ -1348,6 +1350,26 @@ public class LspDomainJacksonSerializationTests {
 
 		json = mapper.writeValueAsString(from);
 		to = mapper.readValue(json, WorkspaceEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testWorkspaceSymbolParams() throws Exception {
+		WorkspaceSymbolParams from = new WorkspaceSymbolParams();
+		String json = mapper.writeValueAsString(from);
+		WorkspaceSymbolParams to = mapper.readValue(json, WorkspaceSymbolParams.class);
+		assertObjects(from, to);
+
+		from = WorkspaceSymbolParams.workspaceSymbolParams()
+				.query("query")
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, WorkspaceSymbolParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("WorkspaceSymbolParams1.json");
+		to = mapper.readValue(expect, WorkspaceSymbolParams.class);
 		assertObjects(from, to);
 	}
 

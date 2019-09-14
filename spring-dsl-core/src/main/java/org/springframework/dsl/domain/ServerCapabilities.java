@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class ServerCapabilities {
 	private CompletionOptions completionProvider;
 	private Boolean documentSymbolProvider;
 	private CodeLensOptions codeLensProvider;
+	private Boolean workspaceSymbolProvider;
 
 	public ServerCapabilities() {
 	}
@@ -110,6 +111,14 @@ public class ServerCapabilities {
 		this.renameProvider = renameProvider;
 	}
 
+	public Boolean getWorkspaceSymbolProvider() {
+		return workspaceSymbolProvider;
+	}
+
+	public void setWorkspaceSymbolProvider(Boolean workspaceSymbolProvider) {
+		this.workspaceSymbolProvider = workspaceSymbolProvider;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -121,6 +130,7 @@ public class ServerCapabilities {
 		result = prime * result + ((textDocumentSyncKind == null) ? 0 : textDocumentSyncKind.hashCode());
 		result = prime * result + ((textDocumentSyncOptions == null) ? 0 : textDocumentSyncOptions.hashCode());
 		result = prime * result + ((codeLensProvider == null) ? 0 : codeLensProvider.hashCode());
+		result = prime * result + ((workspaceSymbolProvider == null) ? 0 : workspaceSymbolProvider.hashCode());
 		return result;
 	}
 
@@ -179,6 +189,13 @@ public class ServerCapabilities {
 				return false;
 			}
 		} else if (!codeLensProvider.equals(other.codeLensProvider)) {
+			return false;
+		}
+		if (workspaceSymbolProvider == null) {
+			if (other.workspaceSymbolProvider != null) {
+				return false;
+			}
+		} else if (!workspaceSymbolProvider.equals(other.workspaceSymbolProvider)) {
 			return false;
 		}
 		return true;
@@ -273,6 +290,14 @@ public class ServerCapabilities {
 		 * @return the builder for chaining
 		 */
 		CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider(boolean enabled);
+
+		/**
+		 * Sets if {@code workspaceSymbolProvider} is enabled.
+		 *
+		 * @param workspaceSymbolProvider the provider enabler flag
+		 * @return the builder for chaining
+		 */
+		ServerCapabilitiesBuilder<P> workspaceSymbolProvider(Boolean workspaceSymbolProvider);
 	}
 
 	/**
@@ -298,6 +323,7 @@ public class ServerCapabilities {
 		private Boolean documentSymbolProvider;
 		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
 		private CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider;
+		private Boolean workspaceSymbolProvider;
 
 		InternalServerCapabilitiesBuilder(P parent) {
 			super(parent);
@@ -374,6 +400,12 @@ public class ServerCapabilities {
 		}
 
 		@Override
+		public ServerCapabilitiesBuilder<P> workspaceSymbolProvider(Boolean workspaceSymbolProvider) {
+			this.workspaceSymbolProvider = workspaceSymbolProvider;
+			return this;
+		}
+
+		@Override
 		public ServerCapabilities build() {
 			ServerCapabilities serverCapabilities = new ServerCapabilities();
 			if (textDocumentSyncOptions != null) {
@@ -389,6 +421,9 @@ public class ServerCapabilities {
 			}
 			if (codeLensProvider != null) {
 				serverCapabilities.setCodeLensProvider(codeLensProvider.build());
+			}
+			if (workspaceSymbolProvider != null) {
+				serverCapabilities.setWorkspaceSymbolProvider(workspaceSymbolProvider);
 			}
 			return serverCapabilities;
 		}

@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.service;
 
+import java.util.List;
+
 import org.springframework.dsl.document.Document;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
@@ -91,4 +93,6 @@ public interface DocumentStateTracker {
 	 * @return the known document for uri
 	 */
 	Document getDocument(String uri);
+
+	List<Document> getDocuments();
 }

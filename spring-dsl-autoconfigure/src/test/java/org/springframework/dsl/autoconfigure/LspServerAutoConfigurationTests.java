@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.dsl.lsp.server.controller.RootLanguageServerController;
+import org.springframework.dsl.lsp.server.controller.TextDocumentLanguageServerController;
+import org.springframework.dsl.lsp.server.controller.WorkspaceLanguageServerController;
 
 /**
  * Tests for {@link LspServerAutoConfiguration}.
@@ -50,6 +52,8 @@ public class LspServerAutoConfigurationTests {
 				.run((context) -> {
 					assertThat(context).hasSingleBean(ReactiveAdapterRegistry.class);
 					assertThat(context).hasSingleBean(RootLanguageServerController.class);
+					assertThat(context).hasSingleBean(TextDocumentLanguageServerController.class);
+					assertThat(context).hasSingleBean(WorkspaceLanguageServerController.class);
 				});
 		this.contextRunner
 				.withUserConfiguration(DslAutoConfiguration.class, LanguageServerControllerAutoConfiguration.class)
@@ -57,6 +61,8 @@ public class LspServerAutoConfigurationTests {
 				.run((context) -> {
 					assertThat(context).hasSingleBean(ReactiveAdapterRegistry.class);
 					assertThat(context).doesNotHaveBean(RootLanguageServerController.class);
+					assertThat(context).doesNotHaveBean(TextDocumentLanguageServerController.class);
+					assertThat(context).doesNotHaveBean(WorkspaceLanguageServerController.class);
 				});
 	}
 }

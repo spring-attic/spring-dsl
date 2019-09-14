@@ -102,6 +102,8 @@ public class RootLanguageServerController {
 //						.change(documentStateTracker.isIncrementalChangesSupported() ? TextDocumentSyncKind.Incremental
 //							: TextDocumentSyncKind.Full)
 						.and()
+					// TODO: for dev testing for now
+					.workspaceSymbolProvider(true)
 					.and()
 				.build();
 		}).doOnSuccess(result -> {
