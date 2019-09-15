@@ -75,6 +75,10 @@ public class TextDocumentIdentifier {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "TextDocumentIdentifier [uri=" + uri + "]";
+	}
 
 	/**
 	 * Builder interface for {@link TextDocumentIdentifier}.
