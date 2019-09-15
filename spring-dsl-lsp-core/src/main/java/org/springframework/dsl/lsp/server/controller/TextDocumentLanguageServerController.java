@@ -54,7 +54,6 @@ import org.springframework.dsl.service.DocumentStateTracker;
 import org.springframework.dsl.service.DslContext;
 import org.springframework.dsl.service.DslServiceRegistry;
 import org.springframework.dsl.service.Hoverer;
-import org.springframework.dsl.service.Lenser;
 import org.springframework.dsl.service.reconcile.Reconciler;
 import org.springframework.util.Assert;
 
@@ -106,16 +105,17 @@ public class TextDocumentLanguageServerController {
 		log.debug("clientDocumentOpened {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didOpen(params))
-				.map(document -> buildCommonDslContext(document, session))
-				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
-						.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
-								.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
-						.flatMap(reconciler -> reconciler.reconcile(context)))
-				.reduce((l, r) -> {
-					l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
-							.collect(Collectors.toList()));
-					return l;
-				}).switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))).flux();
+			.map(document -> buildCommonDslContext(document, session))
+			.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
+				.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
+					.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
+				.flatMap(reconciler -> reconciler.reconcile(context)))
+			.reduce((l, r) -> {
+				l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+					.collect(Collectors.toList()));
+				return l;
+			})
+			.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))).flux();
 	}
 
 	/**
@@ -132,16 +132,17 @@ public class TextDocumentLanguageServerController {
 		log.debug("clientDocumentChanged {}", params);
 		DocumentStateTracker documentStateTracker = getTracker(session);
 		return Flux.from(documentStateTracker.didChange(params))
-				.map(document -> buildCommonDslContext(document, session))
-				.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
-						.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
-								.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
-						.flatMap(reconciler -> reconciler.reconcile(context)))
-				.reduce((l, r) -> {
-					l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
-							.collect(Collectors.toList()));
-					return l;
-				}).switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))).flux();
+			.map(document -> buildCommonDslContext(document, session))
+			.flatMap(context -> Flux.fromIterable(registry.getReconcilers())
+				.filter(reconciler -> reconciler.getSupportedLanguageIds().stream()
+					.anyMatch(l -> l.isCompatibleWith(context.getDocument().languageId())))
+				.flatMap(reconciler -> reconciler.reconcile(context)))
+			.reduce((l, r) -> {
+				l.setDiagnostics(Stream.concat(l.getDiagnostics().stream(), r.getDiagnostics().stream())
+					.collect(Collectors.toList()));
+				return l;
+			})
+			.switchIfEmpty(Mono.just(new PublishDiagnosticsParams(params.getTextDocument().getUri()))).flux();
 	}
 
 	/**
@@ -220,9 +221,10 @@ public class TextDocumentLanguageServerController {
 		DslContext context = buildCommonDslContext(document, session);
 
 		return Flux.fromIterable(registry.getHoverers())
-				.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
-						.anyMatch(l -> l.isCompatibleWith(document.languageId())))
-				.next().flatMap(hoverer -> hoverer.hover(context, position));
+			.filter(hoverer -> hoverer.getSupportedLanguageIds().stream()
+				.anyMatch(l -> l.isCompatibleWith(document.languageId())))
+			.next()
+			.flatMap(hoverer -> hoverer.hover(context, position));
 	}
 
 	/**
@@ -246,9 +248,10 @@ public class TextDocumentLanguageServerController {
 
 		// TODO: think how to integrate into isIncomplete setting
 		return Flux.fromIterable(registry.getCompletioners(document.languageId()))
-				.concatMap(completioner -> completioner.complete(context, position)).buffer().map(completionItems -> {
-					return CompletionList.completionList().isIncomplete(false).items(completionItems).build();
-				}).next();
+			.concatMap(completioner -> completioner.complete(context, position)).buffer().map(completionItems -> {
+				return CompletionList.completionList().isIncomplete(false).items(completionItems).build();
+			})
+			.next();
 	}
 
 	/**
@@ -271,20 +274,20 @@ public class TextDocumentLanguageServerController {
 		// TODO: should probably fix this so that if we prefer either one, and that
 		// is empty, we also check other one.
 		if (properties.getLsp().getServer().getTextDocument().getDocumentSymbol()
-				.getPrefer() == DocumentSymbolPrefer.SymbolInformation) {
+			.getPrefer() == DocumentSymbolPrefer.SymbolInformation) {
 			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-					.map(symbolizer -> symbolizer.symbolize(context))
-					.map(si -> si.symbolInformations())
-					.next()
-					.flatMap(ds -> ds.collectList())
-					.map(list -> list.toArray(new SymbolInformation[0]));
+				.map(symbolizer -> symbolizer.symbolize(context))
+				.map(si -> si.symbolInformations())
+				.next()
+				.flatMap(ds -> ds.collectList())
+				.map(list -> list.toArray(new SymbolInformation[0]));
 		} else {
 			return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-					.map(symbolizer -> symbolizer.symbolize(context))
-					.map(si -> si.documentSymbols())
-					.next()
-					.flatMap(ds -> ds.collectList())
-					.map(list -> list.toArray(new DocumentSymbol[0]));
+				.map(symbolizer -> symbolizer.symbolize(context))
+				.map(si -> si.documentSymbols())
+				.next()
+				.flatMap(ds -> ds.collectList())
+				.map(list -> list.toArray(new DocumentSymbol[0]));
 		}
 	}
 
@@ -304,7 +307,7 @@ public class TextDocumentLanguageServerController {
 		DslContext context = buildCommonDslContext(document, session);
 
 		return Flux.fromIterable(registry.getRenamers(document.languageId()))
-				.concatMap(renamer -> renamer.rename(context, params.getPosition(), params.getNewName())).next();
+			.concatMap(renamer -> renamer.rename(context, params.getPosition(), params.getNewName())).next();
 	}
 
 	/**
