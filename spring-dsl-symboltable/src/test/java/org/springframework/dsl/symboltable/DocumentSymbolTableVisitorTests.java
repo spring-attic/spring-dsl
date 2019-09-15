@@ -31,7 +31,7 @@ import org.springframework.dsl.symboltable.support.DocumentSymbolTableVisitor;
 public class DocumentSymbolTableVisitorTests {
 
 	@Test
-	public void test1() {
+	public void testSimpleVisit() {
 		PredefinedScope scope = new PredefinedScope();
 
 		ClassSymbol classA = new ClassSymbol("classA");
@@ -63,5 +63,43 @@ public class DocumentSymbolTableVisitorTests {
 		List<SymbolInformation> symbolInformations = visitor.getSymbolizeInfo().symbolInformations().toStream()
 				.collect(Collectors.toList());
 		assertThat(symbolInformations).hasSize(3);
+	}
+
+	@Test
+	public void testSimpleVisitQuery() {
+		PredefinedScope scope = new PredefinedScope();
+
+		ClassSymbol classA = new ClassSymbol("classA");
+		scope.define(classA);
+
+		ClassSymbol classB = new ClassSymbol("classB");
+		scope.define(classB);
+
+		FieldSymbol fieldA = new FieldSymbol("fieldA");
+		classB.define(fieldA);
+
+		DocumentSymbolTableVisitor visitor = new DocumentSymbolTableVisitor();
+		visitor.setSymbolQuery(symbol -> {
+			if (symbol instanceof FieldSymbol) {
+				return true;
+			}
+			return false;
+		});
+		scope.accept(visitor);
+		assertThat(visitor.getSymbolizeInfo()).isNotNull();
+
+		List<DocumentSymbol> documentSymbols = visitor.getSymbolizeInfo().documentSymbols().toStream()
+				.collect(Collectors.toList());
+		assertThat(documentSymbols).hasSize(2);
+		for (DocumentSymbol ds : documentSymbols) {
+			if (ds.getName() == "classB") {
+				assertThat(ds.getChildren()).hasSize(1);
+				assertThat(ds.getChildren().get(0).getName()).isEqualTo("fieldA");
+			}
+		}
+
+		List<SymbolInformation> symbolInformations = visitor.getSymbolizeInfo().symbolInformations().toStream()
+				.collect(Collectors.toList());
+		assertThat(symbolInformations).hasSize(1);
 	}
 }

@@ -16,6 +16,7 @@
 package org.springframework.dsl.symboltable;
 
 import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.domain.SymbolKind;
 
 /**
  * A generic programming language symbol. A symbol has to have a name and a
@@ -70,6 +71,10 @@ public interface Symbol {
 	 * @return the range
 	 */
 	Range getRange();
+
+	default SymbolKind getKind() {
+		return SymbolKind.String;
+	};
 
 	/**
 	 * Accepts a {@link SymbolTableVisitor}.

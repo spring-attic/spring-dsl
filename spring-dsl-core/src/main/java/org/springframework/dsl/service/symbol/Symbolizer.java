@@ -33,4 +33,17 @@ public interface Symbolizer extends DslService {
 	 * @return a symbolize info
 	 */
 	SymbolizeInfo symbolize(DslContext context);
+
+	/**
+	 * Provide symbol information for a given document with a given
+	 * query. This method defaults to {@link #symbolize(DslContext)}
+	 * essentially discarding query.
+	 *
+	 * @param context the dsl context
+	 * @param query the symbol query
+	 * @return a symbolize info
+	 */
+	default SymbolizeInfo symbolize(DslContext context, String query) {
+		return symbolize(context);
+	};
 }

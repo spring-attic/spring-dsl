@@ -18,6 +18,7 @@ package org.springframework.dsl.symboltable.support;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,6 @@ import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.DocumentSymbol.DocumentSymbolBuilder;
 import org.springframework.dsl.domain.SymbolInformation;
 import org.springframework.dsl.domain.SymbolInformation.SymbolInformationBuilder;
-import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
@@ -46,6 +46,7 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 	private final List<SymbolInformation> symbolInformations = new ArrayList<>();
 	private final Stack<BuilderHolder> stack = new Stack<>();
 	private final String uri;
+	private Function<Symbol, Boolean> symbolQuery = (symbol) -> true;
 
 	/**
 	 * Instantiates a new document symbol table visitor.
@@ -63,6 +64,10 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		this.uri = uri;
 	}
 
+	public void setSymbolQuery(Function<Symbol, Boolean> symbolQuery) {
+		this.symbolQuery = symbolQuery;
+	}
+
 	@Override
 	public void enterVisitScope(Scope scope) {
 		log.debug("enterVisitScope {}", scope);
@@ -78,12 +83,12 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		log.debug("enterVisitSymbol {}", symbol);
 		DocumentSymbolBuilder<?> documentSymbolBuilder = DocumentSymbol.documentSymbol()
 			.name(symbol.getName())
-			.kind(SymbolKind.String)
+			.kind(symbol.getKind())
 			.range(symbol.getRange())
 			.selectionRange(symbol.getRange());
 		SymbolInformationBuilder<?> symbolInformationBuilder = SymbolInformation.symbolInformation()
 			.name(symbol.getName())
-			.kind(SymbolKind.String)
+			.kind(symbol.getKind())
 			.location()
 				.uri(uri)
 				.range(symbol.getRange())
@@ -98,6 +103,7 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 	@Override
 	public void exitVisitSymbol(Symbol symbol) {
 		log.debug("exitVisitSymbol {}", symbol);
+		Boolean match = symbolQuery.apply(symbol);
 		BuilderHolder builderHolder = stack.pop();
 		if (stack.isEmpty()) {
 			documentSymbols.add(builderHolder.documentSymbolBuilder.build());
@@ -105,11 +111,9 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 			stack.peek().documentSymbolBuilder.child(builderHolder.documentSymbolBuilder.build());
 		}
 		// SymbolInformation is flat, add all symbols
-		symbolInformations.add(builderHolder.symbolInformationBuilder.build());
-	}
-
-	protected SymbolKind getSymbolKind(Symbol symbol) {
-		return SymbolKind.String;
+		if (match != null && match) {
+			symbolInformations.add(builderHolder.symbolInformationBuilder.build());
+		}
 	}
 
 	private static class BuilderHolder {

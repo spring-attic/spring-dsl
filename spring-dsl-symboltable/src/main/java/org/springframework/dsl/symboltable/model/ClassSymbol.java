@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.symboltable.MemberSymbol;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
@@ -135,6 +136,11 @@ public class ClassSymbol extends DataAggregateSymbol {
 		}
 		n += getNumberOfDefinedFields();
 		return n;
+	}
+
+	@Override
+	public SymbolKind getKind() {
+		return SymbolKind.Class;
 	}
 
 	/** Return the set of all methods defined within this class */

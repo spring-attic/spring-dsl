@@ -56,7 +56,7 @@ public class WorkspaceLanguageServerController {
 				.flatMap(document -> {
 					DslContext context = buildCommonDslContext(document, session);
 					return Flux.fromIterable(registry.getSymbolizers(document.languageId()))
-						.map(symbolizer -> symbolizer.symbolize(context))
+						.map(symbolizer -> symbolizer.symbolize(context, params.getQuery()))
 						.flatMap(si -> si.symbolInformations());
 				})
 				.collectList();
