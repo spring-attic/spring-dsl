@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 import reactor.core.scheduler.Schedulers;
 import reactor.netty.Connection;
-import reactor.netty.NettyPipeline;
 import reactor.netty.tcp.TcpClient;
 
 public class StdioSocketBridge {
@@ -108,10 +107,7 @@ public class StdioSocketBridge {
 					.subscribeOn(Schedulers.parallel())
 					.subscribe();
 
-
-					return out.options(NettyPipeline.SendOptions::flushOnEach)
-							.neverComplete();
-
+					return out.neverComplete();
 				})
 				.connect()
 				.block();

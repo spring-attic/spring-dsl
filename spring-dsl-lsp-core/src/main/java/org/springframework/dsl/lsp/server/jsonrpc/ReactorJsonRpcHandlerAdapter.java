@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
-import reactor.netty.NettyPipeline;
 
 /**
  * Adapter to hook into netty's channels to dispatch messages into {@link RpcHandler}.
@@ -195,8 +194,6 @@ public class ReactorJsonRpcHandlerAdapter implements BiFunction<NettyInbound, Ne
 					});
 				}
 			});
-
-		return out.options(NettyPipeline.SendOptions::flushOnEach)
-				.neverComplete();
+		return out.neverComplete();
 	}
 }

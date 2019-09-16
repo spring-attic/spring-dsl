@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springVersion = '5.2.0.M2'
-		springBootVersion = '2.2.0.M3'
+		springVersion = '5.2.0.RC2'
+		springBootVersion = '2.2.0.M6'
 		antlr4Version = '4.7.1'
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
@@ -322,7 +322,7 @@ configure(sampleProjects()) {
 
 project('spring-dsl-samples-common') {
 	description = "Spring Dsl Samples Common"
-	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+	//configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
 	tasks.findByPath("artifactoryPublish")?.enabled = false
 	dependencies {
 		compile project(':spring-dsl-core')
@@ -333,7 +333,7 @@ project('spring-dsl-samples-common') {
 
 project('spring-dsl-build-tests') {
 	description = "Spring Dsl Build Tests"
-	configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+	//configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
 	tasks.findByPath("artifactoryPublish")?.enabled = false
 
 	dependencies {
@@ -530,9 +530,5 @@ configure(rootProject) {
 	artifacts {
 		archives docsZip
 	}
-
-	task wrapper(type: Wrapper) {
-		description = 'Generates gradlew[.bat] scripts'
-		gradleVersion = '4.4.1'
-	}
 }
+
