@@ -52,13 +52,13 @@ class Test2AntlrParseResultFunction
 	@Override
 	protected Mono<AntlrParseResult<Object>> parse(Document document) {
 		List<ReconcileProblem> errors = new ArrayList<>();
-		Test2Grammar parser = getParser(CharStreams.fromString(document.content()));
+		Test2Grammar parser = getParser(CharStreams.fromString(document.content().toString()));
         parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
         parser.removeErrorListeners();
         parser.addErrorListener(new Test2ErrorListener(errors));
         parser.definitions();
 
-        parser = getParser(CharStreams.fromString(document.content()));
+        parser = getParser(CharStreams.fromString(document.content().toString()));
 		ParseTree tree = parser.definitions();
 		Test2Visitor visitor = new Test2Visitor(errors);
 		AntlrParseResult<Object> result = visitor.visit(tree);
@@ -92,7 +92,7 @@ class Test2AntlrParseResultFunction
 
 	@Override
 	protected Flux<CompletionItem> getCompletionItems(Mono<AntlrParseResult<Object>> shared, Document document, Position position) {
-		Test2Grammar p = getParser(CharStreams.fromString(document.content()));
+		Test2Grammar p = getParser(CharStreams.fromString(document.content().toString()));
 		HashSet<Integer> preferredRules = new HashSet<>(
 				Arrays.asList(Test2Grammar.RULE_sourceId, Test2Grammar.RULE_targetId));
 		AntlrCompletionEngine completionEngine = new DefaultAntlrCompletionEngine(p, preferredRules, null);

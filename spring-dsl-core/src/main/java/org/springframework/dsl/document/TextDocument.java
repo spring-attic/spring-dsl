@@ -15,22 +15,11 @@
  */
 package org.springframework.dsl.document;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dsl.document.linetracker.DefaultLineTracker;
-import org.springframework.dsl.document.linetracker.LineTracker;
-import org.springframework.dsl.document.linetracker.Region;
-import org.springframework.dsl.domain.DidChangeTextDocumentParams;
+import org.springframework.dsl.document.Region;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.Range;
-import org.springframework.dsl.domain.TextDocumentContentChangeEvent;
 import org.springframework.dsl.domain.TextDocumentIdentifier;
 import org.springframework.dsl.model.LanguageId;
-
-import javolution.text.Text;
 
 /**
  * {@link Document} implementation having a textual content and understands
@@ -42,24 +31,11 @@ import javolution.text.Text;
  */
 public class TextDocument implements Document {
 
-	private static final Logger log = LoggerFactory.getLogger(TextDocument.class);
-	private static final Pattern NEWLINE = Pattern.compile("\\r(\\n)?|\\n");
-
-	//TODO: should try to avoid haveing any methods returning String
-	//      This defeats the point of using javaolution.Text (i.e. converion into
-	//      String can cause massive string copying)
-
-	//TODO: this 'stateful' object should be
-	//      - renamed to TextDocumentState
-	//      - not implement IDocument but have a method obtain an IDocument
-	//      - representing a read-only snapshot of the document contents.
-	//      - replace line tracker with something better.
-
-	private LineTracker lineTracker = new DefaultLineTracker();
-	private final LanguageId languageId;
 	private final String uri;
-	private Text text = new Text("");
+	private final LanguageId languageId;
 	private int version;
+	private DocumentText text = new DocumentText("");
+	private DocumentLineTracker lineTracker = new DefaultDocumentLineTracker();
 
 	public TextDocument(String content) {
 		this(null, null, 0, content);
@@ -80,7 +56,7 @@ public class TextDocument implements Document {
 		this.uri = other.uri;
 		this.languageId = other.languageId();
 		this.text = other.text;
-		this.lineTracker.set(text.toString());
+		this.lineTracker.set(text);
 		this.version = other.version;
 	}
 
@@ -100,8 +76,8 @@ public class TextDocument implements Document {
 	}
 
 	@Override
-	public String content() {
-		return getText().toString();
+	public DocumentText content() {
+		return text;
 	}
 
 	@Override
@@ -120,26 +96,9 @@ public class TextDocument implements Document {
 		return pos;
 	}
 
-	public synchronized Text getText() {
-		return text;
-	}
-
 	public synchronized void setText(String content) {
-		this.text = new Text(content);
-		this.lineTracker.set(content);
-	}
-
-	public synchronized void apply(DidChangeTextDocumentParams params) {
-		int newVersion = params.getTextDocument().getVersion();
-		if (version < newVersion) {
-			log.trace("Number of changes {}", params.getContentChanges().size());
-			for (TextDocumentContentChangeEvent change : params.getContentChanges()) {
-				apply(change);
-			}
-			this.version = newVersion;
-		} else {
-			log.warn("Change event with bad version ignored, current {} new {}: {}", version, newVersion, params);
-		}
+		this.text = new DocumentText(content);
+		this.lineTracker.set(this.text);
 	}
 
 	/**
@@ -178,16 +137,12 @@ public class TextDocument implements Document {
 	}
 
 	@Override
-	public String content(int start, int len) {
-		try {
-			return text.subtext(start, start+len).toString();
-		} catch (Exception e) {
-			throw new BadLocationException("Error processing subtext", e);
-		}
+	public DocumentText content(int start, int length) {
+		return text.subtext(start, start + length);
 	}
 
 	@Override
-	public String content(Range range) {
+	public DocumentText content(Range range) {
 		int startOffset = toOffset(range.getStart());
 		int endOffset = toOffset(range.getEnd());
 		return content(startOffset, endOffset - startOffset);
@@ -196,15 +151,6 @@ public class TextDocument implements Document {
 	@Override
 	public int lineCount() {
 		return lineTracker.getNumberOfLines();
-	}
-
-	@Override
-	public String getDefaultLineDelimiter() {
-		Matcher newlineFinder = NEWLINE.matcher(text);
-		if (newlineFinder.find()) {
-			return text.subtext(newlineFinder.start(), newlineFinder.end()).toString();
-		}
-		return System.getProperty("line.separator");
 	}
 
 	@Override
@@ -267,15 +213,15 @@ public class TextDocument implements Document {
 		int end = start+len;
 		text = text
 			.delete(start, end)
-			.insert(start, new Text(ins));
-		lineTracker.replace(start, len, ins);
+			.insert(start, new DocumentText(ins));
+		lineTracker.replace(start, len, new DocumentText(ins));
 	}
 
 	public synchronized TextDocument copy() {
 		return new TextDocument(this);
 	}
 
-	public String textBetween(int start, int end) {
+	public DocumentText textBetween(int start, int end) {
 		return content(start, end-start);
 	}
 
@@ -284,20 +230,6 @@ public class TextDocument implements Document {
 			return new TextDocumentIdentifier(uri);
 		}
 		return null;
-	}
-
-	private void apply(TextDocumentContentChangeEvent change) {
-		log.trace("Old content before apply is '{}'", content());
-		Range range = change.getRange();
-		if (range == null) {
-			//full sync mode
-			setText(change.getText());
-		} else {
-			int start = toOffset(range.getStart());
-			int end = toOffset(range.getEnd());
-			replace(start, end-start, change.getText());
-		}
-		log.trace("New content after apply is '{}'", content());
 	}
 
 	private int startOfLine(int line) {

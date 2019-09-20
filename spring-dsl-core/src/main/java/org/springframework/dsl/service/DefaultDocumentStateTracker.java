@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dsl.document.BadLocationException;
 import org.springframework.dsl.document.Document;
-import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.document.TextDocumentState;
 import org.springframework.dsl.domain.DidChangeTextDocumentParams;
 import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
@@ -39,6 +39,7 @@ import org.springframework.dsl.model.TrackedDocument;
 import reactor.core.publisher.Mono;
 
 /**
+ * Default implementation of a {@link DocumentStateTracker}.
  *
  * @author Kris De Volder
  * @author Janne Valkealahti
@@ -52,12 +53,12 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 	@Override
 	public Document getDocument(String uri) {
 		TrackedDocument trackedDocument = documents.get(uri);
-		return trackedDocument != null ? trackedDocument.getDocument() : null;
+		return trackedDocument != null ? trackedDocument.getDocument().getDocument() : null;
 	}
 
 	@Override
 	public List<Document> getDocuments() {
-		return documents.values().stream().map(td -> td.getDocument()).collect(Collectors.toList());
+		return documents.values().stream().map(td -> td.getDocument().getDocument()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -77,7 +78,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 
 		TrackedDocument trackedDocument = createDocument(uri, languageId, version, text).open();
 		logState();
-		return Mono.just(trackedDocument.getDocument());
+		return Mono.just(trackedDocument.getDocument().getDocument());
 	}
 
 	@Override
@@ -89,9 +90,9 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 			TrackedDocument trackedDocument = documents.get(url);
 
 			try {
-				TextDocument doc = trackedDocument.getDocument();
+				TextDocumentState doc = trackedDocument.getDocument();
 				doc.apply(params);
-				return Mono.just(doc);
+				return Mono.just(doc.getDocument());
 
 			} catch (BadLocationException e) {
 				log.error("", e);
@@ -131,7 +132,7 @@ public class DefaultDocumentStateTracker implements DocumentStateTracker {
 			log.warn("Creating document [{}] but it already exists. Reusing existing!", url);
 			return trackedDocument;
 		}
-		trackedDocument = new TrackedDocument(new TextDocument(url, languageId, version, text));
+		trackedDocument = new TrackedDocument(new TextDocumentState(text, url, languageId));
 		documents.put(url, trackedDocument);
 		return trackedDocument;
 	}

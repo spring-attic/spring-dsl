@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,31 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.dsl.document.linetracker;
+package org.springframework.dsl.document;
 
-import org.springframework.dsl.document.BadLocationException;
+import org.springframework.dsl.document.Region;
 
-/**
- * A line tracker maps character positions to line numbers and vice versa.
- * Initially the line tracker is informed about its underlying text in order to
- * initialize the mapping information. After that, the line tracker is informed
- * about all changes of the underlying text allowing for incremental updates of
- * the mapping information. It is the client's responsibility to actively inform
- * the line tacker about text changes. For example, when using a line tracker in
- * combination with a document the document controls the line tracker.
- *
- * @author Kris De Volder
- * @author Janne Valkealahti
- *
- */
-public interface LineTracker {
+public interface DocumentLineTracker {
 
 	/**
 	 * Returns the strings this tracker considers as legal line delimiters.
 	 *
 	 * @return the legal line delimiters
 	 */
-	String[] getLegalLineDelimiters();
+	DocumentText[] getLegalLineDelimiters();
 
 	/**
 	 * Returns the line delimiter of the specified line. Returns <code>null</code> if the
@@ -47,15 +34,7 @@ public interface LineTracker {
 	 * @return the line's delimiter or <code>null</code> if line does not have a delimiter
 	 * @exception BadLocationException if the line number is invalid in this tracker's line structure
 	 */
-	String getLineDelimiter(int line);
-
-	/**
-	 * Computes the number of lines in the given text.
-	 *
-	 * @param text the text whose number of lines should be computed
-	 * @return the number of lines in the given text
-	 */
-	int computeNumberOfLines(String text);
+	DocumentText getLineDelimiter(int line);
 
 	/**
 	 * Returns the number of lines.
@@ -127,12 +106,12 @@ public interface LineTracker {
 	 * @param length the length of the replaced text
 	 * @param text the substitution text
 	 */
-	void replace(int offset, int length, String text);
+	void replace(int offset, int length, DocumentText text);
 
 	/**
 	 * Sets the tracked text to the specified text.
 	 *
 	 * @param text the new tracked text
 	 */
-	void set(String text);
+	void set(DocumentText text);
 }

@@ -57,7 +57,7 @@ public interface Document {
 	 *
 	 * @return the content
 	 */
-	String content();
+	DocumentText content();
 
 	/**
 	 * Gets a length of a document.
@@ -115,7 +115,7 @@ public interface Document {
 	 * @param length the length
 	 * @return the string
 	 */
-	String content(int start, int length);
+	DocumentText content(int start, int length);
 
 	/**
 	 * Get a content from a range.
@@ -123,7 +123,7 @@ public interface Document {
 	 * @param range a range
 	 * @return the string
 	 */
-	String content(Range range);
+	DocumentText content(Range range);
 
 	/**
 	 * Gets a position from a given offset.
@@ -148,13 +148,6 @@ public interface Document {
 	 * @return true, if successful
 	 */
 	boolean positionInBounds(Position position);
-
-	/**
-	 * Gets the default line delimiter.
-	 *
-	 * @return the default line delimiter
-	 */
-	String getDefaultLineDelimiter();
 
 	/**
 	 * Create a valid position so that it always lies within

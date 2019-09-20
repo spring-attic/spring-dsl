@@ -46,7 +46,7 @@ public class DOTAntlrParseResultFunction
 	public Mono<? extends AntlrParseResult<Object>> apply(Document document) {
 		return Mono.defer(() -> {
 			List<ReconcileProblem> errors = new ArrayList<>();
-			DOTParser parser = getParser(CharStreams.fromString(document.content()));
+			DOTParser parser = getParser(CharStreams.fromString(document.content().toString()));
 			parser.removeErrorListeners();
 			parser.addErrorListener(new DOTErrorListener(errors));
 			parser.graph();

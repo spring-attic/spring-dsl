@@ -36,7 +36,7 @@ public class TextDocumentTests {
 	@Test
 	public void testSimpleContent() {
 		TextDocument textDocument = new TextDocument(DOC1);
-		assertThat(textDocument.content()).isEqualTo(DOC1);
+		assertThat(textDocument.content().toString()).isEqualTo(DOC1);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class TextDocumentTests {
 		assertThat(textDocument.toRange(6, 1)).isEqualTo(Range.from(1, 0, 1, 1));
 		assertThat(textDocument.getLineRange(0)).isEqualTo(Range.from(0, 0, 0, 5));
 		assertThat(textDocument.getLineRange(1)).isEqualTo(Range.from(1, 0, 1, 5));
-		assertThat(textDocument.content(Range.from(1, 0, 1, 5))).isEqualTo("line2");
+		assertThat(textDocument.content(Range.from(1, 0, 1, 5)).toString()).isEqualTo("line2");
 
 		textDocument = new TextDocument(DOC3);
 		assertThat(textDocument.toRange(0, 12)).isEqualTo(Range.from(0, 0, 2, 0));

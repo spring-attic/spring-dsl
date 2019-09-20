@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.dsl.document.Document;
+import org.springframework.dsl.document.DocumentText;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.model.LanguageId;
@@ -150,7 +151,8 @@ public class SimpleLanguage {
 	public static SimpleLanguage build(Document document) {
 		ArrayList<Line> lines = new ArrayList<>();
 
-		String content = document.content();
+		// String content = document.content();
+		DocumentText content = document.content();
 		Matcher matcher = REGEX.matcher(content);
 
 		int position = 0;
@@ -159,7 +161,8 @@ public class SimpleLanguage {
 
 		while (matcher.find()) {
 			found = true;
-			String line = content.substring(position, matcher.start());
+			// String line = content.substring(position, matcher.start());
+			DocumentText line = content.substring(position, matcher.start());
 			processLine(lines, line, lineIndex);
 			position = matcher.end();
 			lineIndex++;
@@ -174,11 +177,12 @@ public class SimpleLanguage {
 		return new SimpleLanguage(document, lines);
 	}
 
-	private static void processLine(ArrayList<Line> lines, String line, int lineIndex) {
-		if (!StringUtils.hasText(line)) {
+	// private static void processLine(ArrayList<Line> lines, String line, int lineIndex) {
+	private static void processLine(ArrayList<Line> lines, DocumentText line, int lineIndex) {
+			if (!StringUtils.hasText(line)) {
 			return;
 		}
-		String[] split = line.split("=");
+		DocumentText[] split = line.splitFirst('=');
 		// content before '=' with surrounding white spaces stripped is a key,
 		// same for value after '='.
 		if (split.length == 1) {
@@ -192,7 +196,7 @@ public class SimpleLanguage {
 						.character(split[0].length())
 						.and()
 					.build();
-			KeyToken keyToken = new KeyToken(split[0], range, resolveType(split[0]));
+			KeyToken keyToken = new KeyToken(split[0].toString(), range, resolveType(split[0].toString()));
 			lines.add(new Line(lineIndex, keyToken, null));
 		} else {
 			Range range1 = Range.range()
@@ -215,8 +219,8 @@ public class SimpleLanguage {
 						.character(line.length())
 						.and()
 					.build();
-			KeyToken keyToken = new KeyToken(split[0], range1, resolveType(split[0]));
-			ValueToken valueToken = new ValueToken(split[1], range2);
+			KeyToken keyToken = new KeyToken(split[0].toString(), range1, resolveType(split[0].toString()));
+			ValueToken valueToken = new ValueToken(split[1].toString(), range2);
 			lines.add(new Line(lineIndex, keyToken, valueToken));
 		}
 	}

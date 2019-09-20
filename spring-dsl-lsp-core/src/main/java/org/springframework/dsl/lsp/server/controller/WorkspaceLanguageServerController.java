@@ -52,6 +52,7 @@ public class WorkspaceLanguageServerController {
 	public Mono<List<SymbolInformation>> symbol(WorkspaceSymbolParams params, JsonRpcSession session) {
 		log.debug("symbol {}", params);
 		return Mono.defer(() -> {
+			// TODO: Can't just blindly process all documents
 			return Flux.fromIterable(getTracker(session).getDocuments())
 				.flatMap(document -> {
 					DslContext context = buildCommonDslContext(document, session);

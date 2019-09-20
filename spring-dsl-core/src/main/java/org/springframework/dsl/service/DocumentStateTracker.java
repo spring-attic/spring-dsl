@@ -94,5 +94,10 @@ public interface DocumentStateTracker {
 	 */
 	Document getDocument(String uri);
 
+	/**
+	 * Gets all documents.
+	 *
+	 * @return all documents
+	 */
 	List<Document> getDocuments();
 }

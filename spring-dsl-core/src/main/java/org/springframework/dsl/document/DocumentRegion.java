@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.dsl.document.linetracker.Region;
+import org.springframework.dsl.document.Region;
 import org.springframework.dsl.domain.Range;
 import org.springframework.util.Assert;
 
@@ -345,12 +345,12 @@ public class DocumentRegion implements CharSequence, Region {
 
 	@Override
 	public String toString() {
-		return textBetween(document, start, end);
+		return textBetween(document, start, end).toString();
 	}
 
-	public static String textBetween(Document doc, int start, int end) {
+	public static DocumentText textBetween(Document doc, int start, int end) {
 		if (start >= doc.length()) {
-			return "";
+			return new DocumentText("");
 		}
 		if (start < 0) {
 			start = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
  */
 package org.springframework.dsl.model;
 
-import org.springframework.dsl.document.TextDocument;
+import org.springframework.dsl.document.TextDocumentState;
 
 public class TrackedDocument {
 
-	private final TextDocument doc;
+	private final TextDocumentState state;
 	private int openCount = 0;
 
-	public TrackedDocument(TextDocument doc) {
-		this.doc = doc;
+	public TrackedDocument(TextDocumentState state) {
+		this.state = state;
 	}
 
-	public TextDocument getDocument() {
-		return doc;
+	public TextDocumentState getDocument() {
+		return state;
 	}
 
 	public TrackedDocument open() {
@@ -43,5 +43,4 @@ public class TrackedDocument {
 	public int getOpenCount() {
 		return openCount;
 	}
-
 }
