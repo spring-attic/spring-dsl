@@ -56,4 +56,17 @@ public class DefaultDocumentLineTrackerTests {
 		assertThat(tracker.getLineLength(0)).isEqualTo(0);
 	}
 
+	@Test
+	public void testAddEmptyLine() {
+		DefaultDocumentLineTracker tracker = new DefaultDocumentLineTracker();
+
+		tracker.set(new DocumentText(""));
+		assertThat(tracker.getNumberOfLines()).isEqualTo(1);
+		assertThat(tracker.getLineLength(0)).isEqualTo(0);
+
+		tracker.replace(0, 0, new DocumentText("\n"));
+		assertThat(tracker.getNumberOfLines()).isEqualTo(2);
+		assertThat(tracker.getLineLength(0)).isEqualTo(1);
+		assertThat(tracker.getLineLength(1)).isEqualTo(0);
+	}
 }

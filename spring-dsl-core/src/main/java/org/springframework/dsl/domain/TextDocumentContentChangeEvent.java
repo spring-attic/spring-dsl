@@ -104,6 +104,12 @@ public class TextDocumentContentChangeEvent {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "TextDocumentContentChangeEvent [range=" + range + ", rangeLength=" + rangeLength + ", text=" + text
+				+ "]";
+	}
+
 	/**
 	 * Builder interface for {@link TextDocumentContentChangeEvent}.
 	 *

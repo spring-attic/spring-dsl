@@ -43,7 +43,7 @@ public class TextDocumentState {
 	}
 
 	public TextDocumentState(String content, String uri, LanguageId languageId) {
-		this.documentText = new DocumentText(content);
+		setText(content);
 		this.uri = uri;
 		this.languageId = languageId;
 	}
@@ -64,7 +64,6 @@ public class TextDocumentState {
 
 	public synchronized void setText(String content) {
 		documentText = new DocumentText(content);
-		// lineTracker.set(content);
 		lineTracker.set(documentText);
 	}
 
@@ -77,6 +76,7 @@ public class TextDocumentState {
 	}
 
 	private void apply(TextDocumentContentChangeEvent change) {
+		log.debug("Apply TextDocumentContentChangeEvent {}", change);
 		log.trace("Old content before apply is '{}'", content());
 		Range range = change.getRange();
 		if (range == null) {
@@ -91,6 +91,7 @@ public class TextDocumentState {
 	}
 
 	public synchronized void apply(DidChangeTextDocumentParams params) {
+		log.debug("Apply DidChangeTextDocumentParams {}", params);
 		int newVersion = params.getTextDocument().getVersion();
 		if (version < newVersion) {
 			log.trace("Number of changes {}", params.getContentChanges().size());
