@@ -272,7 +272,7 @@ project('spring-dsl-autoconfigure') {
 }
 
 project('spring-dsl-bom') {
-	description = "Spring Coap (Bill of Materials)"
+	description = "Spring Dsl (Bill of Materials)"
 
 	dependencyManagement {
 		generatedPomCustomization {
