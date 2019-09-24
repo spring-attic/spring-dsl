@@ -51,6 +51,22 @@ public final class DocumentText implements CharSequence {
 		return new DocumentText(text);
 	}
 
+	public boolean hasText() {
+		return !text.isBlank();
+	}
+
+    public boolean hasText(int start, int length) {
+		return !text.isBlank(start, length);
+	}
+
+	public DocumentText trimStart() {
+		return from(text.trimStart());
+	}
+
+	public DocumentText trimEnd() {
+		return from(text.trimEnd());
+	}
+
     public DocumentText insert(int index, DocumentText documentText) {
 		return from(text.insert(index, documentText.getText()));
 	}
