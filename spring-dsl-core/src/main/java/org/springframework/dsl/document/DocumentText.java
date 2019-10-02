@@ -59,6 +59,10 @@ public final class DocumentText implements CharSequence {
 		return !text.isBlank(start, length);
 	}
 
+	public DocumentText trim() {
+		return from(text.trim());
+	}
+
 	public DocumentText trimStart() {
 		return from(text.trimStart());
 	}
@@ -81,6 +85,34 @@ public final class DocumentText implements CharSequence {
 
     public DocumentText substring(int start, int end) {
 		return from(text.subtext(start, end));
+	}
+
+	public int indexOf(CharSequence csq) {
+		return text.indexOf(csq);
+	}
+
+	public int indexOf(CharSequence csq, int fromIndex) {
+		return text.indexOf(csq, fromIndex);
+	}
+
+	public int lastIndexOf(CharSequence csq) {
+		return text.lastIndexOf(csq);
+	}
+
+	public int lastIndexOf(CharSequence csq, int fromIndex) {
+		return text.lastIndexOf(csq, fromIndex);
+	}
+
+	public boolean startsWith(CharSequence prefix) {
+		return text.startsWith(prefix);
+	}
+
+	public boolean endsWith(CharSequence suffix) {
+		return text.endsWith(suffix);
+	}
+
+	public boolean startsWith(CharSequence prefix, int index) {
+		return text.startsWith(prefix, index);
 	}
 
 	protected Text getText() {
