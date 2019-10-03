@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
 import org.springframework.dsl.symboltable.SymbolTableException;
@@ -56,6 +57,8 @@ public abstract class BaseScope implements Scope {
 	 * objects.
 	 */
 	protected final List<Scope> nestedScopesNotSymbols = new ArrayList<>();
+
+	private Range scopeRange;
 
 	/**
 	 * Instantiates a new base scope.
@@ -259,6 +262,15 @@ public abstract class BaseScope implements Scope {
 	@Override
 	public String toQualifierString(String separator) {
 		return Utils.toQualifierString(this, separator);
+	}
+
+	@Override
+	public Range getScopeRange() {
+		return scopeRange;
+	}
+
+	public void setScopeRange(Range scopeRange) {
+		this.scopeRange = scopeRange;
 	}
 
 //	public String toTestString() {

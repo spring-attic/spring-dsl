@@ -18,6 +18,8 @@ package org.springframework.dsl.symboltable;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.domain.SymbolKind;
 import org.springframework.dsl.symboltable.model.BaseScope;
 
 /**
@@ -178,6 +180,12 @@ public interface Scope {
 	 * @return the qualifier string
 	 */
 	public String toQualifierString(String separator);
+
+	Range getScopeRange();
+
+	default SymbolKind getScopeKind() {
+		return SymbolKind.String;
+	};
 
 	/**
 	 * Accepts a {@link SymbolTableVisitor}.

@@ -16,6 +16,7 @@
 package org.springframework.dsl.symboltable.support;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
@@ -30,11 +31,12 @@ import org.springframework.dsl.service.symbol.SymbolizeInfo;
 import org.springframework.dsl.symboltable.Scope;
 import org.springframework.dsl.symboltable.Symbol;
 import org.springframework.dsl.symboltable.SymbolTableVisitor;
+import org.springframework.util.Assert;
 
 import reactor.core.publisher.Flux;
 
 /**
- * {@link SymbolTableVisitor} which builds a {@link DocumentSymbol}.
+ * {@link SymbolTableVisitor} which builds a {@link SymbolizeInfo}.
  *
  * @author Janne Valkealahti
  *
@@ -42,11 +44,25 @@ import reactor.core.publisher.Flux;
 public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 
 	private static final Logger log = LoggerFactory.getLogger(DocumentSymbolTableVisitor.class);
+
+	// things are going to be inserted here when scopes and symbols are visited
 	private final List<DocumentSymbol> documentSymbols = new ArrayList<>();
 	private final List<SymbolInformation> symbolInformations = new ArrayList<>();
+
+	// in flight stack for builders while visiting
 	private final Stack<BuilderHolder> stack = new Stack<>();
+
+	// uri passed to location in SymbolInformation
 	private final String uri;
+
+	// active symbol query to limit results
 	private Function<Symbol, Boolean> symbolQuery = (symbol) -> true;
+
+	// active symbols and scopes based on a used queries
+	private HashSet<Scope> activeScopes = new HashSet<>();
+	private HashSet<Symbol> activeSymbols = new HashSet<>();
+	private Function<Scope, Boolean> scopeActiveQuery = (scope) -> false;
+	private Function<Symbol, Boolean> symbolActiveQuery = (symbol) -> true;
 
 	/**
 	 * Instantiates a new document symbol table visitor.
@@ -56,7 +72,8 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 	}
 
 	/**
-	 * Instantiates a new document symbol table visitor.
+	 * Instantiates a new document symbol table visitor. Given {@code uri} is passed
+	 * to location uri in a {@link SymbolInformation}.
 	 *
 	 * @param uri the uri
 	 */
@@ -64,23 +81,66 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		this.uri = uri;
 	}
 
-	public void setSymbolQuery(Function<Symbol, Boolean> symbolQuery) {
-		this.symbolQuery = symbolQuery;
-	}
-
 	@Override
 	public void enterVisitScope(Scope scope) {
-		log.debug("enterVisitScope {}", scope);
+		log.debug("enterVisitScope {} {} {}", scope, scope != null ? scope.getClass().getSimpleName() : null,
+				stack.size());
+
+		boolean active = scopeActiveQuery.apply(scope);
+		log.debug("Scope enter {} active state {}", scope, active);
+		if (!active) {
+			return;
+		}
+		activeScopes.add(scope);
+
+		DocumentSymbolBuilder<?> documentSymbolBuilder = DocumentSymbol.documentSymbol()
+			.name(scope.getName())
+			.kind(scope.getScopeKind())
+			.range(scope.getScopeRange())
+			.selectionRange(scope.getScopeRange());
+		SymbolInformationBuilder<?> symbolInformationBuilder = SymbolInformation.symbolInformation()
+			.name(scope.getName())
+			.kind(scope.getScopeKind())
+			.location()
+				.uri(uri)
+				.range(scope.getScopeRange())
+				.and();
+		stack.push(new BuilderHolder(documentSymbolBuilder, symbolInformationBuilder));
 	}
 
 	@Override
 	public void exitVisitScope(Scope scope) {
-		log.debug("exitVisitScope {}", scope);
+		log.debug("exitVisitScope {} {} {}", scope, scope != null ? scope.getClass().getSimpleName() : null,
+				stack.size());
+
+		boolean active = activeScopes.contains(scope);
+		log.debug("Scope exit {} active state {}", scope, active);
+		if (!active) {
+			return;
+		}
+
+		BuilderHolder builderHolder = stack.pop();
+		DocumentSymbol ds = builderHolder.documentSymbolBuilder.build();
+
+		if (stack.isEmpty()) {
+			documentSymbols.add(ds);
+		} else {
+			stack.peek().documentSymbolBuilder.child(ds);
+		}
 	}
 
 	@Override
 	public void enterVisitSymbol(Symbol symbol) {
-		log.debug("enterVisitSymbol {}", symbol);
+		log.debug("enterVisitSymbol {} {} {}", symbol, symbol != null ? symbol.getClass().getSimpleName() : null,
+				stack.size());
+
+		boolean active = symbolActiveQuery.apply(symbol);
+		log.debug("Symbol enter {} active state {}", symbol, active);
+		if (!active) {
+			return;
+		}
+		activeSymbols.add(symbol);
+
 		DocumentSymbolBuilder<?> documentSymbolBuilder = DocumentSymbol.documentSymbol()
 			.name(symbol.getName())
 			.kind(symbol.getKind())
@@ -96,13 +156,17 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		stack.push(new BuilderHolder(documentSymbolBuilder, symbolInformationBuilder));
 	}
 
-	public SymbolizeInfo getSymbolizeInfo() {
-		return SymbolizeInfo.of(Flux.fromIterable(documentSymbols), Flux.fromIterable(symbolInformations));
-	}
-
 	@Override
 	public void exitVisitSymbol(Symbol symbol) {
-		log.debug("exitVisitSymbol {}", symbol);
+		log.debug("exitVisitSymbol {} {} {}", symbol, symbol != null ? symbol.getClass().getSimpleName() : null,
+				stack.size());
+
+		boolean active = activeSymbols.contains(symbol);
+		log.debug("Symbol exit {} active state {}", symbol, active);
+		if (!active) {
+			return;
+		}
+
 		Boolean match = symbolQuery.apply(symbol);
 		BuilderHolder builderHolder = stack.pop();
 		if (stack.isEmpty()) {
@@ -114,6 +178,25 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		if (match != null && match) {
 			symbolInformations.add(builderHolder.symbolInformationBuilder.build());
 		}
+	}
+
+	public void setSymbolQuery(Function<Symbol, Boolean> query) {
+		Assert.notNull(query, "symbolQuery cannot be null");
+		this.symbolQuery = query;
+	}
+
+	public void setScopeActiveQuery(Function<Scope, Boolean> query) {
+		Assert.notNull(query, "scopeActiveQuery cannot be null");
+		this.scopeActiveQuery = query;
+	}
+
+	public void setSymbolActiveQuery(Function<Symbol, Boolean> query) {
+		Assert.notNull(query, "symbolActiveQuery cannot be null");
+		this.symbolActiveQuery = query;
+	}
+
+	public SymbolizeInfo getSymbolizeInfo() {
+		return SymbolizeInfo.of(Flux.fromIterable(documentSymbols), Flux.fromIterable(symbolInformations));
 	}
 
 	private static class BuilderHolder {
