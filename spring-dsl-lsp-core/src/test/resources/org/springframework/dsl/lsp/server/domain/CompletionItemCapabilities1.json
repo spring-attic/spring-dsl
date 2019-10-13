@@ -1,0 +1,10 @@
+{
+  "snippetSupport": true,
+  "commitCharactersSupport": true,
+  "documentationFormat": [
+    "markdown",
+    "plaintext"
+  ],
+  "deprecatedSupport": true,
+  "preselectSupport": true
+}

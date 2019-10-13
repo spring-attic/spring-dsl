@@ -33,8 +33,11 @@ import org.springframework.dsl.domain.CodeLens;
 import org.springframework.dsl.domain.CodeLensOptions;
 import org.springframework.dsl.domain.CodeLensParams;
 import org.springframework.dsl.domain.Command;
+import org.springframework.dsl.domain.CompletionClientCapabilities;
 import org.springframework.dsl.domain.CompletionItem;
+import org.springframework.dsl.domain.CompletionItemCapabilities;
 import org.springframework.dsl.domain.CompletionItemKind;
+import org.springframework.dsl.domain.CompletionItemKindCapabilities;
 import org.springframework.dsl.domain.CompletionList;
 import org.springframework.dsl.domain.CompletionOptions;
 import org.springframework.dsl.domain.Diagnostic;
@@ -402,6 +405,20 @@ public class LspDomainJacksonSerializationTests {
 					.willSave(true)
 					.willSaveWaitUntil(true)
 					.didSave(true)
+					.and()
+				.completion()
+					.dynamicRegistration(true)
+					.contextSupport(true)
+					.completionItem()
+						.snippetSupport(true)
+						.commitCharactersSupport(true)
+						.documentationFormat(Arrays.asList(MarkupKind.markdown, MarkupKind.plaintext))
+						.deprecatedSupport(true)
+						.preselectSupport(true)
+						.and()
+					.completionItemKind()
+						.valueSet((Arrays.asList(CompletionItemKind.Text, CompletionItemKind.Method, CompletionItemKind.Function)))
+						.and()
 					.and()
 				.build();
 
@@ -1370,6 +1387,104 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("WorkspaceSymbolParams1.json");
 		to = mapper.readValue(expect, WorkspaceSymbolParams.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCompletionItemKindCapabilities() throws Exception {
+		CompletionItemKindCapabilities from = new CompletionItemKindCapabilities();
+		String json = mapper.writeValueAsString(from);
+		CompletionItemKindCapabilities to = mapper.readValue(json, CompletionItemKindCapabilities.class);
+		assertObjects(from, to);
+
+		from = CompletionItemKindCapabilities.completionItemKindCapabilities()
+				.valueSet(CompletionItemKind.Text)
+				.valueSet(CompletionItemKind.Method)
+				.valueSet(CompletionItemKind.Function)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionItemKindCapabilities.class);
+		assertObjects(from, to);
+
+		from = CompletionItemKindCapabilities.completionItemKindCapabilities()
+				.valueSet(Arrays.asList(CompletionItemKind.Text, CompletionItemKind.Method, CompletionItemKind.Function))
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionItemKindCapabilities.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CompletionItemKindCapabilities1.json");
+		to = mapper.readValue(expect, CompletionItemKindCapabilities.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCompletionItemCapabilities() throws Exception {
+		CompletionItemCapabilities from = new CompletionItemCapabilities();
+		String json = mapper.writeValueAsString(from);
+		CompletionItemCapabilities to = mapper.readValue(json, CompletionItemCapabilities.class);
+		assertObjects(from, to);
+
+		from = CompletionItemCapabilities.completionItemKindCapabilities()
+				.snippetSupport(true)
+				.commitCharactersSupport(true)
+				.documentationFormat(MarkupKind.markdown)
+				.documentationFormat(MarkupKind.plaintext)
+				.deprecatedSupport(true)
+				.preselectSupport(true)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionItemCapabilities.class);
+		assertObjects(from, to);
+
+		from = CompletionItemCapabilities.completionItemKindCapabilities()
+				.snippetSupport(true)
+				.commitCharactersSupport(true)
+				.documentationFormat(Arrays.asList(MarkupKind.markdown, MarkupKind.plaintext))
+				.deprecatedSupport(true)
+				.preselectSupport(true)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionItemCapabilities.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CompletionItemCapabilities1.json");
+		to = mapper.readValue(expect, CompletionItemCapabilities.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testCompletionClientCapabilities() throws Exception {
+		CompletionClientCapabilities from = new CompletionClientCapabilities();
+		String json = mapper.writeValueAsString(from);
+		CompletionClientCapabilities to = mapper.readValue(json, CompletionClientCapabilities.class);
+		assertObjects(from, to);
+
+		from = CompletionClientCapabilities.completionClientCapabilities()
+				.dynamicRegistration(true)
+				.contextSupport(true)
+				.completionItem()
+					.snippetSupport(true)
+					.commitCharactersSupport(true)
+					.documentationFormat(Arrays.asList(MarkupKind.markdown, MarkupKind.plaintext))
+					.deprecatedSupport(true)
+					.preselectSupport(true)
+					.and()
+				.completionItemKind()
+					.valueSet((Arrays.asList(CompletionItemKind.Text, CompletionItemKind.Method, CompletionItemKind.Function)))
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, CompletionClientCapabilities.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("CompletionClientCapabilities1.json");
+		to = mapper.readValue(expect, CompletionClientCapabilities.class);
 		assertObjects(from, to);
 	}
 

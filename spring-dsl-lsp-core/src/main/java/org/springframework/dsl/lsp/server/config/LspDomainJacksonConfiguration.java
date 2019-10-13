@@ -17,6 +17,7 @@ package org.springframework.dsl.lsp.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dsl.domain.CompletionItemKind;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageType;
@@ -27,6 +28,8 @@ import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilderCustomizer;
 import org.springframework.dsl.jsonrpc.support.JsonRpcRequestJsonDeserializer;
 import org.springframework.dsl.jsonrpc.support.JsonRpcResponseJsonDeserializer;
+import org.springframework.dsl.lsp.server.domain.CompletionItemKindDeserializer;
+import org.springframework.dsl.lsp.server.domain.CompletionItemKindSerializer;
 import org.springframework.dsl.lsp.server.domain.DiagnosticSeverityDeserializer;
 import org.springframework.dsl.lsp.server.domain.DiagnosticSeveritySerializer;
 import org.springframework.dsl.lsp.server.domain.MarkupKindDeserializer;
@@ -63,6 +66,8 @@ public class LspDomainJacksonConfiguration {
 		builder.deserializerByType(MarkupKind.class, new MarkupKindDeserializer());
 		builder.serializerByType(MessageType.class, new MessageTypeSerializer());
 		builder.deserializerByType(MessageType.class, new MessageTypeDeserializer());
+		builder.serializerByType(CompletionItemKind.class, new CompletionItemKindSerializer());
+		builder.deserializerByType(CompletionItemKind.class, new CompletionItemKindDeserializer());
 		builder.featuresToEnable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
 		builder.serializationInclusion(JsonInclude.Include.NON_NULL);
 	};

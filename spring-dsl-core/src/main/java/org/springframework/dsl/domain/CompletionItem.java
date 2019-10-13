@@ -279,6 +279,16 @@ public class CompletionItem {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "CompletionItem [additionalTextEdits=" + additionalTextEdits + ", command=" + command
+				+ ", commitCharacters=" + commitCharacters + ", data=" + data + ", deprecated=" + deprecated
+				+ ", detail=" + detail + ", documentation=" + documentation + ", filterText=" + filterText
+				+ ", insertText=" + insertText + ", insertTextFormat=" + insertTextFormat + ", kind=" + kind
+				+ ", label=" + label + ", preselect=" + preselect + ", sortText=" + sortText + ", textEdit=" + textEdit
+				+ "]";
+	}
+
 	/**
 	 * Builder interface for {@link CompletionItem}.
 	 *

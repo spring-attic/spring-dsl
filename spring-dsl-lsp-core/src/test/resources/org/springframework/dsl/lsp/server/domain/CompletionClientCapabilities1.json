@@ -1,0 +1,21 @@
+{
+  "dynamicRegistration": true,
+  "contextSupport": true,
+  "completionItem": {
+    "snippetSupport": true,
+    "commitCharactersSupport": true,
+    "documentationFormat": [
+      "markdown",
+      "plaintext"
+    ],
+    "deprecatedSupport": true,
+    "preselectSupport": true
+  },
+  "completionItemKind": {
+    "valueSet": [
+      1,
+      2,
+      3
+    ]
+  }
+}

@@ -15,6 +15,7 @@
  */
 package org.springframework.dsl.domain;
 
+import org.springframework.dsl.domain.CompletionClientCapabilities.CompletionClientCapabilitiesBuilder;
 import org.springframework.dsl.domain.Synchronization.SynchronizationBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
@@ -22,6 +23,7 @@ import org.springframework.dsl.support.DomainBuilder;
 public class TextDocumentClientCapabilities {
 
 	private Synchronization synchronization;
+	private CompletionClientCapabilities completion;
 
 	public TextDocumentClientCapabilities() {
 	}
@@ -34,10 +36,19 @@ public class TextDocumentClientCapabilities {
 		this.synchronization = synchronization;
 	}
 
+	public CompletionClientCapabilities getCompletion() {
+		return completion;
+	}
+
+	public void setCompletion(CompletionClientCapabilities completion) {
+		this.completion = completion;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((completion == null) ? 0 : completion.hashCode());
 		result = prime * result + ((synchronization == null) ? 0 : synchronization.hashCode());
 		return result;
 	}
@@ -51,6 +62,11 @@ public class TextDocumentClientCapabilities {
 		if (getClass() != obj.getClass())
 			return false;
 		TextDocumentClientCapabilities other = (TextDocumentClientCapabilities) obj;
+		if (completion == null) {
+			if (other.completion != null)
+				return false;
+		} else if (!completion.equals(other.completion))
+			return false;
 		if (synchronization == null) {
 			if (other.synchronization != null)
 				return false;
@@ -59,9 +75,17 @@ public class TextDocumentClientCapabilities {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "TextDocumentClientCapabilities [completion=" + completion + ", synchronization=" + synchronization
+				+ "]";
+	}
+
 	public interface TextDocumentClientCapabilitiesBuilder<P> extends DomainBuilder<TextDocumentClientCapabilities, P> {
 
 		SynchronizationBuilder<TextDocumentClientCapabilitiesBuilder<P>> synchronization();
+
+		CompletionClientCapabilitiesBuilder<TextDocumentClientCapabilitiesBuilder<P>> completion();
 	}
 
 	public static <P> TextDocumentClientCapabilitiesBuilder<P> textDocumentClientCapabilities() {
@@ -75,7 +99,8 @@ public class TextDocumentClientCapabilities {
 	private static class InternalTextDocumentClientCapabilitiesBuilder<P>
 			extends AbstractDomainBuilder<TextDocumentClientCapabilities, P> implements TextDocumentClientCapabilitiesBuilder<P> {
 
-		private SynchronizationBuilder<TextDocumentClientCapabilitiesBuilder<P>> synchronization;
+		private SynchronizationBuilder<TextDocumentClientCapabilitiesBuilder<P>> synchronizationBuilder;
+		private CompletionClientCapabilitiesBuilder<TextDocumentClientCapabilitiesBuilder<P>> completionBuilder;
 
 		InternalTextDocumentClientCapabilitiesBuilder(P parent) {
 			super(parent);
@@ -83,15 +108,24 @@ public class TextDocumentClientCapabilities {
 
 		@Override
 		public SynchronizationBuilder<TextDocumentClientCapabilitiesBuilder<P>> synchronization() {
-			this.synchronization = Synchronization.synchronization(this);
-			return synchronization;
+			this.synchronizationBuilder = Synchronization.synchronization(this);
+			return synchronizationBuilder;
+		}
+
+		@Override
+		public CompletionClientCapabilitiesBuilder<TextDocumentClientCapabilitiesBuilder<P>> completion() {
+			this.completionBuilder = CompletionClientCapabilities.completionClientCapabilities(this);
+			return completionBuilder;
 		}
 
 		@Override
 		public TextDocumentClientCapabilities build() {
 			TextDocumentClientCapabilities textDocumentClientCapabilities = new TextDocumentClientCapabilities();
-			if (synchronization != null) {
-				textDocumentClientCapabilities.setSynchronization(synchronization.build());
+			if (synchronizationBuilder != null) {
+				textDocumentClientCapabilities.setSynchronization(synchronizationBuilder.build());
+			}
+			if (completionBuilder != null) {
+				textDocumentClientCapabilities.setCompletion(completionBuilder.build());
 			}
 			return textDocumentClientCapabilities;
 		}

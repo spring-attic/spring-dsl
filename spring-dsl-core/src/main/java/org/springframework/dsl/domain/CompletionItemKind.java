@@ -77,4 +77,10 @@ public enum CompletionItemKind {
 		return value;
 	}
 
+	public static CompletionItemKind forValue(int value) {
+		CompletionItemKind[] allValues = CompletionItemKind.values();
+		if (value < 1 || value > allValues.length)
+			throw new IllegalArgumentException("Illegal enum value: " + value);
+		return allValues[value - 1];
+	}
 }
