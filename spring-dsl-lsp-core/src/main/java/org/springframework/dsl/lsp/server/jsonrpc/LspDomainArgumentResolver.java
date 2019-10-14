@@ -79,10 +79,15 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 			WorkspaceSymbolParams.class
 			).stream().collect(Collectors.toSet());
 
+	private final ObjectMapper objectMapper;
+
 	/**
 	 * Instantiates a new lsp domain argument resolver.
+	 *
+	 * @param objectMapper the used object mapper
 	 */
-	public LspDomainArgumentResolver() {
+	public LspDomainArgumentResolver(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -96,31 +101,17 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		Class<?> type = parameter.getParameterType();
 		Class<?> contextClass = (parameter != null ? parameter.getContainingClass() : null);
 
-//		Flux<DataBuffer> body = exchange.getRequest().getBody();
-//		Mono<String> bodyAsString = getBodyAsString(body);
-
 		Mono<String> bodyAsString = exchange.getRequest().getParams();
 
-		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//		ObjectWriter writer = objectMapper.writer();
-//		ObjectReader reader = objectMapper.reader();
 		TypeFactory typeFactory = objectMapper.getTypeFactory();
 		JavaType javaType = typeFactory.constructType(GenericTypeResolver.resolveType(type, contextClass));
 		ObjectReader forType = objectMapper.readerFor(javaType);
 		try {
 			return Mono.just(forType.readValue(bodyAsString.block().toString()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return Mono.error(e);
 		}
-//		return Mono.just(BeanUtils.instantiateClass(type));
-//		Object body = null;
-//		if (exchange.getRequest() != null) {
-//		}
-//		Class<?> clazz = parameter.getParameterType();
-//		return Mono.just(conversionService.convert(body, clazz));
 	}
 
 	public Mono<String> getBodyAsString(Flux<DataBuffer> body) {
@@ -141,12 +132,4 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 		buffer.read(bytes);
 		return new String(bytes, charset);
 	}
-
-
-//	private Flux<TokenBuffer> tokenize(Publisher<DataBuffer> input, boolean tokenizeArrayElements) {
-//		Flux<DataBuffer> inputFlux = Flux.from(input);
-//		JsonFactory factory = getObjectMapper().getFactory();
-//		return Jackson2Tokenizer.tokenize(inputFlux, factory, tokenizeArrayElements);
-//	}
-
 }

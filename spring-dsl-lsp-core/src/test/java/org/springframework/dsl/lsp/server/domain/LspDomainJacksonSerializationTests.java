@@ -1400,7 +1400,7 @@ public class LspDomainJacksonSerializationTests {
 		from = CompletionItemKindCapabilities.completionItemKindCapabilities()
 				.valueSet(CompletionItemKind.Text)
 				.valueSet(CompletionItemKind.Method)
-				.valueSet(CompletionItemKind.Function)
+				.valueSet(CompletionItemKind.TypeParameter)
 				.build();
 
 		json = mapper.writeValueAsString(from);
@@ -1408,7 +1408,7 @@ public class LspDomainJacksonSerializationTests {
 		assertObjects(from, to);
 
 		from = CompletionItemKindCapabilities.completionItemKindCapabilities()
-				.valueSet(Arrays.asList(CompletionItemKind.Text, CompletionItemKind.Method, CompletionItemKind.Function))
+				.valueSet(Arrays.asList(CompletionItemKind.Text, CompletionItemKind.Method, CompletionItemKind.TypeParameter))
 				.build();
 
 		json = mapper.writeValueAsString(from);

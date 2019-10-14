@@ -52,8 +52,9 @@ public class GenericLspConfiguration {
 	}
 
 	@Bean
-	public LspDomainArgumentResolver lspDomainArgumentResolver() {
-		return new LspDomainArgumentResolver();
+	public LspDomainArgumentResolver lspDomainArgumentResolver(
+			@Qualifier(JsonRpcSystemConstants.JSONRPC_OBJECT_MAPPER_BEAN_NAME) ObjectMapper objectMapper) {
+		return new LspDomainArgumentResolver(objectMapper);
 	}
 
 	@Bean

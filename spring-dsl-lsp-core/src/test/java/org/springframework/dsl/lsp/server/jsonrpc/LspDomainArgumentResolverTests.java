@@ -36,8 +36,10 @@ import org.springframework.dsl.domain.TextDocumentPositionParams;
 import org.springframework.dsl.domain.WorkspaceSymbolParams;
 import org.springframework.dsl.jsonrpc.ResolvableMethod;
 import org.springframework.dsl.jsonrpc.ServerJsonRpcExchange;
+import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilder;
 import org.springframework.dsl.jsonrpc.support.MockJsonRpcInputMessage;
 import org.springframework.dsl.jsonrpc.support.MockServerJsonRpcExchange;
+import org.springframework.dsl.lsp.server.config.LspDomainJacksonConfiguration;
 
 /**
  * Tests for {@link LspDomainArgumentResolver}.
@@ -52,7 +54,10 @@ public class LspDomainArgumentResolverTests {
 
 	@Before
 	public void setup() {
-		this.resolver = new LspDomainArgumentResolver();
+		LspDomainJacksonConfiguration configuration = new LspDomainJacksonConfiguration();
+		JsonRpcJackson2ObjectMapperBuilder builder = new JsonRpcJackson2ObjectMapperBuilder();
+		configuration.lspJackson2ObjectMapperBuilderCustomizer().customize(builder);
+		this.resolver = new LspDomainArgumentResolver(builder.build());
 	}
 
 	@Test
@@ -108,6 +113,15 @@ public class LspDomainArgumentResolverTests {
 					.and()
 				.build();
 		assertThat(result).isEqualTo(expected);
+	}
+
+	@Test
+	public void testJacksonDeserialization() {
+		String params = "{  \"processId\": 24297,  \"rootPath\": \"/home/jvalkealahti/Documents/vscode/test/log-sink-rabbit\",  \"rootUri\": \"file:///home/jvalkealahti/Documents/vscode/test/log-sink-rabbit\",  \"capabilities\": {    \"workspace\": {      \"applyEdit\": true,      \"workspaceEdit\": {        \"documentChanges\": true,        \"resourceOperations\": [          \"create\",          \"rename\",          \"delete\"        ],        \"failureHandling\": \"textOnlyTransactional\"      },      \"didChangeConfiguration\": {        \"dynamicRegistration\": true      },      \"didChangeWatchedFiles\": {        \"dynamicRegistration\": true      },      \"symbol\": {        \"dynamicRegistration\": true,        \"symbolKind\": {          \"valueSet\": [            1,            2,            3,            4,            5,            6,            7,            8,            9,            10,            11,            12,            13,            14,            15,            16,            17,            18,            19,            20,            21,            22,            23,            24,            25,            26          ]        }      },      \"executeCommand\": {        \"dynamicRegistration\": true      },      \"configuration\": true,      \"workspaceFolders\": true    },    \"textDocument\": {      \"publishDiagnostics\": {        \"relatedInformation\": true      },      \"synchronization\": {        \"dynamicRegistration\": true,        \"willSave\": true,        \"willSaveWaitUntil\": true,        \"didSave\": true      },      \"completion\": {        \"dynamicRegistration\": true,        \"contextSupport\": true,        \"completionItem\": {          \"snippetSupport\": true,          \"commitCharactersSupport\": true,          \"documentationFormat\": [            \"markdown\",            \"plaintext\"          ],          \"deprecatedSupport\": true,          \"preselectSupport\": true        },        \"completionItemKind\": {          \"valueSet\": [            1,            2,            3,            4,            5,            6,            7,            8,            9,            10,            11,            12,            13,            14,            15,            16,            17,            18,            19,            20,            21,            22,            23,            24,            25          ]        }      },      \"hover\": {        \"dynamicRegistration\": true,        \"contentFormat\": [          \"markdown\",          \"plaintext\"        ]      },      \"signatureHelp\": {        \"dynamicRegistration\": true,        \"signatureInformation\": {          \"documentationFormat\": [            \"markdown\",            \"plaintext\"          ],          \"parameterInformation\": {            \"labelOffsetSupport\": true          }        }      },      \"definition\": {        \"dynamicRegistration\": true,        \"linkSupport\": true      },      \"references\": {        \"dynamicRegistration\": true      },      \"documentHighlight\": {        \"dynamicRegistration\": true      },      \"documentSymbol\": {        \"dynamicRegistration\": true,        \"symbolKind\": {          \"valueSet\": [            1,            2,            3,            4,            5,            6,            7,            8,            9,            10,            11,            12,            13,            14,            15,            16,            17,            18,            19,            20,            21,            22,            23,            24,            25,            26          ]        },        \"hierarchicalDocumentSymbolSupport\": true      },      \"codeAction\": {        \"dynamicRegistration\": true,        \"codeActionLiteralSupport\": {          \"codeActionKind\": {            \"valueSet\": [              \"\",              \"quickfix\",              \"refactor\",              \"refactor.extract\",              \"refactor.inline\",              \"refactor.rewrite\",              \"source\",              \"source.organizeImports\"            ]          }        }      },      \"codeLens\": {        \"dynamicRegistration\": true      },      \"formatting\": {        \"dynamicRegistration\": true      },      \"rangeFormatting\": {        \"dynamicRegistration\": true      },      \"onTypeFormatting\": {        \"dynamicRegistration\": true      },      \"rename\": {        \"dynamicRegistration\": true,        \"prepareSupport\": true      },      \"documentLink\": {        \"dynamicRegistration\": true      },      \"typeDefinition\": {        \"dynamicRegistration\": true,        \"linkSupport\": true      },      \"implementation\": {        \"dynamicRegistration\": true,        \"linkSupport\": true      },      \"colorProvider\": {        \"dynamicRegistration\": true      },      \"foldingRange\": {        \"dynamicRegistration\": true,        \"rangeLimit\": 5000,        \"lineFoldingOnly\": true      },      \"declaration\": {        \"dynamicRegistration\": true,        \"linkSupport\": true      }    }  },  \"trace\": \"off\",  \"workspaceFolders\": [    {      \"uri\": \"file:///home/jvalkealahti/Documents/vscode/test/log-sink-rabbit\",      \"name\": \"log-sink-rabbit\"    },    {      \"uri\": \"file:///home/jvalkealahti/Documents/vscode/test/time-source-rabbit\",      \"name\": \"time-source-rabbit\"    },    {      \"uri\": \"file:///home/jvalkealahti/Documents/vscode/test/dataflow\",      \"name\": \"dataflow\"    }  ]}";
+		MockServerJsonRpcExchange exchange = MockServerJsonRpcExchange.from(MockJsonRpcInputMessage.get("")
+				.body(params));
+		MethodParameter param = this.testMethod.arg(InitializeParams.class);
+		resolve(param, exchange);
 	}
 
 	public void testDidOpenTextDocumentParams() {
