@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.springframework.dsl.autoconfigure;
 
+import java.time.Duration;
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.dsl.jsonrpc.session.DefaultJsonRpcSessionManager;
+import org.springframework.dsl.jsonrpc.session.InMemoryJsonRpcSessionStore;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSessionManager;
 import org.springframework.dsl.lsp.server.config.EnableLanguageServer;
 import org.springframework.dsl.lsp.server.config.LspServerSocketConfiguration;
 import org.springframework.dsl.lsp.server.config.LspServerStdioConfiguration;
@@ -75,6 +80,14 @@ public class LspServerAutoConfiguration {
 	@Configuration
 	@Import({ LspServerStdioConfiguration.class })
 	public static class LspServerProcessConfig {
+
+		@Bean
+		public JsonRpcSessionManager jsonRpcSessionManager() {
+			// process started for single user, so never expire session
+			DefaultJsonRpcSessionManager jsonRpcSessionManager = new DefaultJsonRpcSessionManager();
+			jsonRpcSessionManager.setSessionStore(new InMemoryJsonRpcSessionStore(Duration.ofSeconds(-1)));
+			return jsonRpcSessionManager;
+		}
 	}
 
 	@ConditionalOnProperty(prefix = "spring.dsl.lsp.server", name = "mode", havingValue = "SOCKET")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,33 @@ public class InMemoryJsonRpcSessionStore implements JsonRpcSessionStore {
 	private Clock clock = Clock.system(ZoneId.of("GMT"));
 	private volatile Instant nextExpirationCheckTime = Instant.now(this.clock).plus(EXPIRATION_CHECK_PERIOD);
 	private final ReentrantLock expirationCheckLock = new ReentrantLock();
+	private Duration sessionMaxIdleTime = null;
+
+	/**
+	 * Instantiate in-memory store with default settings.
+	 */
+	public InMemoryJsonRpcSessionStore() {
+	}
+
+	/**
+	 * Instantiate in-memory store with given {@code #sessionMaxIdleTime} to be set
+	 * for for a newly created session.
+	 *
+	 * @param sessionMaxIdleTime the session max idle time
+	 */
+	public InMemoryJsonRpcSessionStore(Duration sessionMaxIdleTime) {
+		this.sessionMaxIdleTime = sessionMaxIdleTime;
+	}
 
 	@Override
 	public Mono<JsonRpcSession> createSession(String sessionId) {
-		return Mono.fromSupplier(() -> new InMemoryJsonRpcSession(sessionId));
+		return Mono.fromSupplier(() -> {
+			InMemoryJsonRpcSession session = new InMemoryJsonRpcSession(sessionId);
+			if (sessionMaxIdleTime != null) {
+				session.setMaxIdleTime(sessionMaxIdleTime);
+			}
+			return session;
+		});
 	}
 
 	@Override

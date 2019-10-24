@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.dsl.jsonrpc.JsonRpcSystemConstants;
 import org.springframework.dsl.jsonrpc.config.JsonRpcJacksonConfiguration;
+import org.springframework.dsl.jsonrpc.session.JsonRpcSessionManager;
 import org.springframework.dsl.jsonrpc.support.DispatcherJsonRpcHandler;
 import org.springframework.dsl.lsp.server.jsonrpc.LspClientArgumentResolver;
 import org.springframework.dsl.lsp.server.jsonrpc.LspDomainArgumentResolver;
@@ -63,8 +64,13 @@ public class GenericLspConfiguration {
 	}
 
 	@Bean
-	public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler) {
-		return new RpcJsonRpcHandlerAdapter(dispatcherJsonRpcHandler);
+	public RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter(DispatcherJsonRpcHandler dispatcherJsonRpcHandler,
+			Optional<JsonRpcSessionManager> jsonRpcSessionManager) {
+		RpcJsonRpcHandlerAdapter rpcJsonRpcHandlerAdapter = new RpcJsonRpcHandlerAdapter(dispatcherJsonRpcHandler);
+		if (jsonRpcSessionManager.isPresent()) {
+			rpcJsonRpcHandlerAdapter.setSessionManager(jsonRpcSessionManager.get());
+		}
+		return rpcJsonRpcHandlerAdapter;
 	}
 
 	@Bean
