@@ -118,4 +118,19 @@ public interface DslServiceRegistry {
 	 * @return the lensers
 	 */
 	List<Lenser> getLensers(LanguageId languageId);
+
+	/**
+	 * Gets the folderers.
+	 *
+	 * @return the folderers
+	 */
+	List<Folderer> getFolderers();
+
+	/**
+	 * Gets the folderers for a language id.
+	 *
+	 * @param languageId the language id
+	 * @return the folderers
+	 */
+	List<Folderer> getFolderers(LanguageId languageId);
 }

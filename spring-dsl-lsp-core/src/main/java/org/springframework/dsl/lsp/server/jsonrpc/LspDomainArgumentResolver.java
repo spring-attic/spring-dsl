@@ -34,6 +34,7 @@ import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.domain.DocumentSymbolParams;
+import org.springframework.dsl.domain.FoldingRangeParams;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
 import org.springframework.dsl.domain.RenameParams;
@@ -76,7 +77,8 @@ public class LspDomainArgumentResolver implements JsonRpcHandlerMethodArgumentRe
 			TextDocumentPositionParams.class,
 			RenameParams.class,
 			CodeLensParams.class,
-			WorkspaceSymbolParams.class
+			WorkspaceSymbolParams.class,
+			FoldingRangeParams.class
 			).stream().collect(Collectors.toSet());
 
 	private final ObjectMapper objectMapper;

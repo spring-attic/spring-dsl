@@ -32,6 +32,8 @@ import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.DocumentSymbolParams;
+import org.springframework.dsl.domain.FoldingRange;
+import org.springframework.dsl.domain.FoldingRangeParams;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.PublishDiagnosticsParams;
@@ -327,6 +329,19 @@ public class TextDocumentLanguageServerController {
 
 		return Flux.fromIterable(registry.getLensers(document.languageId()))
 			.concatMap(lenser -> lenser.lense(context))
+			.collectList();
+	}
+
+	@JsonRpcRequestMapping(method = "foldingRange")
+	@JsonRpcResponseResult
+	public Mono<List<FoldingRange>> foldingRange(FoldingRangeParams params, JsonRpcSession session) {
+		log.debug("foldingRange {}", params);
+		DocumentStateTracker documentStateTracker = getTracker(session);
+		Document document = documentStateTracker.getDocument(params.getTextDocument().getUri());
+		DslContext context = buildCommonDslContext(document, session);
+
+		return Flux.fromIterable(registry.getFolderers(document.languageId()))
+			.concatMap(lenser -> lenser.fold(context))
 			.collectList();
 	}
 

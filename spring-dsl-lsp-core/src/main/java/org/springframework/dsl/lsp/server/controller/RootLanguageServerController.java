@@ -104,6 +104,8 @@ public class RootLanguageServerController {
 						.and()
 					// TODO: for dev testing for now
 					.workspaceSymbolProvider(true)
+					// TODO: for dev testing for now
+					.foldingRangeProvider(true)
 					.and()
 				.build();
 		}).doOnSuccess(result -> {

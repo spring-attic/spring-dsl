@@ -85,6 +85,11 @@ public class ServerCapabilitiesJsonDeserializer extends JsonDeserializer<ServerC
 			object.setWorkspaceSymbolProvider(workspaceSymbolProviderNode.asBoolean());
 		}
 
+		JsonNode foldingRangeProviderNode = node.get("foldingRangeProvider");
+		if (foldingRangeProviderNode != null && foldingRangeProviderNode.isBoolean()) {
+			object.setFoldingRangeProvider(foldingRangeProviderNode.asBoolean());
+		}
+
 		return object;
 	}
 }

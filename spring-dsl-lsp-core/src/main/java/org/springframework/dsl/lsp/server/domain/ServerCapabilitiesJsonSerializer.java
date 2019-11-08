@@ -66,6 +66,10 @@ public class ServerCapabilitiesJsonSerializer extends JsonSerializer<ServerCapab
 			gen.writeBooleanField("workspaceSymbolProvider", value.getWorkspaceSymbolProvider());
 		}
 
+		if (value.getFoldingRangeProvider() != null) {
+			gen.writeBooleanField("foldingRangeProvider", value.getFoldingRangeProvider());
+		}
+
 		gen.writeEndObject();
 	}
 }

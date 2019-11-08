@@ -45,6 +45,9 @@ import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.DocumentSymbol;
 import org.springframework.dsl.domain.DocumentSymbolParams;
 import org.springframework.dsl.domain.DynamicRegistration;
+import org.springframework.dsl.domain.FoldingRange;
+import org.springframework.dsl.domain.FoldingRangeKind;
+import org.springframework.dsl.domain.FoldingRangeParams;
 import org.springframework.dsl.domain.Hover;
 import org.springframework.dsl.domain.InitializeResult;
 import org.springframework.dsl.domain.InsertTextFormat;
@@ -1485,6 +1488,52 @@ public class LspDomainJacksonSerializationTests {
 
 		String expect = loadResourceAsString("CompletionClientCapabilities1.json");
 		to = mapper.readValue(expect, CompletionClientCapabilities.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testFoldingRange() throws Exception{
+		FoldingRange from = new FoldingRange();
+		String json = mapper.writeValueAsString(from);
+		FoldingRange to = mapper.readValue(json, FoldingRange.class);
+		assertObjects(from, to);
+
+		from = FoldingRange.foldingRange()
+				.startLine(1)
+				.startCharacter(2)
+				.endLine(3)
+				.endCharacter(4)
+				.kind(FoldingRangeKind.imports)
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, FoldingRange.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("FoldingRange1.json");
+		to = mapper.readValue(expect, FoldingRange.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testFoldingRangeParams() throws Exception{
+		FoldingRangeParams from = new FoldingRangeParams();
+		String json = mapper.writeValueAsString(from);
+		FoldingRangeParams to = mapper.readValue(json, FoldingRangeParams.class);
+		assertObjects(from, to);
+
+		from = FoldingRangeParams.foldingRangeParams()
+				.textDocument()
+					.uri("uri")
+					.and()
+				.build();
+
+		json = mapper.writeValueAsString(from);
+		to = mapper.readValue(json, FoldingRangeParams.class);
+		assertObjects(from, to);
+
+		String expect = loadResourceAsString("FoldingRangeParams1.json");
+		to = mapper.readValue(expect, FoldingRangeParams.class);
 		assertObjects(from, to);
 	}
 

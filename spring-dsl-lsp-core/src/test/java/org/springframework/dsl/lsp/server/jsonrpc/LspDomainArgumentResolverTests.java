@@ -29,6 +29,7 @@ import org.springframework.dsl.domain.DidCloseTextDocumentParams;
 import org.springframework.dsl.domain.DidOpenTextDocumentParams;
 import org.springframework.dsl.domain.DidSaveTextDocumentParams;
 import org.springframework.dsl.domain.DocumentSymbolParams;
+import org.springframework.dsl.domain.FoldingRangeParams;
 import org.springframework.dsl.domain.InitializeParams;
 import org.springframework.dsl.domain.InitializedParams;
 import org.springframework.dsl.domain.RenameParams;
@@ -88,6 +89,8 @@ public class LspDomainArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
 		param = this.testMethod.arg(WorkspaceSymbolParams.class);
 		assertThat(this.resolver.supportsParameter(param)).isTrue();
+		param = this.testMethod.arg(FoldingRangeParams.class);
+		assertThat(this.resolver.supportsParameter(param)).isTrue();
 	}
 
 	@Test
@@ -144,6 +147,7 @@ public class LspDomainArgumentResolverTests {
 			DocumentSymbolParams documentSymbolParams,
 			RenameParams renameParams,
 			CodeLensParams codeLensParams,
-			WorkspaceSymbolParams workspaceSymbolParams
+			WorkspaceSymbolParams workspaceSymbolParams,
+			FoldingRangeParams foldingRangeParams
 			) {}
 }

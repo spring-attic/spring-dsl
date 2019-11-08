@@ -43,6 +43,9 @@ public class ServerCapabilities {
 	private Boolean documentSymbolProvider;
 	private CodeLensOptions codeLensProvider;
 	private Boolean workspaceSymbolProvider;
+	// TODO actual type is boolean | FoldingRangeProviderOptions |
+	//      (FoldingRangeProviderOptions & TextDocumentRegistrationOptions & StaticRegistrationOptions)
+	private Boolean foldingRangeProvider;
 
 	public ServerCapabilities() {
 	}
@@ -119,6 +122,14 @@ public class ServerCapabilities {
 		this.workspaceSymbolProvider = workspaceSymbolProvider;
 	}
 
+	public Boolean getFoldingRangeProvider() {
+		return foldingRangeProvider;
+	}
+
+	public void setFoldingRangeProvider(Boolean foldingRangeProvider) {
+		this.foldingRangeProvider = foldingRangeProvider;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -131,6 +142,7 @@ public class ServerCapabilities {
 		result = prime * result + ((textDocumentSyncOptions == null) ? 0 : textDocumentSyncOptions.hashCode());
 		result = prime * result + ((codeLensProvider == null) ? 0 : codeLensProvider.hashCode());
 		result = prime * result + ((workspaceSymbolProvider == null) ? 0 : workspaceSymbolProvider.hashCode());
+		result = prime * result + ((foldingRangeProvider == null) ? 0 : foldingRangeProvider.hashCode());
 		return result;
 	}
 
@@ -196,6 +208,13 @@ public class ServerCapabilities {
 				return false;
 			}
 		} else if (!workspaceSymbolProvider.equals(other.workspaceSymbolProvider)) {
+			return false;
+		}
+		if (foldingRangeProvider == null) {
+			if (other.foldingRangeProvider != null) {
+				return false;
+			}
+		} else if (!foldingRangeProvider.equals(other.foldingRangeProvider)) {
 			return false;
 		}
 		return true;
@@ -298,6 +317,8 @@ public class ServerCapabilities {
 		 * @return the builder for chaining
 		 */
 		ServerCapabilitiesBuilder<P> workspaceSymbolProvider(Boolean workspaceSymbolProvider);
+
+		ServerCapabilitiesBuilder<P> foldingRangeProvider(Boolean foldingRangeProvider);
 	}
 
 	/**
@@ -324,6 +345,7 @@ public class ServerCapabilities {
 		private CompletionOptionsBuilder<ServerCapabilitiesBuilder<P>> completionProvider;
 		private CodeLensOptionsBuilder<ServerCapabilitiesBuilder<P>> codeLensProvider;
 		private Boolean workspaceSymbolProvider;
+		private Boolean foldingRangeProvider;
 
 		InternalServerCapabilitiesBuilder(P parent) {
 			super(parent);
@@ -406,6 +428,12 @@ public class ServerCapabilities {
 		}
 
 		@Override
+		public ServerCapabilitiesBuilder<P> foldingRangeProvider(Boolean foldingRangeProvider) {
+			this.foldingRangeProvider = foldingRangeProvider;
+			return this;
+		}
+
+		@Override
 		public ServerCapabilities build() {
 			ServerCapabilities serverCapabilities = new ServerCapabilities();
 			if (textDocumentSyncOptions != null) {
@@ -425,6 +453,7 @@ public class ServerCapabilities {
 			if (workspaceSymbolProvider != null) {
 				serverCapabilities.setWorkspaceSymbolProvider(workspaceSymbolProvider);
 			}
+			serverCapabilities.setFoldingRangeProvider(foldingRangeProvider);
 			return serverCapabilities;
 		}
 	}

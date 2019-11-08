@@ -42,22 +42,56 @@ public class Range {
 	private Position start;
 	private Position end;
 
+	/**
+	 * Instantiates a new range.
+	 */
 	public Range() {
 	}
 
+	/**
+	 * Instantiates a new range.
+	 *
+	 * @param start start position
+	 * @param end end position
+	 */
 	public Range(Position start, Position end) {
 		this.start = start;
 		this.end = end;
 	}
 
+	/**
+	 * Instantiates a new range.
+	 *
+	 * @param startLine start line
+	 * @param startCharacter start character
+	 * @param endLine end line
+	 * @param endCharacter end character
+	 */
 	public Range(int startLine, int startCharacter, int endLine, int endCharacter) {
 		this.start = new Position(startLine, startCharacter);
 		this.end = new Position(endLine, endCharacter);
 	}
 
+	/**
+	 * Instantiates a new range.
+	 *
+	 * @param line line
+	 * @param startCharacter start character
+	 * @param endCharacter end character
+	 */
 	public Range(int line, int startCharacter, int endCharacter) {
 		this.start = new Position(line, startCharacter);
 		this.end = new Position(line, endCharacter);
+	}
+
+	/**
+	 * Instantiates a new range.
+	 *
+	 * @param range range
+	 */
+	public Range(Range range) {
+		this.start = new Position(range.getStart().getLine(), range.getStart().getCharacter());
+		this.end = new Position(range.getEnd().getLine(), range.getEnd().getCharacter());
 	}
 
 	/**
@@ -85,6 +119,16 @@ public class Range {
 	}
 
 	/**
+	 * Builds a new range from given range.
+	 *
+	 * @param range range
+	 * @return the new range
+	 */
+	public static Range from(Range range) {
+		return new Range(range);
+	}
+
+	/**
 	 * Builds a new range where positions are zeroed.
 	 *
 	 * @return the new range
@@ -107,6 +151,21 @@ public class Range {
 
 	public void setEnd(Position end) {
 		this.end = end;
+	}
+
+	/**
+	 * Extend this range with a given range. Resulting range is always original if
+	 * given range is inside original or extended from start and end positions
+	 * depending on a given range.
+	 *
+	 * @param range range
+	 * @return the new extended range
+	 */
+	public Range extend(Range range) {
+		return from(Math.min(this.start.getLine(), range.getStart().getLine()),
+				Math.min(this.start.getCharacter(), range.getStart().getCharacter()),
+				Math.max(this.end.getLine(), range.getEnd().getLine()),
+				Math.max(this.end.getCharacter(), range.getEnd().getCharacter()));
 	}
 
 	@Override
