@@ -17,6 +17,9 @@ package org.springframework.dsl.support;
 
 import org.springframework.dsl.domain.Position;
 import org.springframework.dsl.domain.Range;
+import org.springframework.dsl.service.symbol.SymbolizeInfo;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Various utility functions for {@code DSL}.
@@ -50,5 +53,16 @@ public abstract class DslUtils {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Utility method to wrap {@link SymbolizeInfo} of a {@link Mono} to a proper
+	 * {@link SymbolizeInfo}.
+	 *
+	 * @param symbolizeInfo symbolize info mono
+	 * @return the symbolize info
+	 */
+	public static SymbolizeInfo symbolizeInfoFromMono(Mono<SymbolizeInfo> symbolizeInfo) {
+		return new SymbolizeInfoWrapper(symbolizeInfo);
 	}
 }
