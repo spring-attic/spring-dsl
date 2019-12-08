@@ -1,0 +1,12 @@
+{
+  "documentChanges": [
+    {
+      "kind": "create",
+      "uri": "uri1",
+      "options": {
+        "override": true,
+        "ignoreIfExists": true
+      }
+    }
+  ]
+}

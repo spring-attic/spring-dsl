@@ -24,6 +24,7 @@ import org.springframework.dsl.domain.MarkupKind;
 import org.springframework.dsl.domain.MessageType;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.SymbolKind;
+import org.springframework.dsl.domain.WorkspaceEdit;
 import org.springframework.dsl.jsonrpc.JsonRpcRequest;
 import org.springframework.dsl.jsonrpc.JsonRpcResponse;
 import org.springframework.dsl.jsonrpc.jackson.JsonRpcJackson2ObjectMapperBuilderCustomizer;
@@ -43,6 +44,8 @@ import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonDeseriali
 import org.springframework.dsl.lsp.server.domain.ServerCapabilitiesJsonSerializer;
 import org.springframework.dsl.lsp.server.domain.SymbolKindDeserializer;
 import org.springframework.dsl.lsp.server.domain.SymbolKindSerializer;
+import org.springframework.dsl.lsp.server.domain.WorkspaceEditDeserializer;
+import org.springframework.dsl.lsp.server.domain.WorkspaceEditSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -73,6 +76,8 @@ public class LspDomainJacksonConfiguration {
 		builder.deserializerByType(MessageType.class, new MessageTypeDeserializer());
 		builder.serializerByType(CompletionItemKind.class, new CompletionItemKindSerializer());
 		builder.deserializerByType(CompletionItemKind.class, new CompletionItemKindDeserializer());
+		builder.serializerByType(WorkspaceEdit.class, new WorkspaceEditSerializer());
+		builder.deserializerByType(WorkspaceEdit.class, new WorkspaceEditDeserializer());
 		builder.featuresToEnable(SerializationFeature.WRITE_ENUMS_USING_INDEX);
 		builder.serializationInclusion(JsonInclude.Include.NON_NULL);
 	};
