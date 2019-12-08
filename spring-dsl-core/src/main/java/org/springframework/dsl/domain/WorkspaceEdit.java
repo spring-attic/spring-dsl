@@ -20,7 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import org.springframework.dsl.domain.CreateFile.CreateFileBuilder;
+import org.springframework.dsl.domain.DeleteFile.DeleteFileBuilder;
+import org.springframework.dsl.domain.RenameFile.RenameFileBuilder;
+import org.springframework.dsl.domain.TextDocumentEdit.TextDocumentEditBuilder;
 import org.springframework.dsl.domain.TextEdit.TextEditBuilder;
 import org.springframework.dsl.support.AbstractDomainBuilder;
 import org.springframework.dsl.support.DomainBuilder;
@@ -34,8 +39,10 @@ import org.springframework.dsl.support.DomainBuilder;
 public class WorkspaceEdit {
 
 	private Map<String, List<TextEdit>> changes;
-	// TODO: documentChanges
-	//       documentChanges?: (TextDocumentEdit[] | (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[]);
+	private List<TextDocumentEdit> documentChangesTextDocumentEdits;
+	private List<CreateFile> documentChangesCreateFiles;
+	private List<RenameFile> documentChangesRenameFiles;
+	private List<DeleteFile> documentChangesDeleteFiles;
 
 	public WorkspaceEdit() {
 	}
@@ -46,6 +53,38 @@ public class WorkspaceEdit {
 
 	public void setChanges(Map<String, List<TextEdit>> changes) {
 		this.changes = changes;
+	}
+
+	public List<TextDocumentEdit> getDocumentChangesTextDocumentEdits() {
+		return documentChangesTextDocumentEdits;
+	}
+
+	public void setDocumentChangesTextDocumentEdits(List<TextDocumentEdit> documentChangesTextDocumentEdits) {
+		this.documentChangesTextDocumentEdits = documentChangesTextDocumentEdits;
+	}
+
+	public List<CreateFile> getDocumentChangesCreateFiles() {
+		return documentChangesCreateFiles;
+	}
+
+	public void setDocumentChangesCreateFiles(List<CreateFile> documentChangesCreateFiles) {
+		this.documentChangesCreateFiles = documentChangesCreateFiles;
+	}
+
+	public List<RenameFile> getDocumentChangesRenameFiles() {
+		return documentChangesRenameFiles;
+	}
+
+	public void setDocumentChangesRenameFiles(List<RenameFile> documentChangesRenameFiles) {
+		this.documentChangesRenameFiles = documentChangesRenameFiles;
+	}
+
+	public List<DeleteFile> getDocumentChangesDeleteFiles() {
+		return documentChangesDeleteFiles;
+	}
+
+	public void setDocumentChangesDeleteFiles(List<DeleteFile> documentChangesDeleteFiles) {
+		this.documentChangesDeleteFiles = documentChangesDeleteFiles;
 	}
 
 	/**
@@ -72,6 +111,34 @@ public class WorkspaceEdit {
 		 * @return the builder for chaining
 		 */
 		WorkspaceEditBuilder<P> changes(String uri, List<TextEdit> edits);
+
+		/**
+		 * Gets a builder for {@code documentChanges} for having {@link TextDocumentEdit} types.
+		 *
+		 * @return the text document edit builder
+		 */
+		TextDocumentEditBuilder<WorkspaceEditBuilder<P>> documentChangesTextDocumentEdits();
+
+		/**
+		 * Gets a builder for {@code documentChanges} for having {@link CreateFile} types.
+		 *
+		 * @return the create file builder
+		 */
+		CreateFileBuilder<WorkspaceEditBuilder<P>> documentChangesCreateFiles();
+
+		/**
+		 * Gets a builder for {@code documentChanges} for having {@link RenameFile} types.
+		 *
+		 * @return the rename file builder
+		 */
+		RenameFileBuilder<WorkspaceEditBuilder<P>> documentChangesRenameFiles();
+
+		/**
+		 * Gets a builder for {@code documentChanges} for having {@link DeleteFile} types.
+		 *
+		 * @return the delete file builder
+		 */
+		DeleteFileBuilder<WorkspaceEditBuilder<P>> documentChangesDeleteFiles();
 	}
 
 	@Override
@@ -79,28 +146,48 @@ public class WorkspaceEdit {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((changes == null) ? 0 : changes.hashCode());
+		result = prime * result + ((documentChangesCreateFiles == null) ? 0 : documentChangesCreateFiles.hashCode());
+		result = prime * result + ((documentChangesDeleteFiles == null) ? 0 : documentChangesDeleteFiles.hashCode());
+		result = prime * result + ((documentChangesRenameFiles == null) ? 0 : documentChangesRenameFiles.hashCode());
+		result = prime * result
+				+ ((documentChangesTextDocumentEdits == null) ? 0 : documentChangesTextDocumentEdits.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		WorkspaceEdit other = (WorkspaceEdit) obj;
 		if (changes == null) {
-			if (other.changes != null) {
+			if (other.changes != null)
 				return false;
-			}
-		} else if (!changes.equals(other.changes)) {
+		} else if (!changes.equals(other.changes))
 			return false;
-		}
+		if (documentChangesCreateFiles == null) {
+			if (other.documentChangesCreateFiles != null)
+				return false;
+		} else if (!documentChangesCreateFiles.equals(other.documentChangesCreateFiles))
+			return false;
+		if (documentChangesDeleteFiles == null) {
+			if (other.documentChangesDeleteFiles != null)
+				return false;
+		} else if (!documentChangesDeleteFiles.equals(other.documentChangesDeleteFiles))
+			return false;
+		if (documentChangesRenameFiles == null) {
+			if (other.documentChangesRenameFiles != null)
+				return false;
+		} else if (!documentChangesRenameFiles.equals(other.documentChangesRenameFiles))
+			return false;
+		if (documentChangesTextDocumentEdits == null) {
+			if (other.documentChangesTextDocumentEdits != null)
+				return false;
+		} else if (!documentChangesTextDocumentEdits.equals(other.documentChangesTextDocumentEdits))
+			return false;
 		return true;
 	}
 
@@ -122,6 +209,10 @@ public class WorkspaceEdit {
 
 		private Map<String, List<TextEdit>> changes = new HashMap<>();
 		private Map<String, List<TextEditBuilder<WorkspaceEditBuilder<P>>>> changesBuilders = new HashMap<>();
+		private List<TextDocumentEditBuilder<WorkspaceEditBuilder<P>>> documentChangesTextDocumentEditsBuilders = new ArrayList<>();
+		private List<CreateFileBuilder<WorkspaceEditBuilder<P>>> documentChangesCreateFilesBuilders = new ArrayList<>();
+		private List<RenameFileBuilder<WorkspaceEditBuilder<P>>> documentChangesRenameFilesBuilders = new ArrayList<>();
+		private List<DeleteFileBuilder<WorkspaceEditBuilder<P>>> documentChangesDeleteFilesBuilders = new ArrayList<>();
 
 		InternalWorkspaceEditBuilder(P parent) {
 			super(parent);
@@ -143,11 +234,36 @@ public class WorkspaceEdit {
 		}
 
 		@Override
+		public TextDocumentEditBuilder<WorkspaceEditBuilder<P>> documentChangesTextDocumentEdits() {
+			TextDocumentEditBuilder<WorkspaceEditBuilder<P>> builder = TextDocumentEdit.textDocumentEdit(this);
+			documentChangesTextDocumentEditsBuilders.add(builder);
+			return builder;
+		}
+
+		@Override
+		public CreateFileBuilder<WorkspaceEditBuilder<P>> documentChangesCreateFiles() {
+			CreateFileBuilder<WorkspaceEditBuilder<P>> builder = CreateFile.createFile(this);
+			documentChangesCreateFilesBuilders.add(builder);
+			return builder;
+		}
+
+		@Override
+		public RenameFileBuilder<WorkspaceEditBuilder<P>> documentChangesRenameFiles() {
+			RenameFileBuilder<WorkspaceEditBuilder<P>> builder = RenameFile.renameFile(this);
+			documentChangesRenameFilesBuilders.add(builder);
+			return builder;
+		}
+
+		@Override
+		public DeleteFileBuilder<WorkspaceEditBuilder<P>> documentChangesDeleteFiles() {
+			DeleteFileBuilder<WorkspaceEditBuilder<P>> builder = DeleteFile.deleteFile(this);
+			documentChangesDeleteFilesBuilders.add(builder);
+			return builder;
+		}
+
+		@Override
 		public WorkspaceEdit build() {
 			WorkspaceEdit workspaceEdit = new WorkspaceEdit();
-			if (changes.isEmpty() && changesBuilders.isEmpty()) {
-				return workspaceEdit;
-			}
 			Map<String, List<TextEdit>> map = new HashMap<String, List<TextEdit>>();
 			if (!changes.isEmpty()) {
 				for (Entry<String, List<TextEdit>> e : changes.entrySet()) {
@@ -162,8 +278,29 @@ public class WorkspaceEdit {
 					map.put(e.getKey(), list);
 				}
 			}
+
+			if (!documentChangesTextDocumentEditsBuilders.isEmpty()) {
+				List<TextDocumentEdit> edits = documentChangesTextDocumentEditsBuilders.stream()
+					.map(builder -> builder.build()).collect(Collectors.toList());
+				workspaceEdit.setDocumentChangesTextDocumentEdits(edits);
+			} else if (!documentChangesCreateFilesBuilders.isEmpty()) {
+				List<CreateFile> files = documentChangesCreateFilesBuilders.stream()
+					.map(builder -> builder.build()).collect(Collectors.toList());
+				workspaceEdit.setDocumentChangesCreateFiles(files);
+			} else if (!documentChangesRenameFilesBuilders.isEmpty()) {
+				List<RenameFile> files = documentChangesRenameFilesBuilders.stream()
+					.map(builder -> builder.build()).collect(Collectors.toList());
+				workspaceEdit.setDocumentChangesRenameFiles(files);
+			} else if (!documentChangesDeleteFilesBuilders.isEmpty()) {
+				List<DeleteFile> files = documentChangesDeleteFilesBuilders.stream()
+					.map(builder -> builder.build()).collect(Collectors.toList());
+				workspaceEdit.setDocumentChangesDeleteFiles(files);
+			}
+
 			// ok, we have someting in a map, set it
-			workspaceEdit.setChanges(map);
+			if (!map.isEmpty()) {
+				workspaceEdit.setChanges(map);
+			}
 			return workspaceEdit;
 		}
 	}

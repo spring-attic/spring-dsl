@@ -1,0 +1,13 @@
+{
+  "documentChanges": [
+    {
+      "kind": "rename",
+      "oldUri": "uri1",
+      "newUri": "uri2",
+      "options": {
+        "override": true,
+        "ignoreIfExists": true
+      }
+    }
+  ]
+}

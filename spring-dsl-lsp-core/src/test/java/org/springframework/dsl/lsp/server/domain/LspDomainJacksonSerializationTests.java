@@ -40,6 +40,8 @@ import org.springframework.dsl.domain.CompletionItemKind;
 import org.springframework.dsl.domain.CompletionItemKindCapabilities;
 import org.springframework.dsl.domain.CompletionList;
 import org.springframework.dsl.domain.CompletionOptions;
+import org.springframework.dsl.domain.CreateFileKind;
+import org.springframework.dsl.domain.DeleteFileKind;
 import org.springframework.dsl.domain.Diagnostic;
 import org.springframework.dsl.domain.DiagnosticSeverity;
 import org.springframework.dsl.domain.DocumentSymbol;
@@ -62,6 +64,7 @@ import org.springframework.dsl.domain.PublishDiagnosticsParams;
 import org.springframework.dsl.domain.Range;
 import org.springframework.dsl.domain.Registration;
 import org.springframework.dsl.domain.RegistrationParams;
+import org.springframework.dsl.domain.RenameFileKind;
 import org.springframework.dsl.domain.RenameParams;
 import org.springframework.dsl.domain.ServerCapabilities;
 import org.springframework.dsl.domain.ShowMessageRequestParams;
@@ -1305,7 +1308,7 @@ public class LspDomainJacksonSerializationTests {
 	}
 
 	@Test
-	public void testWorkspaceEdit() throws Exception {
+	public void testWorkspaceEdit1() throws Exception {
 		WorkspaceEdit from = new WorkspaceEdit();
 		String json = mapper.writeValueAsString(from);
 		WorkspaceEdit to = mapper.readValue(json, WorkspaceEdit.class);
@@ -1345,12 +1348,15 @@ public class LspDomainJacksonSerializationTests {
 		String expect = loadResourceAsString("WorkspaceEdit1.json");
 		to = mapper.readValue(expect, WorkspaceEdit.class);
 		assertObjects(from, to);
+	}
 
-		from = WorkspaceEdit.workspaceEdit()
+	@Test
+	public void testWorkspaceEdit2() throws Exception {
+		WorkspaceEdit from = WorkspaceEdit.workspaceEdit()
 				.build();
 
-		expect = loadResourceAsString("WorkspaceEdit2.json");
-		to = mapper.readValue(expect, WorkspaceEdit.class);
+		String expect = loadResourceAsString("WorkspaceEdit2.json");
+		WorkspaceEdit to = mapper.readValue(expect, WorkspaceEdit.class);
 		assertObjects(from, to);
 
 		List<TextEdit> edits = new ArrayList<>();
@@ -1358,7 +1364,7 @@ public class LspDomainJacksonSerializationTests {
 				.changes("uri1", edits)
 				.build();
 
-		json = mapper.writeValueAsString(from);
+		String json = mapper.writeValueAsString(from);
 		to = mapper.readValue(json, WorkspaceEdit.class);
 		assertObjects(from, to);
 
@@ -1370,6 +1376,90 @@ public class LspDomainJacksonSerializationTests {
 
 		json = mapper.writeValueAsString(from);
 		to = mapper.readValue(json, WorkspaceEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testWorkspaceEdit3() throws Exception {
+		WorkspaceEdit from = WorkspaceEdit.workspaceEdit()
+			.documentChangesTextDocumentEdits()
+				.textDocument()
+					.uri("uri")
+					.version(1)
+					.and()
+				.edits()
+					.range()
+						.start()
+							.line(0)
+							.character(0)
+							.and()
+						.end()
+							.line(1)
+							.character(1)
+							.and()
+						.and()
+					.newText("newText")
+					.and()
+				.and()
+			.build();
+
+		String expect = loadResourceAsString("WorkspaceEdit3.json");
+		WorkspaceEdit to = mapper.readValue(expect, WorkspaceEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testWorkspaceEdit4() throws Exception {
+		WorkspaceEdit from = WorkspaceEdit.workspaceEdit()
+			.documentChangesCreateFiles()
+				.kind(CreateFileKind.create)
+				.uri("uri1")
+				.options()
+					.override(true)
+					.ignoreIfExists(true)
+					.and()
+				.and()
+			.build();
+
+		String expect = loadResourceAsString("WorkspaceEdit4.json");
+		WorkspaceEdit to = mapper.readValue(expect, WorkspaceEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testWorkspaceEdit5() throws Exception {
+		WorkspaceEdit from = WorkspaceEdit.workspaceEdit()
+			.documentChangesRenameFiles()
+				.kind(RenameFileKind.rename)
+				.oldUri("uri1")
+				.newUri("uri2")
+				.options()
+					.override(true)
+					.ignoreIfExists(true)
+					.and()
+				.and()
+			.build();
+
+		String expect = loadResourceAsString("WorkspaceEdit5.json");
+		WorkspaceEdit to = mapper.readValue(expect, WorkspaceEdit.class);
+		assertObjects(from, to);
+	}
+
+	@Test
+	public void testWorkspaceEdit6() throws Exception {
+		WorkspaceEdit from = WorkspaceEdit.workspaceEdit()
+			.documentChangesDeleteFiles()
+				.kind(DeleteFileKind.delete)
+				.uri("uri1")
+				.options()
+					.override(true)
+					.ignoreIfExists(true)
+					.and()
+				.and()
+			.build();
+
+		String expect = loadResourceAsString("WorkspaceEdit6.json");
+		WorkspaceEdit to = mapper.readValue(expect, WorkspaceEdit.class);
 		assertObjects(from, to);
 	}
 

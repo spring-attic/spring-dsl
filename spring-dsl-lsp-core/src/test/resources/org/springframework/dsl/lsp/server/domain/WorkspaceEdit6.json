@@ -1,0 +1,12 @@
+{
+  "documentChanges": [
+    {
+      "kind": "delete",
+      "uri": "uri1",
+      "options": {
+        "override": true,
+        "ignoreIfExists": true
+      }
+    }
+  ]
+}
