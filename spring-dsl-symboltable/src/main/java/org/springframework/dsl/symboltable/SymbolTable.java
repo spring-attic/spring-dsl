@@ -34,5 +34,11 @@ public interface SymbolTable {
 	 */
 	List<? extends Symbol> getAllSymbols();
 
-	void visitSymbolTable(SymbolTableVisitor visitor);
+	/**
+	 * Visit table with a given visitor and return it after completion.
+	 *
+	 * @param visitor the symbol table visitor
+	 * @return the given visitor
+	 */
+	<T extends SymbolTableVisitor> T visitSymbolTable(T visitor);
 }

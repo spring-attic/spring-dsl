@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,9 +72,24 @@ public interface Symbol {
 	 */
 	Range getRange();
 
+	/**
+	 * Gets a {@link SymbolKind} of this symbol, defaults to
+	 * {@code SymbolKind.String}.
+	 *
+	 * @return the kind
+	 */
 	default SymbolKind getKind() {
 		return SymbolKind.String;
 	};
+
+	/**
+	 * Gets a details of this symbol if any, defaults to {@code null}.
+	 *
+	 * @return the detail
+	 */
+	default String getDetail() {
+		return null;
+	}
 
 	/**
 	 * Accepts a {@link SymbolTableVisitor}.

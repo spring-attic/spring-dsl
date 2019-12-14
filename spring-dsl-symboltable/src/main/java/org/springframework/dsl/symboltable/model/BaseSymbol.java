@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public abstract class BaseSymbol implements Symbol {
 
 	private final String name;
 	private final ArrayList<Modifier> modifiers = new ArrayList<>();
+	private String detail;
 	private Type type; // If language statically typed, record type
 	private Scope scope; // All symbols know what scope contains them.
 	private int lexicalOrder; // order seen or insertion order from 0; compilers often need this
@@ -64,6 +65,15 @@ public abstract class BaseSymbol implements Symbol {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
 
 	@Override

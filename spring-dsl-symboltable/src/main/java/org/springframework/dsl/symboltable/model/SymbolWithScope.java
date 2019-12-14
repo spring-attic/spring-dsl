@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 
 	private final String name;
 	private final ArrayList<Modifier> modifiers = new ArrayList<>();
+	private String detail;
 	private int index;
 	private Range range;
 
@@ -67,6 +68,15 @@ public abstract class SymbolWithScope extends BaseScope implements Symbol, Scope
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
 
 	@Override

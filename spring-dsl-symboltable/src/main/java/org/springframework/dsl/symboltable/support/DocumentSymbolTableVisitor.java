@@ -81,6 +81,19 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		this.uri = uri;
 	}
 
+	/**
+	 * Conveniance method to build visitor with url and symbol query.
+	 *
+	 * @param uri the uri
+	 * @param symbolQuery the symbor query
+	 * @return document symbol table visitor
+	 */
+	public static DocumentSymbolTableVisitor from(String uri, Function<Symbol, Boolean> symbolQuery) {
+		DocumentSymbolTableVisitor visitor = new DocumentSymbolTableVisitor(uri);
+		visitor.setSymbolQuery(symbolQuery);
+		return visitor;
+	}
+
 	@Override
 	public void enterVisitScope(Scope scope) {
 		log.debug("enterVisitScope {} {} {}", scope, scope != null ? scope.getClass().getSimpleName() : null,
@@ -144,11 +157,13 @@ public class DocumentSymbolTableVisitor implements SymbolTableVisitor {
 		DocumentSymbolBuilder<?> documentSymbolBuilder = DocumentSymbol.documentSymbol()
 			.name(symbol.getName())
 			.kind(symbol.getKind())
+			.detail(symbol.getDetail())
 			.range(symbol.getRange())
 			.selectionRange(symbol.getRange());
 		SymbolInformationBuilder<?> symbolInformationBuilder = SymbolInformation.symbolInformation()
 			.name(symbol.getName())
 			.kind(symbol.getKind())
+			.containerName(symbol.getScope() != null ? symbol.getScope().getName() : null)
 			.location()
 				.uri(uri)
 				.range(symbol.getRange())

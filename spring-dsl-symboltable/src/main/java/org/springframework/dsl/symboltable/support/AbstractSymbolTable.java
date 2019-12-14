@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,12 @@ public abstract class AbstractSymbolTable implements SymbolTable {
 		return globals.getAllSymbols();
 	}
 
+	@Override
+	public <T extends SymbolTableVisitor> T visitSymbolTable(T visitor) {
+		getGlobalScope().accept(visitor);
+		return visitor;
+	}
+
 	/**
 	 * Define a predefined symbol.
 	 *
@@ -73,10 +79,5 @@ public abstract class AbstractSymbolTable implements SymbolTable {
 	 */
 	public Scope getGlobalScope() {
 		return globals;
-	}
-
-	@Override
-	public void visitSymbolTable(SymbolTableVisitor visitor) {
-		getGlobalScope().accept(visitor);
 	}
 }
