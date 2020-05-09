@@ -3,7 +3,7 @@ buildscript {
 		springVersion = '5.2.6.RELEASE'
 		springBootVersion = '2.2.7.RELEASE'
 		antlr4Version = '4.7.1'
-		mooworkVersion = '1.2.0'
+		nodeGradleVersion = '2.2.3'
 		propdepsVersion = '0.0.8'
 		asciidoctorVersion = '1.6.1'
 		javolutionVersion = '6.0.0'
@@ -22,7 +22,7 @@ buildscript {
 		classpath("io.spring.gradle:propdeps-plugin:${propdepsVersion}")
 		classpath("org.asciidoctor:asciidoctor-gradle-plugin:${asciidoctorVersion}")
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("com.moowork.gradle:gradle-node-plugin:${mooworkVersion}")
+		classpath("com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin:${nodeGradleVersion}")
 	}
 }
 

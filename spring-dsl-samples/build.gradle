@@ -61,10 +61,10 @@ project('spring-dsl-samples-dotdsl') {
 }
 
 project('spring-dsl-samples-spring-dsl-editor-lib') {
-	apply plugin: 'com.moowork.node'
-	
+	apply plugin: 'com.github.node-gradle.node'
+
 	description = 'Spring Dsl Angular Module'
-	
+
 	node {
 		version = "${mooworkNodeVersion}"
 		npmVersion = "${mooworkNpmVersion}"
@@ -82,10 +82,10 @@ project('spring-dsl-samples-spring-dsl-editor-lib') {
 
 project('spring-dsl-samples-simpledsleditor') {
 	apply plugin: 'org.springframework.boot'
-	apply plugin: 'com.moowork.node'
-	
+	apply plugin: 'com.github.node-gradle.node'
+
 	description = 'Spring Dsl Simple Editor Sample'
-	
+
 	dependencies {
 		compile project(':spring-dsl-starter-lspserver-reactive')
 		compile project(':spring-dsl-samples-common')
@@ -99,7 +99,7 @@ project('spring-dsl-samples-simpledsleditor') {
 			from "ui/dist/ui"
 		}
 	}
-	
+
 	node {
 		version = "${mooworkNodeVersion}"
 		npmVersion = "${mooworkNpmVersion}"
@@ -127,7 +127,7 @@ project('spring-dsl-samples-simpledsleditor') {
 
 	bootRun.dependsOn(buildClientDev)
 	bootJar.dependsOn(buildClient)
-	build.dependsOn bootJar 
+	build.dependsOn bootJar
 	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
 	install.dependsOn bootJar
 }
@@ -173,10 +173,10 @@ project('spring-dsl-samples-simpledslsocketserver') {
 
 project('spring-dsl-samples-wordcheckdsleditor') {
 	apply plugin: 'org.springframework.boot'
-	apply plugin: 'com.moowork.node'
-	
+	apply plugin: 'com.github.node-gradle.node'
+
 	description = 'Spring Dsl Wordcheck Editor Reactive Sample'
-	
+
 	dependencies {
 		compile project(':spring-dsl-starter-lspserver-reactive')
 		compile project(':spring-dsl-samples-common')
@@ -190,7 +190,7 @@ project('spring-dsl-samples-wordcheckdsleditor') {
 			from "ui/dist/ui"
 		}
 	}
-	
+
 	node {
 		version = "${mooworkNodeVersion}"
 		npmVersion = "${mooworkNpmVersion}"
@@ -218,17 +218,17 @@ project('spring-dsl-samples-wordcheckdsleditor') {
 
 	bootRun.dependsOn(buildClientDev)
 	bootJar.dependsOn(buildClient)
-	build.dependsOn bootJar 
+	build.dependsOn bootJar
 	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
 	install.dependsOn bootJar
 }
 
 project('spring-dsl-samples-wordcheckdsleditorservlet') {
 	apply plugin: 'org.springframework.boot'
-	apply plugin: 'com.moowork.node'
-	
+	apply plugin: 'com.github.node-gradle.node'
+
 	description = 'Spring Dsl Wordcheck Editor Servlet Sample'
-	
+
 	dependencies {
 		compile project(':spring-dsl-starter-lspserver-servlet')
 		compile project(':spring-dsl-samples-common')
@@ -242,7 +242,7 @@ project('spring-dsl-samples-wordcheckdsleditorservlet') {
 			from "ui/dist/ui"
 		}
 	}
-	
+
 	node {
 		version = "${mooworkNodeVersion}"
 		npmVersion = "${mooworkNpmVersion}"
@@ -270,17 +270,17 @@ project('spring-dsl-samples-wordcheckdsleditorservlet') {
 
 	bootRun.dependsOn(buildClientDev)
 	bootJar.dependsOn(buildClient)
-	build.dependsOn bootJar 
+	build.dependsOn bootJar
 	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
 	install.dependsOn bootJar
 }
 
 project('spring-dsl-samples-showcaseeditor') {
 	apply plugin: 'org.springframework.boot'
-	apply plugin: 'com.moowork.node'
-	
+	apply plugin: 'com.github.node-gradle.node'
+
 	description = 'Spring Dsl Showcase Editor Sample'
-	
+
 	dependencies {
 		compile project(':spring-dsl-starter-lspserver-reactive')
 		compile project(':spring-dsl-lsp-web')
@@ -295,7 +295,7 @@ project('spring-dsl-samples-showcaseeditor') {
 			from "ui/dist/ui"
 		}
 	}
-	
+
 	node {
 		version = "${mooworkNodeVersion}"
 		npmVersion = "${mooworkNpmVersion}"
@@ -323,7 +323,7 @@ project('spring-dsl-samples-showcaseeditor') {
 
 	bootRun.dependsOn(buildClientDev)
 	bootJar.dependsOn(buildClient)
-	build.dependsOn bootJar 
+	build.dependsOn bootJar
 	npmInstall.dependsOn ':spring-dsl-samples-common:spring-dsl-samples-spring-dsl-editor-lib:buildPackage'
 	install.dependsOn bootJar
 }
