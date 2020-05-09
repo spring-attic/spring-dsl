@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springVersion = '5.2.1.RELEASE'
-		springBootVersion = '2.2.1.RELEASE'
+		springVersion = '5.2.6.RELEASE'
+		springBootVersion = '2.2.7.RELEASE'
 		antlr4Version = '4.7.1'
 		mooworkVersion = '1.2.0'
 		propdepsVersion = '0.0.8'
