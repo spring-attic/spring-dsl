@@ -1,3 +1,5 @@
+# spring-dsl is no longer actively maintained by VMware, Inc.
+
 = Spring Dsl
 
 The Spring Dsl project aims to provide a common infrastructure to work with various concepts around different languages
